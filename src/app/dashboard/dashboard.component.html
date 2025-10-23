@@ -1,0 +1,114 @@
+<!-- TOP BAR -->
+<mat-toolbar class="topbar" color="primary">
+  <div class="welcome chip">
+    <mat-icon>celebration</mat-icon>
+    <span>¡Bienvenido, {{ nombre }}!</span>
+  </div>
+
+  <nav class="tabs">
+    <button mat-button>ALUMNOS</button>
+    <button mat-button>PROFESORES</button>
+    <button mat-button>EMPRENDEDORES</button>
+    <button mat-raised-button color="accent">EX ALUMNOS</button>
+  </nav>
+
+  <button mat-icon-button class="avatar" aria-label="Perfil">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+</mat-toolbar>
+
+<!-- HERO con degradé y patrón -->
+<section class="hero fancy">
+  <header class="hero-head">
+    <div class="greet">
+      <h2>Dashboard ExAlumnos</h2>
+      <p>¡Bienvenido, {{ nombre }}! Aquí tienes un vistazo rápido.</p>
+    </div>
+    <div class="meter">
+      <span>Perfil completado</span>
+      <div class="meter-bar">
+        <div class="meter-fill" [style.width.%]="perfilCompletado()"></div>
+      </div>
+      <strong>{{ perfilCompletado() }}%</strong>
+    </div>
+  </header>
+
+  <div class="hero-inner">
+    <!-- IZQUIERDA: progreso grande -->
+    <div class="progress-wrap glass">
+      <mat-progress-spinner class="ring" mode="determinate"
+        [value]="perfilCompletado()" diameter="210" strokeWidth="10"
+        color="accent">
+      </mat-progress-spinner>
+      <div class="ring-text">{{ perfilCompletado() }}%</div>
+      <div class="ring-label">PERFIL COMPLETADO</div>
+    </div>
+
+    <!-- DERECHA: GRID de tarjetas con variantes -->
+    <div class="cards">
+      <mat-card class="card tone-primary hover-raise" routerLink="/oportunidades">
+        <mat-card-header>
+          <mat-icon>work_outline</mat-icon>
+          <div>
+            <mat-card-title>OPORTUNIDADES</mat-card-title>
+            <mat-card-subtitle>{{ kpis.oportunidades }} Oportunidades disponibles</mat-card-subtitle>
+          </div>
+        </mat-card-header>
+      </mat-card>
+
+      <mat-card class="card tone-success hover-raise" routerLink="/postulaciones">
+        <mat-card-header>
+          <mat-icon>checklist_rtl</mat-icon>
+          <div>
+            <mat-card-title>MIS POSTULACIONES</mat-card-title>
+            <mat-card-subtitle>{{ kpis.postulaciones }} Postulaciones activas</mat-card-subtitle>
+          </div>
+        </mat-card-header>
+      </mat-card>
+
+      <mat-card class="card tone-info hover-raise" routerLink="/noticias">
+        <mat-card-header>
+          <mat-icon>campaign</mat-icon>
+          <div>
+            <mat-card-title>Noticias/Eventos de la UC</mat-card-title>
+            <mat-card-subtitle>Lo último de la comunidad</mat-card-subtitle>
+          </div>
+        </mat-card-header>
+      </mat-card>
+
+      <mat-card class="card tone-purple hover-raise" routerLink="/mensajes">
+        <mat-card-header>
+          <mat-icon>send</mat-icon>
+          <div>
+            <mat-card-title>MENSAJERÍA</mat-card-title>
+            <mat-card-subtitle>Tienes {{ kpis.mensajesNuevos }} mensaje nuevo</mat-card-subtitle>
+          </div>
+        </mat-card-header>
+      </mat-card>
+
+      <mat-card class="card tone-warning hover-raise" routerLink="/portafolio">
+        <mat-card-header>
+          <mat-icon>inventory_2</mat-icon>
+          <div>
+            <mat-card-title>PORTAFOLIO</mat-card-title>
+            <mat-card-subtitle>Sube tus evidencias</mat-card-subtitle>
+          </div>
+        </mat-card-header>
+      </mat-card>
+
+      <mat-card class="card tone-muted hover-raise" routerLink="/posgrados">
+        <mat-card-header>
+          <mat-icon>edit</mat-icon>
+          <div>
+            <mat-card-title>POSGRADOS</mat-card-title>
+            <mat-card-subtitle>Explora programas de posgrados</mat-card-subtitle>
+          </div>
+        </mat-card-header>
+      </mat-card>
+    </div>
+  </div>
+
+  <footer class="footnote">
+    CONECTANDO ACADEMIA, INDUSTRIA Y SOCIEDAD
+  </footer>
+</section>

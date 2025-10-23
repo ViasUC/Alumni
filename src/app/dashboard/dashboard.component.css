@@ -1,0 +1,100 @@
+/* Topbar igual, solo apenitas más light */
+.topbar{ background:#fff; color:var(--ink); border-bottom:1px solid #eee; padding:6px 12px; gap:12px; }
+.topbar .chip{ display:inline-flex; gap:8px; align-items:center; background:#f3f4f6; padding:8px 12px; border-radius:12px; }
+.topbar .tabs{ display:flex; gap:6px; margin-left:10px; flex:1; }
+.topbar .avatar{ margin-left:auto; }
+
+/* HERO con degradé y patrón de puntitos */
+.hero.fancy{
+  background: radial-gradient(1200px 600px at -10% -10%, rgba(255,255,255,.25) 0%, rgba(255,255,255,0) 40%),
+              linear-gradient(135deg, var(--primary) 0%, #09138f 100%);
+  color:#fff;
+  min-height: calc(100dvh - 64px);
+  padding: 28px;
+  border-radius: 16px;
+  margin: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.hero.fancy::after{
+  content:""; position:absolute; inset:0;
+  background-image: radial-gradient(rgba(255,255,255,.08) 2px, transparent 2.5px);
+  background-size: 22px 22px; pointer-events:none;
+}
+
+/* Head con barra de progreso */
+.hero-head{
+  display:flex; align-items:end; justify-content:space-between;
+  margin: 0 6px 16px;
+}
+.greet h2{ margin:0 0 4px; font-size:24px; font-weight:700; }
+.greet p{ margin:0; opacity:.85; }
+.meter{ display:flex; align-items:center; gap:10px; }
+.meter span{ opacity:.85; font-size:14px; }
+.meter-bar{ width:200px; height:8px; background:rgba(255,255,255,.2); border-radius:999px; overflow:hidden; }
+.meter-fill{ height:100%; background:linear-gradient(90deg,#34d399,#22c55e); }
+
+.hero-inner{
+  display:grid; grid-template-columns: 360px 1fr; gap:24px;
+}
+
+/* Glass card para el progreso */
+.glass{
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+.progress-wrap{
+  position:relative; display:grid; place-items:center; align-content:center;
+  gap:10px; padding:24px; color:#fff;
+}
+.ring-text{ position:absolute; font-size:44px; font-weight:800; }
+.ring-label{ margin-top:220px; font-weight:600; letter-spacing:.5px; }
+
+/* Grid de tarjetas */
+.cards{ display:grid; grid-template-columns: repeat(2, minmax(320px,1fr)); gap:18px; }
+.card{
+  background: var(--surface);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  transition: transform .14s ease, box-shadow .14s ease, border-color .14s;
+  border: 2px solid transparent;
+}
+.card mat-card-header{ padding:26px; gap:12px; align-items:center; }
+.card mat-icon{ font-size:32px; height:32px; width:32px; }
+.card mat-card-title{ font-size:22px; font-weight:800; color:var(--ink); margin-bottom:4px; }
+.card mat-card-subtitle{ color:var(--muted); }
+
+/* Variantes con borde y icono a color */
+.tone-primary{ border-color: rgba(10,28,217,.18); }
+.tone-primary mat-icon{ color: var(--primary); }
+
+.tone-success{ border-color: rgba(34,197,94,.25); }
+.tone-success mat-icon, .tone-success mat-card-title{ color: var(--accent); }
+
+.tone-info{ border-color: rgba(14,165,233,.25); }
+.tone-info mat-icon, .tone-info mat-card-title{ color: var(--info); }
+
+.tone-warning{ border-color: rgba(245,158,11,.25); }
+.tone-warning mat-icon, .tone-warning mat-card-title{ color: var(--warning); }
+
+.tone-purple{ border-color: rgba(124,58,237,.25); }
+.tone-purple mat-icon, .tone-purple mat-card-title{ color: var(--purple); }
+
+.tone-muted{ border-color: rgba(2,6,23,.12); }
+.tone-muted mat-icon, .tone-muted mat-card-title{ color: #264653; }
+
+/* Hover lindo */
+.hover-raise{ cursor:pointer; }
+.hover-raise:hover{ transform: translateY(-4px); box-shadow: 0 16px 36px rgba(0,0,0,.16); }
+
+/* Footer */
+.footnote{ text-align:right; color:#e5e7eb; margin-top:18px; letter-spacing:.8px; }
+
+/* Responsive */
+@media (max-width:1100px){
+  .hero-inner{ grid-template-columns: 1fr; }
+  .cards{ grid-template-columns: 1fr; }
+}

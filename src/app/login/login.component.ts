@@ -19,11 +19,10 @@ export class LoginComponent {
   constructor(private router: Router) {}
 
   onSubmit() {
-    // MOCK: cualquier email con '@' + pass '1234'
     if (this.password === '1234' && this.email.includes('@')) {
       localStorage.setItem('auth', '1');
       this.errorMsg = null;
-      this.router.navigateByUrl('/inicio'); // cambia a /dashboard cuando lo tengas
+      this.router.navigateByUrl('/dashboard');
     } else {
       this.errorMsg = 'Credenciales inválidas.';
       localStorage.removeItem('auth');
