@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /* Angular Material */
@@ -9,7 +9,7 @@ import { MatCardModule }    from '@angular/material/card';
 import { MatGridListModule }from '@angular/material/grid-list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,6 +23,11 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent {
+  private router = inject(Router);
+logout() {
+sessionStorage.removeItem('token');   // borra el token
+this.router.navigateByUrl('/login');
+}
   nombre = 'Horacio';
   perfilCompletado = signal(75);
 

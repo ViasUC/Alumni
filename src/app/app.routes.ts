@@ -1,29 +1,19 @@
-import { Routes, CanMatchFn, UrlTree } from '@angular/router';
+import { Routes, CanActivateFn, UrlTree } from '@angular/router';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 
-// Guard mock: sólo deja entrar al dashboard si hay 'auth' en localStorage
-const canMatchAuth: CanMatchFn = () => {
+// Guard real: protege el dashboard verificando token en sessionStorage
+const canActivateAuth: CanActivateFn = () => {
   const router = inject(Router);
-  const ok = localStorage.getItem('auth') === '1';
-  return ok ? true : router.parseUrl('/login') as UrlTree;
+  const token = sessionStorage.getItem('token');
+
+  // Si no hay token, redirige al login
+  return token ? true : (router.parseUrl('/login') as UrlTree);
 };
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },  // 👈 por defecto
-
-  {
-    path: 'dashboard',
-    canMatch: [canMatchAuth],                                 // 👈 protegido
-    loadComponent: () =>
-      import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
-  },
-
-  {
-    path: 'inicio',                                           // landing opcional
-    loadComponent: () =>
-      import('./humano/humano.component').then(m => m.HumanoComponent),
-  },
+  // Por defecto, si no hay ruta, redirige al login
+  { path: '', pathMatch: 'full', redirectTo: 'login' },
 
   {
     path: 'login',
@@ -31,5 +21,19 @@ export const routes: Routes = [
       import('./login/login.component').then(m => m.LoginComponent),
   },
 
-  { path: '**', redirectTo: 'dashboard' }
+  {
+    path: 'dashboard',
+    canActivate: [canActivateAuth], // 👈 ahora se usa canActivate
+    loadComponent: () =>
+      import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
+  },
+
+  {
+    path: 'inicio',
+    loadComponent: () =>
+      import('./humano/humano.component').then(m => m.HumanoComponent),
+  },
+
+  // Si la ruta no existe, redirige al login
+  { path: '**', redirectTo: 'login' }
 ];
