@@ -118,3 +118,17 @@
   transform: translateY(-2px);
   background: linear-gradient(90deg, #1669c1, #3b7dd8);
 }
+
+.tone-disabled {
+  border-color: rgba(0, 0, 0, 0.1);
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+  pointer-events: none; /* Desactiva clic */
+}
+
+.tone-disabled mat-icon,
+.tone-disabled mat-card-title,
+.tone-disabled mat-card-subtitle {
+  color: #9ca3af !important;
+}
