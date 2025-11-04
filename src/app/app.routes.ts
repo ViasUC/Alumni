@@ -23,7 +23,7 @@ export const routes: Routes = [
 
   {
     path: 'dashboard',
-    canActivate: [canActivateAuth], // 👈 ahora se usa canActivate
+    canActivate: [canActivateAuth],
     loadComponent: () =>
       import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
   },
@@ -32,6 +32,12 @@ export const routes: Routes = [
     path: 'inicio',
     loadComponent: () =>
       import('./humano/humano.component').then(m => m.HumanoComponent),
+  },
+
+  {
+  path: 'oportunidades',
+  loadComponent: () =>
+    import('./oportunidades/oportunidades.component').then(m => m.OportunidadesComponent),
   },
 
   // Si la ruta no existe, redirige al login

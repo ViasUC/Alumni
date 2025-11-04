@@ -1,0 +1,18 @@
+<div class="overlay">
+  <div class="modal">
+    <h3>Detalle de la Oportunidad</h3>
+    <p><b>Título:</b> {{ data?.titulo }}</p>
+    <p><b>Descripción:</b> {{ data?.descripcion }}</p>
+    <p><b>Requisitos:</b> {{ data?.requisitos }}</p>
+    <p><b>Ubicación:</b> {{ data?.ubicacion }}</p>
+    <p><b>Modalidad:</b> {{ data?.modalidad }}</p>
+    <p><b>Fecha Publicación:</b> {{ data?.fechaPublicacion }}</p>
+    <p><b>Fecha Cierre:</b> {{ data?.fechaCierre }}</p>
+    <p><b>Estado:</b> {{ data?.estado }}</p>
+
+    <div class="actions">
+      <button class="btn-primary" (click)="postular.emit()">Postular</button>
+      <button class="btn-secondary" (click)="cerrar.emit()">Cerrar</button>
+    </div>
+  </div>
+</div>

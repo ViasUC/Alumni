@@ -1,0 +1,15 @@
+<div class="panel">
+  <div class="panel-header">
+    <h2>{{ titulo }}</h2>
+
+    <!-- si hay texto de acción, mostramos el botón -->
+    <button *ngIf="accionLabel" class="btn-accion">
+      {{ accionLabel }}
+    </button>
+  </div>
+
+  <div class="panel-body">
+    <!-- acá entra lo que mande el padre -->
+    <ng-content></ng-content>
+  </div>
+</div>

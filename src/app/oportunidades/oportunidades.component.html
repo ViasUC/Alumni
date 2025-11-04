@@ -1,0 +1,81 @@
+<div class="page">
+  <!-- barra superior -->
+  <div class="topbar">
+    <a class="back-btn" routerLink="/dashboard">Volver al inicio</a>
+
+    <nav class="tabs">
+      <a class="tab active">OPORTUNIDADES</a>
+      <a class="tab">MIS POSTULACIONES</a>
+      <a class="tab">PORTAFOLIO</a>
+      <a class="tab">POSGRADOS</a>
+      <a class="tab">MENSAJERÍA</a>
+      <a class="tab">EVENTOS</a>
+    </nav>
+
+    <div class="avatar">
+      <span class="circle"></span>
+    </div>
+  </div>
+
+  <!-- reutilizamos el panel -->
+  <app-panel-lista titulo="Oportunidades" accionLabel="+ Agregar Oportunidad">
+    <!-- este contenido es el que va dentro del panel -->
+    <div class="item" *ngFor="let op of oportunidades">
+      <div class="text">
+        <h3>{{ op.titulo }}</h3>
+        <p>{{ op.descripcion }}</p>
+        <small *ngIf="op.ubicacion || op.modalidad" class="meta">
+          {{ op.ubicacion }} • {{ op.modalidad }}
+        </small>
+      </div>
+
+      <div class="actions">
+        <button
+          *ngIf="!op.creadaPorUsuario"
+          class="link-primary"
+          (click)="abrirDetalle(op)"
+        >
+          Ver más
+        </button>
+
+        <ng-container *ngIf="op.creadaPorUsuario">
+          <button class="link-primary" (click)="abrirEditar(op)">Editar</button>
+          <button class="link-danger" (click)="abrirEliminar(op)">Eliminar</button>
+        </ng-container>
+      </div>
+    </div>
+  </app-panel-lista>
+</div>
+
+<!-- POPUPS -->
+<app-popup-detalle
+  *ngIf="popup === 'detalle'"
+  [data]="seleccionada"
+  (cerrar)="cerrarPopup()"
+  (postular)="abrirPostulacion()">
+</app-popup-detalle>
+
+<app-popup-postulacion
+  *ngIf="popup === 'postulacion'"
+  (cerrar)="cerrarPopup()">
+</app-popup-postulacion>
+
+<app-popup-editar
+  *ngIf="popup === 'editar'"
+  [data]="seleccionada"
+  (cerrar)="cerrarPopup()"
+  (guardar)="guardarOportunidad($event)">
+</app-popup-editar>
+
+<app-popup-eliminar
+  *ngIf="popup === 'eliminar'"
+  [data]="seleccionada"
+  (cancelar)="cerrarPopup()"
+  (eliminar)="confirmarEliminar()">
+</app-popup-eliminar>
+
+<app-popup-confirmar
+  *ngIf="popup === 'confirmar'"
+  (cancelar)="cerrarPopup()"
+  (guardar)="cerrarPopup()">
+</app-popup-confirmar>
