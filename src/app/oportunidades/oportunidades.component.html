@@ -17,8 +17,11 @@
     </div>
   </div>
 
-  <!-- reutilizamos el panel -->
-  <app-panel-lista titulo="Oportunidades" accionLabel="+ Agregar Oportunidad">
+  <app-panel-lista
+  titulo="Oportunidades"
+  accionLabel="+ Agregar Oportunidad"
+  (accionClick)="abrirAgregar()"
+>
     <!-- este contenido es el que va dentro del panel -->
     <div class="item" *ngFor="let op of oportunidades">
       <div class="text">

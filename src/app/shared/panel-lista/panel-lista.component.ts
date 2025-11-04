@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -10,5 +10,10 @@ import { CommonModule } from '@angular/common';
 })
 export class PanelListaComponent {
   @Input() titulo = '';
-  @Input() accionLabel = '';         // ej: "+ Agregar Oportunidad"
+  @Input() accionLabel = '';
+  @Output() accionClick = new EventEmitter<void>();   // 👈 nuevo
+
+  onAccion() {
+    this.accionClick.emit();
+  }
 }
