@@ -1,14 +1,36 @@
 /* Topbar igual, solo apenitas más light */
-.topbar{ background:#fff; color:var(--ink); border-bottom:1px solid #eee; padding:6px 12px; gap:12px; }
-.topbar .chip{ display:inline-flex; gap:8px; align-items:center; background:#f3f4f6; padding:8px 12px; border-radius:12px; }
-.topbar .tabs{ display:flex; gap:6px; margin-left:10px; flex:1; }
-.topbar .avatar{ margin-left:auto; }
+.topbar {
+  background: #fff;
+  color: var(--ink);
+  border-bottom: 1px solid #eee;
+  padding: 6px 12px;
+  gap: 12px;
+}
+
+.topbar .chip {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  background: #f3f4f6;
+  padding: 8px 12px;
+  border-radius: 12px;
+}
+
+.topbar .tabs {
+  display: flex;
+  gap: 6px;
+  margin-left: 10px;
+  flex: 1;
+}
+
+.topbar .avatar {
+  margin-left: auto;
+}
 
 /* HERO con degradé y patrón de puntitos */
-.hero.fancy{
-  background: radial-gradient(1200px 600px at -10% -10%, rgba(255,255,255,.25) 0%, rgba(255,255,255,0) 40%),
-              linear-gradient(135deg, var(--primary) 0%, #09138f 100%);
-  color:#fff;
+.hero.fancy {
+  background: radial-gradient(1200px 600px at -10% -10%, rgba(255, 255, 255, .25) 0%, rgba(255, 255, 255, 0) 40%), linear-gradient(135deg, var(--primary) 0%, #09138f 100%);
+  color: #fff;
   min-height: calc(100dvh - 64px);
   padding: 28px;
   border-radius: 16px;
@@ -16,87 +38,215 @@
   position: relative;
   overflow: hidden;
 }
-.hero.fancy::after{
-  content:""; position:absolute; inset:0;
-  background-image: radial-gradient(rgba(255,255,255,.08) 2px, transparent 2.5px);
-  background-size: 22px 22px; pointer-events:none;
+
+.hero.fancy::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, .08) 2px, transparent 2.5px);
+  background-size: 22px 22px;
+  pointer-events: none;
 }
 
 /* Head con barra de progreso */
-.hero-head{
-  display:flex; align-items:end; justify-content:space-between;
+.hero-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
   margin: 0 6px 16px;
 }
-.greet h2{ margin:0 0 4px; font-size:24px; font-weight:700; }
-.greet p{ margin:0; opacity:.85; }
-.meter{ display:flex; align-items:center; gap:10px; }
-.meter span{ opacity:.85; font-size:14px; }
-.meter-bar{ width:200px; height:8px; background:rgba(255,255,255,.2); border-radius:999px; overflow:hidden; }
-.meter-fill{ height:100%; background:linear-gradient(90deg,#34d399,#22c55e); }
 
-.hero-inner{
-  display:grid; grid-template-columns: 360px 1fr; gap:24px;
+.greet h2 {
+  margin: 0 0 4px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.greet p {
+  margin: 0;
+  opacity: .85;
+}
+
+.meter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.meter span {
+  opacity: .85;
+  font-size: 14px;
+}
+
+.meter-bar {
+  width: 200px;
+  height: 8px;
+  background: rgba(255, 255, 255, .2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #34d399, #22c55e);
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 24px;
 }
 
 /* Glass card para el progreso */
-.glass{
-  background: rgba(255,255,255,.08);
+.glass {
+  background: rgba(255, 255, 255, .08);
   backdrop-filter: blur(6px);
-  border: 1px solid rgba(255,255,255,.16);
+  border: 1px solid rgba(255, 255, 255, .16);
   border-radius: 18px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
 }
-.progress-wrap{
-  position:relative; display:grid; place-items:center; align-content:center;
-  gap:10px; padding:24px; color:#fff;
+
+.progress-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 10px;
+  padding: 24px;
+  color: #fff;
 }
-.ring-text{ position:absolute; font-size:44px; font-weight:800; }
-.ring-label{ margin-top:220px; font-weight:600; letter-spacing:.5px; }
+
+.ring-text {
+  position: absolute;
+  font-size: 44px;
+  font-weight: 800;
+}
+
+.ring-label {
+  margin-top: 220px;
+  font-weight: 600;
+  letter-spacing: .5px;
+}
 
 /* Grid de tarjetas */
-.cards{ display:grid; grid-template-columns: repeat(2, minmax(320px,1fr)); gap:18px; }
-.card{
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+.card {
   background: var(--surface);
   border-radius: 18px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
   transition: transform .14s ease, box-shadow .14s ease, border-color .14s;
   border: 2px solid transparent;
 }
-.card mat-card-header{ padding:26px; gap:12px; align-items:center; }
-.card mat-icon{ font-size:32px; height:32px; width:32px; }
-.card mat-card-title{ font-size:22px; font-weight:800; color:var(--ink); margin-bottom:4px; }
-.card mat-card-subtitle{ color:var(--muted); }
+
+.card mat-card-header {
+  padding: 26px;
+  gap: 12px;
+  align-items: center;
+}
+
+.card mat-icon {
+  font-size: 32px;
+  height: 32px;
+  width: 32px;
+}
+
+.card mat-card-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.card mat-card-subtitle {
+  color: var(--muted);
+}
 
 /* Variantes con borde y icono a color */
-.tone-primary{ border-color: rgba(10,28,217,.18); }
-.tone-primary mat-icon{ color: var(--primary); }
+.tone-primary {
+  border-color: rgba(10, 28, 217, .18);
+}
 
-.tone-success{ border-color: rgba(34,197,94,.25); }
-.tone-success mat-icon, .tone-success mat-card-title{ color: var(--accent); }
+.tone-primary mat-icon {
+  color: var(--primary);
+}
 
-.tone-info{ border-color: rgba(14,165,233,.25); }
-.tone-info mat-icon, .tone-info mat-card-title{ color: var(--info); }
+.tone-success {
+  border-color: rgba(34, 197, 94, .25);
+}
 
-.tone-warning{ border-color: rgba(245,158,11,.25); }
-.tone-warning mat-icon, .tone-warning mat-card-title{ color: var(--warning); }
+.tone-success mat-icon,
+.tone-success mat-card-title {
+  color: var(--accent);
+}
 
-.tone-purple{ border-color: rgba(124,58,237,.25); }
-.tone-purple mat-icon, .tone-purple mat-card-title{ color: var(--purple); }
+.tone-info {
+  border-color: rgba(14, 165, 233, .25);
+}
 
-.tone-muted{ border-color: rgba(2,6,23,.12); }
-.tone-muted mat-icon, .tone-muted mat-card-title{ color: #264653; }
+.tone-info mat-icon,
+.tone-info mat-card-title {
+  color: var(--info);
+}
+
+.tone-warning {
+  border-color: rgba(245, 158, 11, .25);
+}
+
+.tone-warning mat-icon,
+.tone-warning mat-card-title {
+  color: var(--warning);
+}
+
+.tone-purple {
+  border-color: rgba(124, 58, 237, .25);
+}
+
+.tone-purple mat-icon,
+.tone-purple mat-card-title {
+  color: var(--purple);
+}
+
+.tone-muted {
+  border-color: rgba(2, 6, 23, .12);
+}
+
+.tone-muted mat-icon,
+.tone-muted mat-card-title {
+  color: #264653;
+}
 
 /* Hover lindo */
-.hover-raise{ cursor:pointer; }
-.hover-raise:hover{ transform: translateY(-4px); box-shadow: 0 16px 36px rgba(0,0,0,.16); }
+.hover-raise {
+  cursor: pointer;
+}
+
+.hover-raise:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, .16);
+}
 
 /* Footer */
-.footnote{ text-align:right; color:#e5e7eb; margin-top:18px; letter-spacing:.8px; }
+.footnote {
+  text-align: right;
+  color: #e5e7eb;
+  margin-top: 18px;
+  letter-spacing: .8px;
+}
 
 /* Responsive */
-@media (max-width:1100px){
-  .hero-inner{ grid-template-columns: 1fr; }
-  .cards{ grid-template-columns: 1fr; }
+@media (max-width:1100px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
 }
 
 .logout-btn {
@@ -124,11 +274,171 @@
   background: #f3f4f6;
   color: #9ca3af;
   cursor: not-allowed;
-  pointer-events: none; /* Desactiva clic */
+  pointer-events: none;
+  /* Desactiva clic */
 }
 
 .tone-disabled mat-icon,
 .tone-disabled mat-card-title,
 .tone-disabled mat-card-subtitle {
   color: #9ca3af !important;
+}
+
+/* contenedor */
+.profile-progress {
+  --size: 210px;
+  /* tamaño del círculo */
+  --track: rgba(255, 255, 255, 0.12);
+  --progress: #00c2ff;
+  --bg: rgba(0, 0, 0, 0.08);
+  width: var(--size);
+  height: var(--size);
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+/* anillo de progreso */
+.profile-progress .ring {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(var(--progress) calc(var(--val) * 1%), var(--track) 0);
+  display: block;
+  position: relative;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* agujero del medio */
+.profile-progress .ring::after {
+  content: '';
+  position: absolute;
+  inset: 13px;
+  background: rgba(0, 26, 102, 0.35);
+  border-radius: 50%;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.profile-progress .inner {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.profile-progress .percent {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.profile-progress .label {
+  font-size: 0.75rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.profile-progress .ring {
+  background: conic-gradient(var(--progress) 0%, var(--track) 0);
+  animation: fillProgress 1.2s ease forwards;
+}
+
+@keyframes fillProgress {
+  from {
+    background: conic-gradient(var(--progress) 0%, var(--track) 0);
+  }
+
+  to {
+    background: conic-gradient(var(--progress) calc(var(--val) * 1%), var(--track) 0);
+  }
+}
+
+/* caja del círculo, mismo tamaño que tenías */
+.progress-wrap {
+  width: 340px;
+  min-width: 340px;
+  height: 340px;
+  border-radius: 28px;
+  flex-shrink: 0;
+}
+
+/* contenedor interno del svg */
+.progress-circle-box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* el svg ocupa todo pero deja margen */
+.progress-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  /* para que empiece arriba */
+}
+
+/* círculo de fondo */
+.progress-svg .track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 12;
+}
+
+/* círculo de progreso */
+.progress-svg .progress {
+  fill: none;
+  stroke: #00b4ff;
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+/* centro del círculo (el texto) */
+.progress-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.progress-percent {
+  font-size: 48px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.progress-label {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+}
+
+/* contenedor que tiene el círculo y las tarjetas */
+.hero-inner {
+  display: flex;
+  gap: 2rem;
+  /* 👈 separa el círculo de las tarjetas */
+  align-items: flex-start;
+  margin-top: 1.5rem;
+  /* 👈 baja un poquito todo para que no quede pegado arriba */
+}
+
+/* la columna de tarjetas (lo que está a la derecha del círculo) */
+.hero-inner .cards {
+  flex: 1;
+  /* ocupa todo el espacio restante */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4rem;
 }

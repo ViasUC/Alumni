@@ -11,5 +11,5 @@ import { RouterLink } from '@angular/router';
 })
 export class PanelListaComponent {
   // para marcar la pestaña activa desde cada pantalla
-  @Input() activo: string = 'oportunidades';
+  @Input() activo: string = '';
 }

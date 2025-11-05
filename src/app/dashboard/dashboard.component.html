@@ -12,7 +12,7 @@
     <button mat-raised-button color="accent">EX ALUMNOS</button>
   </nav>
 
-  <button mat-icon-button class="avatar" aria-label="Perfil">
+  <button mat-icon-button class="avatar" aria-label="Perfil" (click)="irAlPerfil()">
     <mat-icon>account_circle</mat-icon>
   </button>
 
@@ -39,18 +39,30 @@
 
   <div class="hero-inner">
     <!-- IZQUIERDA: progreso grande -->
-    <div class="progress-wrap glass">
-      <mat-progress-spinner
-        class="ring"
-        mode="determinate"
-        [value]="perfilCompletado()"
-        diameter="210"
-        strokeWidth="10"
-        color="accent">
-      </mat-progress-spinner>
-      <div class="ring-text">{{ perfilCompletado() }}%</div>
-      <div class="ring-label">PERFIL COMPLETADO</div>
+<div class="progress-wrap glass" (click)="irAlPerfil()" style="cursor:pointer">
+  <div class="progress-circle-box">
+    <svg viewBox="0 0 160 160" class="progress-svg">
+      <!-- círculo de fondo -->
+      <circle cx="80" cy="80" r="65" class="track"></circle>
+
+      <!-- progreso -->
+      <circle
+        cx="80"
+        cy="80"
+        r="65"
+        class="progress"
+        [attr.stroke-dasharray]="408"
+        [attr.stroke-dashoffset]="408 - (408 * perfilCompletado() / 100)">
+      </circle>
+    </svg>
+
+    <div class="progress-center">
+      <div class="progress-percent">{{ perfilCompletado() }}%</div>
+      <div class="progress-label">PERFIL COMPLETADO</div>
     </div>
+  </div>
+</div>
+
 
     <!-- DERECHA: GRID de tarjetas con variantes -->
     <div class="cards">

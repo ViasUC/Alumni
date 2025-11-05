@@ -2,7 +2,7 @@ import { Routes, CanActivateFn, UrlTree } from '@angular/router';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 
-// Guard real: protege el dashboard verificando token en sessionStorage
+// Guard real: protege las rutas verificando token en sessionStorage
 const canActivateAuth: CanActivateFn = () => {
   const router = inject(Router);
   const token = sessionStorage.getItem('token');
@@ -12,7 +12,7 @@ const canActivateAuth: CanActivateFn = () => {
 };
 
 export const routes: Routes = [
-  // Por defecto, si no hay ruta, redirige al login
+  // por defecto
   { path: '', pathMatch: 'full', redirectTo: 'login' },
 
   {
@@ -35,11 +35,20 @@ export const routes: Routes = [
   },
 
   {
-  path: 'oportunidades',
-  loadComponent: () =>
-    import('./oportunidades/oportunidades.component').then(m => m.OportunidadesComponent),
+    path: 'oportunidades',
+    canActivate: [canActivateAuth],
+    loadComponent: () =>
+      import('./oportunidades/oportunidades.component').then(
+        m => m.OportunidadesComponent
+      ),
   },
 
-  // Si la ruta no existe, redirige al login
-  { path: '**', redirectTo: 'login' }
+  {
+    path: 'perfil',
+    canActivate: [canActivateAuth],
+    loadComponent: () =>
+      import('./perfil/perfil.component').then(m => m.PerfilComponent),
+  },
+
+  { path: '**', redirectTo: 'login' },
 ];
