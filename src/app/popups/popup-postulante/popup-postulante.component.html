@@ -1,0 +1,22 @@
+<div class="overlay">
+  <div class="modal">
+    <h3>Postulantes a la oportunidad</h3>
+
+    <p *ngIf="!data?.postulantes?.length">
+      No hay postulantes todavía.
+    </p>
+
+    <ul *ngIf="data?.postulantes?.length" class="list">
+      <li *ngFor="let p of data.postulantes">
+        <div class="info">
+          <a [routerLink]="p.portafolio" target="_blank">{{ p.nombre }}</a>
+          <span class="fecha">Postulado: {{ p.fecha }}</span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="actions">
+      <button class="btn-secondary" (click)="cerrar.emit()">Cerrar</button>
+    </div>
+  </div>
+</div>

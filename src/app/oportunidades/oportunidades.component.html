@@ -1,53 +1,64 @@
-<div class="page">
-  <!-- barra superior -->
-  <div class="topbar">
-    <a class="back-btn" routerLink="/dashboard">Volver al inicio</a>
+<!-- barra reutilizable -->
+<app-panel-lista activo="oportunidades"></app-panel-lista>
 
-    <nav class="tabs">
-      <a class="tab active">OPORTUNIDADES</a>
-      <a class="tab">MIS POSTULACIONES</a>
-      <a class="tab">PORTAFOLIO</a>
-      <a class="tab">POSGRADOS</a>
-      <a class="tab">MENSAJERÍA</a>
-      <a class="tab">EVENTOS</a>
-    </nav>
+<!-- contenido propio de la pantalla -->
+<div class="op-page">
+  <div class="op-panel">
+    <div class="op-header">
+      <h2>Oportunidades</h2>
+      <button class="btn-primary" (click)="abrirAgregar()">
+        + Agregar Oportunidad
+      </button>
+    </div>
 
-    <div class="avatar">
-      <span class="circle"></span>
+    <div class="op-lista">
+      <div class="op-item" *ngFor="let op of oportunidades">
+        <div class="text">
+          <h3>{{ op.titulo }}</h3>
+          <p>{{ op.descripcion }}</p>
+          <small *ngIf="op.ubicacion || op.modalidad" class="meta">
+            {{ op.ubicacion }} • {{ op.modalidad }}
+          </small>
+        </div>
+
+        <div class="actions">
+          <!-- mías -->
+          <ng-container *ngIf="op.creadaPorUsuario; else noPropias">
+            <button class="link-primary" (click)="abrirEditar(op)">Editar</button>
+            <button class="link-danger" (click)="abrirEliminar(op)">Eliminar</button>
+            <button class="link-primary" (click)="abrirPostulantes(op)">
+              Ver postulantes
+            </button>
+          </ng-container>
+
+          <!-- generales -->
+          <ng-template #noPropias>
+            <button
+              *ngIf="!op.postulado"
+              class="link-primary"
+              (click)="abrirDetalle(op)"
+            >
+              Ver más
+            </button>
+            <button
+              *ngIf="!op.postulado"
+              class="link-primary"
+              (click)="togglePostulacion(op)"
+            >
+              Postular
+            </button>
+            <button
+              *ngIf="op.postulado"
+              class="btn-success"
+              (click)="togglePostulacion(op)"
+            >
+              ✅ Despostular
+            </button>
+          </ng-template>
+        </div>
+      </div>
     </div>
   </div>
-
-  <app-panel-lista
-  titulo="Oportunidades"
-  accionLabel="+ Agregar Oportunidad"
-  (accionClick)="abrirAgregar()"
->
-    <!-- este contenido es el que va dentro del panel -->
-    <div class="item" *ngFor="let op of oportunidades">
-      <div class="text">
-        <h3>{{ op.titulo }}</h3>
-        <p>{{ op.descripcion }}</p>
-        <small *ngIf="op.ubicacion || op.modalidad" class="meta">
-          {{ op.ubicacion }} • {{ op.modalidad }}
-        </small>
-      </div>
-
-      <div class="actions">
-        <button
-          *ngIf="!op.creadaPorUsuario"
-          class="link-primary"
-          (click)="abrirDetalle(op)"
-        >
-          Ver más
-        </button>
-
-        <ng-container *ngIf="op.creadaPorUsuario">
-          <button class="link-primary" (click)="abrirEditar(op)">Editar</button>
-          <button class="link-danger" (click)="abrirEliminar(op)">Eliminar</button>
-        </ng-container>
-      </div>
-    </div>
-  </app-panel-lista>
 </div>
 
 <!-- POPUPS -->
@@ -55,7 +66,7 @@
   *ngIf="popup === 'detalle'"
   [data]="seleccionada"
   (cerrar)="cerrarPopup()"
-  (postular)="abrirPostulacion()">
+  (postular)="marcarPostulado($event)">
 </app-popup-detalle>
 
 <app-popup-postulacion
@@ -82,3 +93,9 @@
   (cancelar)="cerrarPopup()"
   (guardar)="cerrarPopup()">
 </app-popup-confirmar>
+
+<app-popup-postulante
+  *ngIf="popup === 'postulante'"
+  [data]="seleccionada"
+  (cerrar)="cerrarPopup()">
+</app-popup-postulante>

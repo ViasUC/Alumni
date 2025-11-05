@@ -1,13 +1,52 @@
-<div class="panel">
-  <div class="panel-header">
-    <h2>{{ titulo }}</h2>
+<header class="topbar">
+  <a class="back-btn" routerLink="/dashboard">Volver al inicio</a>
 
-    <button *ngIf="accionLabel" class="btn-accion" (click)="onAccion()">
-      {{ accionLabel }}
-    </button>
-  </div>
+  <nav class="tabs">
+    <a
+      class="tab"
+      [class.active]="activo === 'oportunidades'"
+      routerLink="/oportunidades"
+    >
+      OPORTUNIDADES
+    </a>
+    <a
+      class="tab"
+      [class.active]="activo === 'actividad'"
+      routerLink="/mi-actividad"
+    >
+      MI ACTIVIDAD
+    </a>
+    <a
+      class="tab"
+      [class.active]="activo === 'descubrir'"
+      routerLink="/descubrir"
+    >
+      DESCUBRIR
+    </a>
+    <a
+      class="tab"
+      [class.active]="activo === 'red'"
+      routerLink="/red-personal"
+    >
+      RED PERSONAL
+    </a>
+    <a
+      class="tab"
+      [class.active]="activo === 'portafolio'"
+      routerLink="/portafolio"
+    >
+      PORTAFOLIO
+    </a>
+    <a
+      class="tab"
+      [class.active]="activo === 'posgrados'"
+      routerLink="/posgrados"
+    >
+      POSGRADOS
+    </a>
+  </nav>
 
-  <div class="panel-body">
-    <ng-content></ng-content>
+  <div class="avatar">
+    <span class="circle"></span>
   </div>
-</div>
+</header>

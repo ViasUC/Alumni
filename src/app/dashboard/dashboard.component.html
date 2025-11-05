@@ -16,14 +16,10 @@
     <mat-icon>account_circle</mat-icon>
   </button>
 
-  <button
-  (click)="logout()"
-  class="logout-btn"
->
-  <span class="material-icons" style="vertical-align: middle;">logout</span>
-  Cerrar sesión
-</button>
-
+  <button (click)="logout()" class="logout-btn">
+    <span class="material-icons" style="vertical-align: middle;">logout</span>
+    Cerrar sesión
+  </button>
 </mat-toolbar>
 
 <!-- HERO con degradé y patrón -->
@@ -44,8 +40,12 @@
   <div class="hero-inner">
     <!-- IZQUIERDA: progreso grande -->
     <div class="progress-wrap glass">
-      <mat-progress-spinner class="ring" mode="determinate"
-        [value]="perfilCompletado()" diameter="210" strokeWidth="10"
+      <mat-progress-spinner
+        class="ring"
+        mode="determinate"
+        [value]="perfilCompletado()"
+        diameter="210"
+        strokeWidth="10"
         color="accent">
       </mat-progress-spinner>
       <div class="ring-text">{{ perfilCompletado() }}%</div>
@@ -54,27 +54,30 @@
 
     <!-- DERECHA: GRID de tarjetas con variantes -->
     <div class="cards">
+      <!-- 1. Oportunidades -->
       <mat-card class="card tone-primary hover-raise" routerLink="/oportunidades">
         <mat-card-header>
           <mat-icon>work_outline</mat-icon>
           <div>
             <mat-card-title>OPORTUNIDADES</mat-card-title>
-            <mat-card-subtitle>{{ kpis.oportunidades }} Oportunidades disponibles</mat-card-subtitle>
+            <mat-card-subtitle>{{ kpis.oportunidades }} oportunidades disponibles</mat-card-subtitle>
           </div>
         </mat-card-header>
       </mat-card>
 
-      <mat-card class="card tone-success hover-raise" routerLink="/postulaciones">
+      <!-- 2. Mi actividad (tus postulaciones/movimientos) -->
+      <mat-card class="card tone-success hover-raise" routerLink="/mi-actividad">
         <mat-card-header>
           <mat-icon>checklist_rtl</mat-icon>
           <div>
-            <mat-card-title>MIS POSTULACIONES</mat-card-title>
-            <mat-card-subtitle>{{ kpis.postulaciones }} Postulaciones activas</mat-card-subtitle>
+            <mat-card-title>MI ACTIVIDAD</mat-card-title>
+            <mat-card-subtitle>{{ kpis.postulaciones }} movimientos recientes</mat-card-subtitle>
           </div>
         </mat-card-header>
       </mat-card>
 
-      <mat-card class="card tone-info hover-raise" routerLink="/noticias">
+      <!-- 3. Descubrir -->
+      <mat-card class="card tone-info hover-raise" routerLink="/descubrir">
         <mat-card-header>
           <mat-icon>campaign</mat-icon>
           <div>
@@ -84,32 +87,35 @@
         </mat-card-header>
       </mat-card>
 
-      <mat-card class="card tone-purple hover-raise" routerLink="/mensajes">
+      <!-- 4. Red personal -->
+      <mat-card class="card tone-purple hover-raise" routerLink="/red-personal">
         <mat-card-header>
           <mat-icon>send</mat-icon>
           <div>
             <mat-card-title>RED PERSONAL</mat-card-title>
-            <mat-card-subtitle>Contacta con tu red</mat-card-subtitle>
+            <mat-card-subtitle>Contactá con tu red</mat-card-subtitle>
           </div>
         </mat-card-header>
       </mat-card>
 
+      <!-- 5. Portafolio -->
       <mat-card class="card tone-warning hover-raise" routerLink="/portafolio">
         <mat-card-header>
           <mat-icon>inventory_2</mat-icon>
           <div>
             <mat-card-title>PORTAFOLIO</mat-card-title>
-            <mat-card-subtitle>Sube tus evidencias</mat-card-subtitle>
+            <mat-card-subtitle>Subí tus evidencias</mat-card-subtitle>
           </div>
         </mat-card-header>
       </mat-card>
 
-      <mat-card class="card tone-disabled">
+      <!-- 6. Posgrados -->
+      <mat-card class="card tone-disabled" routerLink="/posgrados">
         <mat-card-header>
           <mat-icon>edit</mat-icon>
           <div>
             <mat-card-title>POSGRADOS</mat-card-title>
-            <mat-card-subtitle>Proximamente</mat-card-subtitle>
+            <mat-card-subtitle>Explorá programas</mat-card-subtitle>
           </div>
         </mat-card-header>
       </mat-card>

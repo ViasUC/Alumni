@@ -96,3 +96,13 @@ form select {
 .row > div {
   flex: 1;
 }
+
+.btn-success {
+  background: #22c55e;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: default;
+}

@@ -1,17 +1,33 @@
 <div class="overlay">
   <div class="modal">
     <h3>Detalle de la Oportunidad</h3>
-    <p><b>Título:</b> {{ data?.titulo }}</p>
-    <p><b>Descripción:</b> {{ data?.descripcion }}</p>
-    <p><b>Requisitos:</b> {{ data?.requisitos }}</p>
-    <p><b>Ubicación:</b> {{ data?.ubicacion }}</p>
-    <p><b>Modalidad:</b> {{ data?.modalidad }}</p>
-    <p><b>Fecha Publicación:</b> {{ data?.fechaPublicacion }}</p>
-    <p><b>Fecha Cierre:</b> {{ data?.fechaCierre }}</p>
-    <p><b>Estado:</b> {{ data?.estado }}</p>
+
+    <p><strong>Título:</strong> {{ data?.titulo }}</p>
+    <p><strong>Descripción:</strong> {{ data?.descripcion }}</p>
+    <p><strong>Requisitos:</strong> {{ data?.requisitos }}</p>
+    <p><strong>Ubicación:</strong> {{ data?.ubicacion }}</p>
+    <p><strong>Modalidad:</strong> {{ data?.modalidad }}</p>
+    <p><strong>Fecha Publicación:</strong> {{ data?.fechaPublicacion }}</p>
+    <p><strong>Fecha Cierre:</strong> {{ data?.fechaCierre }}</p>
+    <p><strong>Estado:</strong> {{ data?.estado }}</p>
 
     <div class="actions">
-      <button class="btn-primary" (click)="postular.emit()">Postular</button>
+      <button
+        *ngIf="!postulado"
+        class="btn-primary"
+        (click)="onPostular()"
+      >
+        Postular
+      </button>
+
+      <button
+        *ngIf="postulado"
+        class="btn-success"
+        disabled
+      >
+        ✅ Postulado
+      </button>
+
       <button class="btn-secondary" (click)="cerrar.emit()">Cerrar</button>
     </div>
   </div>

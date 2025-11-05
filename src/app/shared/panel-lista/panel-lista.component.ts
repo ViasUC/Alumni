@@ -1,19 +1,15 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-panel-lista',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './panel-lista.component.html',
   styleUrls: ['./panel-lista.component.css']
 })
 export class PanelListaComponent {
-  @Input() titulo = '';
-  @Input() accionLabel = '';
-  @Output() accionClick = new EventEmitter<void>();   // 👈 nuevo
-
-  onAccion() {
-    this.accionClick.emit();
-  }
+  // para marcar la pestaña activa desde cada pantalla
+  @Input() activo: string = 'oportunidades';
 }
