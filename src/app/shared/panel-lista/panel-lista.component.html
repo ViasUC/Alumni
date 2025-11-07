@@ -30,20 +30,9 @@
     >
       RED PERSONAL
     </a>
-    <a
-      class="tab"
-      [class.active]="activo === 'portafolio'"
-      routerLink="/portafolio"
-    >
-      PORTAFOLIO
-    </a>
-    <a
-      class="tab"
-      [class.active]="activo === 'posgrados'"
-      routerLink="/posgrados"
-    >
-      POSGRADOS
-    </a>
+    <!-- ESTOS DOS quedan “decorativos” -->
+    <span class="tab tab-disabled">PORTAFOLIO</span>
+    <span class="tab tab-disabled">POSGRADOS</span>
     <a
       class="tab"
       [class.active]="activo === 'perfil'"

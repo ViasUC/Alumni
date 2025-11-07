@@ -45,3 +45,16 @@
   border-radius: 50%;
   display: inline-block;
 }
+
+.tab-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none; /* desactiva el click */
+  background: none !important;
+  color: #ffffff !important;
+}
+
+.tab-disabled:hover {
+  transform: none;
+  box-shadow: none;
+}

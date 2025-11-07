@@ -50,5 +50,14 @@ export const routes: Routes = [
       import('./perfil/perfil.component').then(m => m.PerfilComponent),
   },
 
+  {
+    path: 'descubrir',
+    loadComponent: () =>
+    import('./descubrir/descubrir.component').then(
+      (m) => m.DescubrirComponent
+    ),
+  },
+
+
   { path: '**', redirectTo: 'login' },
 ];

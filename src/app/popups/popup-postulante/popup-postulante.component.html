@@ -1,22 +1,138 @@
 <div class="overlay">
-  <div class="modal">
-    <h3>Postulantes a la oportunidad</h3>
+  <!-- VISTA 1: lista de postulantes -->
+  <div class="popup" *ngIf="!vistaDetalle">
+    <h2>Postulantes a la oportunidad</h2>
 
-    <p *ngIf="!data?.postulantes?.length">
-      No hay postulantes todavía.
-    </p>
+    <ng-container *ngIf="postulantes.length > 0; else sinPostulantes">
+      <ul class="lista-postulantes">
+        <li
+          *ngFor="let p of postulantes"
+          class="postulante-item"
+          (click)="verPerfilPostulante(p)"
+        >
+          <div class="info">
+            <div class="nombre">{{ p.nombre }}</div>
+            <div class="fecha">Postulado el {{ p.fechaPostulacion }}</div>
+          </div>
+          <button class="btn-ver" type="button">Ver perfil</button>
+        </li>
+      </ul>
+    </ng-container>
 
-    <ul *ngIf="data?.postulantes?.length" class="list">
-      <li *ngFor="let p of data.postulantes">
-        <div class="info">
-          <a [routerLink]="p.portafolio" target="_blank">{{ p.nombre }}</a>
-          <span class="fecha">Postulado: {{ p.fecha }}</span>
-        </div>
-      </li>
-    </ul>
+    <ng-template #sinPostulantes>
+      <p class="empty">No hay postulantes todavía.</p>
+    </ng-template>
 
     <div class="actions">
-      <button class="btn-secondary" (click)="cerrar.emit()">Cerrar</button>
+      <button class="btn-secondary" (click)="cerrarPopup()">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- VISTA 2: perfil del postulante -->
+  <div class="popup popup-detalle" *ngIf="vistaDetalle && postulanteSeleccionado">
+    <div class="perfil-header">
+      <h2>Perfil de {{ postulanteSeleccionado.nombre }}</h2>
+      <button class="close-icon" (click)="volverALista()">×</button>
+    </div>
+
+    <div class="perfil-grid">
+      <!-- datos personales -->
+      <section class="card">
+        <h3>Datos personales</h3>
+
+        <div class="grid-fields">
+          <label>
+            <span>Nombre</span>
+            <input [value]="postulanteSeleccionado.nombre" readonly />
+          </label>
+
+          <label>
+            <span>Ubicación</span>
+            <input [value]="postulanteSeleccionado.ubicacion" readonly />
+          </label>
+
+          <label>
+            <span>Teléfono</span>
+            <input [value]="postulanteSeleccionado.telefono" readonly />
+          </label>
+
+          <label>
+            <span>Email</span>
+            <input [value]="postulanteSeleccionado.email" readonly />
+          </label>
+
+          <label>
+            <span>Título universitario</span>
+            <input [value]="postulanteSeleccionado.titulo" readonly />
+          </label>
+
+          <label>
+            <span>Año de egreso</span>
+            <input [value]="postulanteSeleccionado.anioEgreso" readonly />
+          </label>
+
+          <label>
+            <span>Rol principal</span>
+            <input [value]="postulanteSeleccionado.rol" readonly />
+          </label>
+        </div>
+
+        <div class="mini-progress">
+          <p>Completitud</p>
+          <div class="circle">
+            <span>{{ postulanteSeleccionado.completitud }}%</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- portafolio -->
+      <section class="card">
+        <h3>Portafolio</h3>
+
+        <label>
+          <span>Descripción</span>
+          <textarea rows="3" readonly>
+{{ postulanteSeleccionado.portafolio?.descripcion }}
+          </textarea>
+        </label>
+
+        <label>
+          <span>Skills</span>
+          <input
+            readonly
+            [value]="postulanteSeleccionado.portafolio?.skills"
+          />
+        </label>
+
+        <label>
+          <span>Visibilidad</span>
+          <input
+            readonly
+            [value]="postulanteSeleccionado.portafolio?.visibilidad"
+          />
+        </label>
+
+        <label>
+          <span>Última actualización</span>
+          <input
+            readonly
+            [value]="postulanteSeleccionado.portafolio?.ultimaActualizacion"
+          />
+        </label>
+
+        <h4 class="sub">Evidencias vinculadas</h4>
+        <div
+          class="evidencia"
+          *ngFor="let ev of postulanteSeleccionado.portafolio?.evidencias"
+        >
+          <div>
+            <h5>{{ ev.titulo }}</h5>
+            <p>{{ ev.descripcion }}</p>
+            <small>{{ ev.tipo }} • {{ ev.fecha }}</small>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </div>
+

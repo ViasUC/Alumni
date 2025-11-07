@@ -9,6 +9,7 @@ import { PopupEditarComponent } from '../popups/popup-editar/popup-editar.compon
 import { PopupEliminarComponent } from '../popups/popup-eliminar/popup-eliminar.component';
 import { PopupConfirmarComponent } from '../popups/popup-confirmar/popup-confirmar.component';
 import { PopupPostulanteComponent } from '../popups/popup-postulante/popup-postulante.component';
+import { PopupPerfilPostulanteComponent } from "../popups/popup-perfil-postulante/popup-perfil-postulante.component";
 
 @Component({
   selector: 'app-oportunidades',
@@ -22,8 +23,9 @@ import { PopupPostulanteComponent } from '../popups/popup-postulante/popup-postu
     PopupEditarComponent,
     PopupEliminarComponent,
     PopupConfirmarComponent,
-    PopupPostulanteComponent
-  ],
+    PopupPostulanteComponent,
+    PopupPerfilPostulanteComponent
+],
   templateUrl: './oportunidades.component.html',
   styleUrls: ['./oportunidades.component.css']
 })
@@ -63,8 +65,9 @@ export class OportunidadesComponent {
     }
   ];
 
-  popup: 'detalle' | 'postulacion' | 'editar' | 'eliminar' | 'confirmar' | 'postulante' | null = null;
+  popup: 'detalle' | 'postulacion' | 'editar' | 'eliminar' | 'confirmar' | 'postulante' | 'perfilPostulante' | null = null;
   seleccionada: any = null;
+  postulanteSeleccionado: any;
 
   abrirDetalle(op: any) {
     this.seleccionada = op;
@@ -133,6 +136,11 @@ export class OportunidadesComponent {
       this.oportunidades = this.oportunidades.filter(o => o.id !== this.seleccionada.id);
     }
     this.cerrarPopup();
+  }
+
+  verPerfilPostulante(p: any) {
+  this.postulanteSeleccionado = p;
+  this.popup = 'perfilPostulante';
   }
 
   cerrarPopup() {

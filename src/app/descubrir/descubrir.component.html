@@ -1,0 +1,66 @@
+<app-panel-lista activo="descubrir"></app-panel-lista>
+
+<div class="descubrir-page">
+  <!-- encabezado + búsqueda -->
+  <div class="header">
+    <h1>Descubrir</h1>
+
+    <div class="search-box">
+      <span class="icon">🔍</span>
+      <input
+        type="text"
+        placeholder="Buscar usuarios…"
+        [(ngModel)]="termino"
+      />
+    </div>
+  </div>
+
+  <!-- listado -->
+  <div class="lista">
+    <ng-container *ngIf="usuariosFiltrados.length; else sinResultados">
+      <div class="usuario-card" *ngFor="let u of usuariosFiltrados">
+        <div class="avatar-mini">
+          {{ u.nombre[0] }}{{ u.apellido[0] }}
+        </div>
+        <div class="info">
+          <h2>{{ u.nombre }} {{ u.apellido }}</h2>
+          <p class="meta">
+            {{ u.carrera }} • {{ u.rol }} • {{ u.ubicacion }}
+          </p>
+        </div>
+
+        <div class="actions">
+          <!-- ya somos contactos -->
+          <button
+            *ngIf="u.conectado"
+            class="btn-connected"
+            disabled
+          >
+            Ya conectado
+          </button>
+
+          <!-- solicitud enviada -->
+          <div *ngIf="!u.conectado && u.solicitudEnviada" class="solicitud-wrap">
+            <button class="btn-pending" disabled>Solicitud enviada</button>
+            <button class="link-cancel" (click)="cancelarSolicitud(u)">
+              Descartar
+            </button>
+          </div>
+
+          <!-- botón conectar -->
+          <button
+            *ngIf="!u.conectado && !u.solicitudEnviada"
+            class="btn-primary"
+            (click)="conectar(u)"
+          >
+            Conectar
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #sinResultados>
+      <div class="empty">No se encontraron usuarios.</div>
+    </ng-template>
+  </div>
+</div>
