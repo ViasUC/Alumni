@@ -20,32 +20,32 @@ export class LoginComponent {
   private router = inject(Router);
 
   onSubmit() {
-    this.authService.login(this.email, this.password).subscribe({
-      next: (res: { accessToken: string; user: any }) => {
-        // Guarda el token en sessionStorage
-        sessionStorage.setItem('token', res.accessToken);
-        console.log('Usuario:', res.user);
+    this.errorMsg = null;
 
-        // Redirige al dashboard
+    this.authService.login(this.email, this.password).subscribe({
+      next: user => {
+        if (!user) {
+          this.errorMsg = 'Credenciales inválidas';
+          return;
+        }
+
+        sessionStorage.setItem('user', JSON.stringify(user));
+        console.log('Usuario logueado:', user);
+
         this.router.navigateByUrl('/dashboard');
       },
-      error: (err: any) => {
-        this.errorMsg = 'Credenciales inválidas';
+      error: err => {
         console.error(err);
+        this.errorMsg = 'Credenciales inválidas';
       }
     });
   }
 
-  // 👇 Nueva función: Cerrar sesión
   logout() {
-    // Elimina el token y limpia cualquier dato de sesión
-    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     this.email = '';
     this.password = '';
     this.errorMsg = null;
-
-    console.log('Sesión cerrada correctamente.');
-    // Redirige nuevamente al login
     this.router.navigateByUrl('/login');
   }
 }

@@ -1,39 +1,38 @@
-import { Routes, CanActivateFn, UrlTree } from '@angular/router';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { CanActivateFn, Router, Routes, UrlTree } from '@angular/router';
 
-// Guard real: protege el dashboard verificando token en sessionStorage
+// Guard que valida SI EXISTE user en sessionStorage
 const canActivateAuth: CanActivateFn = () => {
   const router = inject(Router);
-  const token = sessionStorage.getItem('token');
+  const user = sessionStorage.getItem('user');
 
-  // Si no hay token, redirige al login
-  return token ? true : (router.parseUrl('/login') as UrlTree);
+  // si existe user -> entra, si no -> login
+  return user ? true : (router.parseUrl('/login') as UrlTree);
 };
 
 export const routes: Routes = [
-  // Por defecto, si no hay ruta, redirige al login
+  // Redirección por defecto
   { path: '', pathMatch: 'full', redirectTo: 'login' },
 
   {
     path: 'login',
     loadComponent: () =>
-      import('./login/login.component').then(m => m.LoginComponent),
+      import('./login/login.component').then(m => m.LoginComponent)
   },
 
   {
     path: 'dashboard',
-    canActivate: [canActivateAuth], // 👈 ahora se usa canActivate
+    canActivate: [canActivateAuth],
     loadComponent: () =>
-      import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
+      import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
   },
 
   {
     path: 'inicio',
     loadComponent: () =>
-      import('./humano/humano.component').then(m => m.HumanoComponent),
+      import('./humano/humano.component').then(m => m.HumanoComponent)
   },
 
-  // Si la ruta no existe, redirige al login
+  // Ruta no existente
   { path: '**', redirectTo: 'login' }
 ];
