@@ -1,0 +1,60 @@
+.topbar {
+  width: 100%;
+  background: #003a99;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  box-sizing: border-box;
+}
+
+.back-btn {
+  background: #ffffff;
+  color: #003a99;
+  border-radius: 10px;
+  padding: 0.45rem 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.tabs {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+}
+
+.tab {
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.35rem 1.25rem;
+  border-radius: 10px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.tab.active {
+  background: #ffffff;
+  color: #003a99;
+}
+
+.avatar .circle {
+  width: 32px;
+  height: 32px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.tab-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none; /* desactiva el click */
+  background: none !important;
+  color: #ffffff !important;
+}
+
+.tab-disabled:hover {
+  transform: none;
+  box-shadow: none;
+}

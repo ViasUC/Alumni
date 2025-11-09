@@ -1,0 +1,61 @@
+<!-- src/app/portafolio/portafolio.component.html -->
+<div class="page">
+  <!-- barra azul de arriba, igual figma -->
+  <div class="topbar">
+    <a class="back-btn" routerLink="/dashboard">
+      Volver al inicio
+    </a>
+
+    <nav class="tabs">
+      <a class="tab" routerLink="/oportunidades">OPORTUNIDADES</a>
+      <a class="tab" routerLink="/postulaciones">MIS POSTULACIONES</a>
+      <a class="tab active">PORTAFOLIO</a>
+      <a class="tab">POSGRADOS</a>
+      <a class="tab">MENSAJERÍA</a>
+      <a class="tab">EVENTOS</a>
+    </nav>
+
+    <div class="avatar">
+      <span class="circle"></span>
+    </div>
+  </div>
+
+  <!-- contenedor principal -->
+  <div class="content-box">
+    <div class="header-row">
+      <h2>Portafolio</h2>
+      <button class="btn-agregar" (click)="abrirAgregar()">+ Agregar Evidencia</button>
+    </div>
+
+    <div class="list">
+      <div class="card" *ngFor="let ev of evidencias">
+        <div>
+          <h3>{{ ev.titulo }}</h3>
+          <p>{{ ev.descripcion }}</p>
+        </div>
+        <div class="right">
+          <span class="fecha">{{ ev.fecha | date:'dd MMM. y' }}</span>
+          <div class="links">
+            <button class="link-primary" (click)="abrirEditar(ev)">Editar</button>
+            <button class="link-danger" (click)="abrirEliminar(ev)">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POPUPS -->
+<app-popup-portafolio-editar
+  *ngIf="popup === 'editar'"
+  [data]="seleccionada"
+  (cerrar)="cerrarPopup()"
+  (guardar)="guardarEvidencia($event)">
+</app-popup-portafolio-editar>
+
+<app-popup-portafolio-eliminar
+  *ngIf="popup === 'eliminar'"
+  [data]="seleccionada"
+  (cancelar)="cerrarPopup()"
+  (eliminar)="confirmarEliminar()">
+</app-popup-portafolio-eliminar>

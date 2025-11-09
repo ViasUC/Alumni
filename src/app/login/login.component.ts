@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
@@ -12,8 +12,8 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  email: string = '';
-  password: string = '';
+  email = '';
+  password = '';
   errorMsg: string | null = null;
 
   private authService = inject(AuthService);
@@ -23,29 +23,24 @@ export class LoginComponent {
     this.errorMsg = null;
 
     this.authService.login(this.email, this.password).subscribe({
-      next: user => {
+      next: (user) => {
         if (!user) {
-          this.errorMsg = 'Credenciales inválidas';
+          this.errorMsg = "Credenciales inválidas";
           return;
         }
 
+        // ✅ Guardar el usuario en sessionStorage
         sessionStorage.setItem('user', JSON.stringify(user));
-        console.log('Usuario logueado:', user);
 
+        console.log("✅ Usuario logueado:", user);
+
+        // ✅ Redirige al dashboard
         this.router.navigateByUrl('/dashboard');
       },
       error: err => {
         console.error(err);
-        this.errorMsg = 'Credenciales inválidas';
+        this.errorMsg = "Credenciales inválidas";
       }
     });
-  }
-
-  logout() {
-    sessionStorage.removeItem('user');
-    this.email = '';
-    this.password = '';
-    this.errorMsg = null;
-    this.router.navigateByUrl('/login');
   }
 }

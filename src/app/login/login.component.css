@@ -113,7 +113,7 @@
 
 /* Panel derecho oscuro con contenido centrado */
 .hero-panel {
-  background: #07123a; /* azul noche */
+  background: #08083f; /* azul noche */
   display: grid;
   place-items: center;
   padding: 18px;

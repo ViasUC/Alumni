@@ -12,18 +12,14 @@
     <button mat-raised-button color="accent">EX ALUMNOS</button>
   </nav>
 
-  <button mat-icon-button class="avatar" aria-label="Perfil">
+  <button mat-icon-button class="avatar" aria-label="Perfil" (click)="irAlPerfil()">
     <mat-icon>account_circle</mat-icon>
   </button>
 
-  <button
-  (click)="logout()"
-  class="logout-btn"
->
-  <span class="material-icons" style="vertical-align: middle;">logout</span>
-  Cerrar sesión
-</button>
-
+  <button (click)="logout()" class="logout-btn">
+    <span class="material-icons" style="vertical-align: middle;">logout</span>
+    Cerrar sesión
+  </button>
 </mat-toolbar>
 
 <!-- HERO con degradé y patrón -->
@@ -43,73 +39,95 @@
 
   <div class="hero-inner">
     <!-- IZQUIERDA: progreso grande -->
-    <div class="progress-wrap glass">
-      <mat-progress-spinner class="ring" mode="determinate"
-        [value]="perfilCompletado()" diameter="210" strokeWidth="10"
-        color="accent">
-      </mat-progress-spinner>
-      <div class="ring-text">{{ perfilCompletado() }}%</div>
-      <div class="ring-label">PERFIL COMPLETADO</div>
+<div class="progress-wrap glass" (click)="irAlPerfil()" style="cursor:pointer">
+  <div class="progress-circle-box">
+    <svg viewBox="0 0 160 160" class="progress-svg">
+      <!-- círculo de fondo -->
+      <circle cx="80" cy="80" r="65" class="track"></circle>
+
+      <!-- progreso -->
+      <circle
+        cx="80"
+        cy="80"
+        r="65"
+        class="progress"
+        [attr.stroke-dasharray]="408"
+        [attr.stroke-dashoffset]="408 - (408 * perfilCompletado() / 100)">
+      </circle>
+    </svg>
+
+    <div class="progress-center">
+      <div class="progress-percent">{{ perfilCompletado() }}%</div>
+      <div class="progress-label">PERFIL COMPLETADO</div>
     </div>
+  </div>
+</div>
+
 
     <!-- DERECHA: GRID de tarjetas con variantes -->
     <div class="cards">
+      <!-- 1. Oportunidades -->
       <mat-card class="card tone-primary hover-raise" routerLink="/oportunidades">
         <mat-card-header>
           <mat-icon>work_outline</mat-icon>
           <div>
             <mat-card-title>OPORTUNIDADES</mat-card-title>
-            <mat-card-subtitle>{{ kpis.oportunidades }} Oportunidades disponibles</mat-card-subtitle>
+            <mat-card-subtitle>{{ kpis.oportunidades }} oportunidades disponibles</mat-card-subtitle>
           </div>
         </mat-card-header>
       </mat-card>
 
-      <mat-card class="card tone-success hover-raise" routerLink="/postulaciones">
+      <!-- 2. Mi actividad (tus postulaciones/movimientos) -->
+      <mat-card class="card tone-success hover-raise" routerLink="/mi-actividad">
         <mat-card-header>
           <mat-icon>checklist_rtl</mat-icon>
           <div>
-            <mat-card-title>MIS POSTULACIONES</mat-card-title>
-            <mat-card-subtitle>{{ kpis.postulaciones }} Postulaciones activas</mat-card-subtitle>
+            <mat-card-title>MI ACTIVIDAD</mat-card-title>
+            <mat-card-subtitle>{{ kpis.postulaciones }} movimientos recientes</mat-card-subtitle>
           </div>
         </mat-card-header>
       </mat-card>
 
-      <mat-card class="card tone-info hover-raise" routerLink="/noticias">
+      <!-- 3. Descubrir -->
+      <mat-card class="card tone-info hover-raise" routerLink="/descubrir">
         <mat-card-header>
           <mat-icon>campaign</mat-icon>
           <div>
-            <mat-card-title>Noticias/Eventos de la UC</mat-card-title>
+            <mat-card-title>DESCUBRIR</mat-card-title>
             <mat-card-subtitle>Lo último de la comunidad</mat-card-subtitle>
           </div>
         </mat-card-header>
       </mat-card>
 
-      <mat-card class="card tone-purple hover-raise" routerLink="/mensajes">
+      <!-- 4. Red personal -->
+      <mat-card class="card tone-purple hover-raise" routerLink="/red-personal">
         <mat-card-header>
           <mat-icon>send</mat-icon>
           <div>
-            <mat-card-title>MENSAJERÍA</mat-card-title>
-            <mat-card-subtitle>Tienes {{ kpis.mensajesNuevos }} mensaje nuevo</mat-card-subtitle>
+            <mat-card-title>RED PERSONAL</mat-card-title>
+            <mat-card-subtitle>Contactá con tu red</mat-card-subtitle>
           </div>
         </mat-card-header>
       </mat-card>
 
-      <mat-card class="card tone-warning hover-raise" routerLink="/portafolio">
+      <!-- 5. Portafolio -->
+      <mat-card class="card tone-disabled" routerLink="/portafolio">
         <mat-card-header>
           <mat-icon>inventory_2</mat-icon>
           <div>
             <mat-card-title>PORTAFOLIO</mat-card-title>
-            <mat-card-subtitle>Sube tus evidencias</mat-card-subtitle>
+            <mat-card-subtitle>Subí tus evidencias</mat-card-subtitle>
           </div>
         </mat-card-header>
       </mat-card>
 
-      <mat-card class="card tone-muted hover-raise" routerLink="/posgrados">
+      <!-- 6. Posgrados -->
+      <mat-card class="card tone-disabled" routerLink="/posgrados">
         <mat-card-header>
           <mat-icon>edit</mat-icon>
           <div>
             <mat-card-title>POSGRADOS</mat-card-title>
-            <mat-card-subtitle>Explora programas de posgrados</mat-card-subtitle>
+            <mat-card-subtitle>Explorá programas</mat-card-subtitle>
           </div>
         </mat-card-header>
       </mat-card>
@@ -117,6 +135,6 @@
   </div>
 
   <footer class="footnote">
-    CONECTANDO ACADEMIA, INDUSTRIA Y SOCIEDAD
+    VINCULANDO INDUSTRIA, ACADEMIA Y SOCIEDAD
   </footer>
 </section>

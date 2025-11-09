@@ -1,0 +1,133 @@
+<app-panel-lista activo="perfil"></app-panel-lista>
+<div class="perfil-page">
+  <!-- encabezado -->
+  <div class="header">
+    <h1>Mi Perfil</h1>
+
+    <div class="actions">
+      <button
+        *ngIf="!editando"
+        class="btn-primary"
+        (click)="habilitarEdicion()"
+      >
+        Editar perfil
+      </button>
+      <ng-container *ngIf="editando">
+        <button class="btn-primary" (click)="guardarEdicion()">Listo</button>
+        <button class="btn-secondary" (click)="cancelarEdicion()">Cancelar</button>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <!-- 1. DATOS PERSONALES -->
+    <section class="card">
+      <h2>Datos personales</h2>
+
+      <div class="form-grid">
+        <label>
+          <span>Nombre</span>
+          <input [readonly]="!editando" [(ngModel)]="perfil.nombre" />
+        </label>
+
+        <label>
+          <span>Apellido</span>
+          <input [readonly]="!editando" [(ngModel)]="perfil.apellido" />
+        </label>
+
+        <label>
+          <span>Ubicación</span>
+          <input [readonly]="!editando" [(ngModel)]="perfil.ubicacion" />
+        </label>
+
+        <label>
+          <span>Teléfono</span>
+          <input [readonly]="!editando" [(ngModel)]="perfil.telefono" />
+        </label>
+
+        <label>
+          <span>Email</span>
+          <input [readonly]="true" [(ngModel)]="perfil.email" />
+        </label>
+
+        <label>
+          <span>Título universitario</span>
+          <input [readonly]="!editando" [(ngModel)]="perfil.titulo" />
+        </label>
+
+        <label>
+          <span>Año de egreso</span>
+          <input type="number" [readonly]="!editando" [(ngModel)]="perfil.anioEgreso" />
+        </label>
+
+        <label>
+          <span>Rol principal</span>
+          <input [readonly]="!editando" [(ngModel)]="perfil.rol" />
+        </label>
+      </div>
+
+      <div class="progress-box">
+        <p>Completitud</p>
+        <div class="progress-circle">
+          {{ perfil.completitud }}%
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. PORTAFOLIO PERSONAL -->
+    <section class="card">
+      <div class="portafolio-header">
+        <h2>Mi Portafolio</h2>
+        <button class="btn-disabled" disabled>+ Agregar Evidencia</button>
+      </div>
+
+      <div class="form-column">
+        <label>
+          <span>Descripción</span>
+          <textarea [readonly]="true">{{ portafolio.descripcion }}</textarea>
+        </label>
+
+        <label>
+          <span>Skills</span>
+          <input [readonly]="true" [value]="portafolio.skills" />
+        </label>
+
+        <label>
+          <span>Visibilidad</span>
+          <input [readonly]="true" [value]="portafolio.visibilidad" />
+        </label>
+
+        <label>
+          <span>Última actualización</span>
+          <input [readonly]="true" [value]="portafolio.ultimaActualizacion" />
+        </label>
+      </div>
+
+      <h3 class="sub">Evidencias vinculadas</h3>
+
+      <div class="evidencia" *ngFor="let ev of evidencias">
+        <div>
+          <h4>{{ ev.titulo }}</h4>
+          <p>{{ ev.descripcion }}</p>
+          <small>{{ ev.tipo }} • {{ ev.fecha }}</small>
+        </div>
+        <div class="ev-actions" *ngIf="ev.propia">
+          <button class="link-primary">Editar</button>
+          <button class="link-danger">Eliminar</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- POPUP CONFIRMAR -->
+<div class="overlay" *ngIf="mostrarPopup">
+  <div class="popup">
+    <h2>Editar perfil</h2>
+    <p>¿Deseás guardar los cambios realizados?</p>
+    <div class="popup-actions">
+      <button class="btn-primary" (click)="confirmarGuardado()">Sí</button>
+      <button class="btn-secondary" (click)="cerrarPopup()">Cancelar</button>
+    </div>
+  </div>
+</div>

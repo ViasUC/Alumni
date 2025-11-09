@@ -1,0 +1,93 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  display: grid;
+  place-items: center;
+  z-index: 999;
+}
+
+.perfil-popup {
+  background: #fff;
+  width: min(1100px, 95vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 18px;
+  padding: 1.5rem;
+  box-shadow: 0 12px 40px rgba(0,0,0,.2);
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.close-btn {
+  border: none;
+  background: #f3f4f6;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.perfil-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #edf0f4;
+  padding: 1rem;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .75rem;
+}
+
+label span {
+  display: block;
+  font-size: .7rem;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+input, textarea {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: .45rem .6rem;
+  background: #f6f7f9;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.mini-progress .circle {
+  width: 70px;
+  height: 70px;
+  border: 6px solid #1976d2;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  color: #0f172a;
+  margin-top: .5rem;
+}
+
+.ev {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: .5rem .75rem;
+  margin-bottom: .5rem;
+}

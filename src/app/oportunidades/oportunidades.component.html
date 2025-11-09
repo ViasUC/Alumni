@@ -1,0 +1,110 @@
+<!-- barra reutilizable -->
+<app-panel-lista activo="oportunidades"></app-panel-lista>
+
+<!-- contenido propio de la pantalla -->
+<div class="op-page">
+  <div class="op-panel">
+    <div class="op-header">
+      <h2>Oportunidades</h2>
+      <button class="btn-primary" (click)="abrirAgregar()">
+        + Agregar Oportunidad
+      </button>
+    </div>
+
+    <div class="op-lista">
+      <div class="op-item" *ngFor="let op of oportunidades">
+        <div class="text">
+          <h3>{{ op.titulo }}</h3>
+          <p>{{ op.descripcion }}</p>
+          <small *ngIf="op.ubicacion || op.modalidad" class="meta">
+            {{ op.ubicacion }} • {{ op.modalidad }}
+          </small>
+        </div>
+
+        <div class="actions">
+          <!-- mías -->
+          <ng-container *ngIf="op.creadaPorUsuario; else noPropias">
+            <button class="link-primary" (click)="abrirEditar(op)">Editar</button>
+            <button class="link-danger" (click)="abrirEliminar(op)">Eliminar</button>
+            <button class="link-primary" (click)="abrirPostulantes(op)">
+              Ver postulantes
+            </button>
+          </ng-container>
+
+          <!-- generales -->
+          <ng-template #noPropias>
+            <button
+              *ngIf="!op.postulado"
+              class="link-primary"
+              (click)="abrirDetalle(op)"
+            >
+              Ver más
+            </button>
+            <button
+              *ngIf="!op.postulado"
+              class="link-primary"
+              (click)="togglePostulacion(op)"
+            >
+              Postular
+            </button>
+            <button
+              *ngIf="op.postulado"
+              class="btn-success"
+              (click)="togglePostulacion(op)"
+            >
+              ✅ Despostular
+            </button>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POPUPS -->
+<app-popup-detalle
+  *ngIf="popup === 'detalle'"
+  [data]="seleccionada"
+  (cerrar)="cerrarPopup()"
+  (postular)="marcarPostulado($event)">
+</app-popup-detalle>
+
+<app-popup-postulacion
+  *ngIf="popup === 'postulacion'"
+  (cerrar)="cerrarPopup()">
+</app-popup-postulacion>
+
+<app-popup-editar
+  *ngIf="popup === 'editar'"
+  [data]="seleccionada"
+  (cerrar)="cerrarPopup()"
+  (guardar)="guardarOportunidad($event)">
+</app-popup-editar>
+
+<app-popup-eliminar
+  *ngIf="popup === 'eliminar'"
+  [data]="seleccionada"
+  (cancelar)="cerrarPopup()"
+  (eliminar)="confirmarEliminar()">
+</app-popup-eliminar>
+
+<app-popup-confirmar
+  *ngIf="popup === 'confirmar'"
+  (cancelar)="cerrarPopup()"
+  (guardar)="cerrarPopup()">
+</app-popup-confirmar>
+
+<!-- popup lista de postulantes -->
+<app-popup-postulante
+  *ngIf="popup === 'postulante'"
+  [data]="seleccionada"
+  (cerrar)="cerrarPopup()"
+  (verPerfil)="verPerfilPostulante($event)">
+</app-popup-postulante>
+
+<!-- popup perfil de postulante -->
+<app-popup-perfil-postulante
+  *ngIf="popup === 'perfilPostulante'"
+  [postulante]="postulanteSeleccionado"
+  (cerrar)="popup = 'postulante'">
+</app-popup-perfil-postulante>

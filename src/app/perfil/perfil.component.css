@@ -1,0 +1,200 @@
+.perfil-page {
+  background: #d1cbca; /* mismo gris que usás */
+  min-height: calc(100vh - 64px); /* por si tenés topbar fija */
+  padding: 2.5rem 3rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.8rem;
+}
+
+.header h1 {
+  font-size: 1.9rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 1.5rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  padding: 1.6rem 1.4rem 1.4rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.2rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+}
+
+input,
+textarea {
+  border: 1px solid #d7d7d7;
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.9rem;
+  background-color: #f6f6f6;
+}
+
+input[readonly],
+textarea[readonly] {
+  background: #f4f4f4;
+  color: #555;
+}
+
+textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+.progress-box {
+  margin-top: 1.2rem;
+}
+
+.progress-circle {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 6px solid #0065ff;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: #00357d;
+  background: #e8f0ff;
+}
+
+.portafolio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.sub {
+  margin-top: 1.5rem;
+  margin-bottom: 0.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.evidencia {
+  background: #f7f8fa;
+  border-radius: 14px;
+  padding: 0.8rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.7rem;
+}
+
+.evidencia h4 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.evidencia p {
+  margin: 0.35rem 0 0.3rem;
+  font-size: 0.8rem;
+  color: #5b5b5b;
+}
+
+.ev-actions button {
+  margin-left: 0.8rem;
+}
+
+.btn-primary {
+  background: #0065ff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.45rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: #e9eaee;
+  color: #1f2937;
+  border: none;
+  border-radius: 10px;
+  padding: 0.45rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-disabled {
+  background: #dfe5ff;
+  color: #4e5b87;
+  border: none;
+  border-radius: 10px;
+  padding: 0.45rem 1rem;
+  font-weight: 500;
+}
+
+.link-primary {
+  background: none;
+  border: none;
+  color: #0056d6;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.link-danger {
+  background: none;
+  border: none;
+  color: #d00000;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* popup */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: grid;
+  place-items: center;
+  z-index: 999;
+}
+
+.popup {
+  background: #fff;
+  padding: 1.4rem 1.5rem;
+  border-radius: 16px;
+  width: 380px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 980px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

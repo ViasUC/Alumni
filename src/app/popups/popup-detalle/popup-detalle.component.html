@@ -1,0 +1,34 @@
+<div class="overlay">
+  <div class="modal">
+    <h3>Detalle de la Oportunidad</h3>
+
+    <p><strong>Título:</strong> {{ data?.titulo }}</p>
+    <p><strong>Descripción:</strong> {{ data?.descripcion }}</p>
+    <p><strong>Requisitos:</strong> {{ data?.requisitos }}</p>
+    <p><strong>Ubicación:</strong> {{ data?.ubicacion }}</p>
+    <p><strong>Modalidad:</strong> {{ data?.modalidad }}</p>
+    <p><strong>Fecha Publicación:</strong> {{ data?.fechaPublicacion }}</p>
+    <p><strong>Fecha Cierre:</strong> {{ data?.fechaCierre }}</p>
+    <p><strong>Estado:</strong> {{ data?.estado }}</p>
+
+    <div class="actions">
+      <button
+        *ngIf="!postulado"
+        class="btn-primary"
+        (click)="onPostular()"
+      >
+        Postular
+      </button>
+
+      <button
+        *ngIf="postulado"
+        class="btn-success"
+        disabled
+      >
+        ✅ Postulado
+      </button>
+
+      <button class="btn-secondary" (click)="cerrar.emit()">Cerrar</button>
+    </div>
+  </div>
+</div>

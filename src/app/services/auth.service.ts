@@ -1,13 +1,13 @@
+// src/app/services/auth.service.ts
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
   private apiUrl = 'http://localhost:8080/graphql';
 
   constructor(private http: HttpClient) {}
@@ -25,13 +25,8 @@ export class AuthService {
 
     const variables = { input: { email, password } };
 
-    return this.http.post<any>(this.apiUrl, { query, variables })
-  .pipe(
-    map(res => {
-      console.log(">>> RESPUESTA DEL BACKEND:", res);
-      return res.data?.login ?? null;
-    })
-  );
-
+    return this.http
+      .post<any>(this.apiUrl, { query, variables })
+      .pipe(map((res) => res.data?.login ?? null));
   }
 }

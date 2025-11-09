@@ -1,0 +1,44 @@
+<div class="overlay">
+  <div class="modal">
+    <h3>{{ data ? 'Editar Oportunidad' : 'Agregar Oportunidad' }}</h3>
+
+    <form (ngSubmit)="onSubmit()">
+      <label>Título</label>
+      <input type="text" [(ngModel)]="form.titulo" name="titulo" required />
+
+      <label>Descripción</label>
+      <textarea [(ngModel)]="form.descripcion" name="descripcion" rows="3"></textarea>
+
+      <label>Requisitos</label>
+      <textarea [(ngModel)]="form.requisitos" name="requisitos" rows="2"></textarea>
+
+      <label>Ubicación</label>
+      <input type="text" [(ngModel)]="form.ubicacion" name="ubicacion" />
+
+      <label>Modalidad</label>
+      <input type="text" [(ngModel)]="form.modalidad" name="modalidad" />
+
+      <div class="row">
+        <div>
+          <label>Fecha Publicación</label>
+          <input type="date" [(ngModel)]="form.fechaPublicacion" name="fechaPublicacion" />
+        </div>
+        <div>
+          <label>Fecha Cierre</label>
+          <input type="date" [(ngModel)]="form.fechaCierre" name="fechaCierre" />
+        </div>
+      </div>
+
+      <label>Estado</label>
+      <select [(ngModel)]="form.estado" name="estado">
+        <option>Activa</option>
+        <option>Cerrada</option>
+      </select>
+
+      <div class="actions">
+        <button type="button" class="btn-secondary" (click)="cerrar.emit()">Cancelar</button>
+        <button type="submit" class="btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
