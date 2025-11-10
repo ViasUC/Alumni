@@ -62,6 +62,13 @@ export const routes: Routes = [
       import('./humano/humano.component').then(m => m.HumanoComponent)
   },
 
+  {
+  path: 'mi-actividad',
+  loadComponent: () =>
+    import('./mi-actividad/mi-actividad.component').then(m => m.MiActividadComponent),
+  },
+
+
   // Ruta por defecto
   { path: '**', redirectTo: 'login' }
 ];

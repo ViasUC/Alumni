@@ -1,0 +1,97 @@
+<!-- barra azul reutilizada -->
+<app-panel-lista activo="actividad"></app-panel-lista>
+
+<div class="mi-actividad-page">
+  <h1>Mi Actividad</h1>
+
+  <!-- SECCIÓN 1: MIS OPORTUNIDADES -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Mis oportunidades</h2>
+      <div class="filters">
+        <label>
+          <span>Fecha</span>
+          <input type="date" [(ngModel)]="filtroFechaOpo" />
+        </label>
+        <label>
+          <span>Estado</span>
+          <select [(ngModel)]="filtroEstadoOpo">
+            <option value="todas">Todas</option>
+            <option value="activa">Activa</option>
+            <option value="cerrada">Cerrada</option>
+            <option value="borrador">Borrador</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="list" *ngIf="oportunidadesFiltradas.length; else noOpo">
+      <div class="item" *ngFor="let op of oportunidadesFiltradas">
+        <div class="text">
+          <h3>{{ op.titulo }}</h3>
+          <p>{{ op.descripcion }}</p>
+          <small class="meta">
+            {{ op.ubicacion }} • {{ op.modalidad }} • {{ op.fechaPublicacion }}
+          </small>
+        </div>
+        <div class="actions">
+          <span class="badge" [class.badge-green]="op.estado==='activa'"
+                             [class.badge-red]="op.estado==='cerrada'">
+            {{ op.estado | uppercase }}
+          </span>
+          <button class="link-primary" (click)="editarOportunidad(op)">Editar</button>
+          <button class="link-danger" (click)="eliminarOportunidad(op)">Eliminar</button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noOpo>
+      <p class="empty">No tenés oportunidades con esos filtros.</p>
+    </ng-template>
+  </section>
+
+  <!-- SECCIÓN 2: MIS POSTULACIONES -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Mis postulaciones</h2>
+      <div class="filters">
+        <label>
+          <span>Fecha</span>
+          <input type="date" [(ngModel)]="filtroFechaPost" />
+        </label>
+        <label>
+          <span>Estado</span>
+          <select [(ngModel)]="filtroEstadoPost">
+            <option value="todas">Todas</option>
+            <option value="enviada">Enviada</option>
+            <option value="en revisión">En revisión</option>
+            <option value="aceptada">Aceptada</option>
+            <option value="rechazada">Rechazada</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="list" *ngIf="postulacionesFiltradas.length; else noPost">
+      <div class="item" *ngFor="let p of postulacionesFiltradas">
+        <div class="text">
+          <h3>{{ p.oportunidadTitulo }}</h3>
+          <p>Postulado el {{ p.fechaPostulacion }}</p>
+        </div>
+        <div class="actions">
+          <span class="badge"
+                [class.badge-blue]="p.estado==='enviada' || p.estado==='en revisión'"
+                [class.badge-green]="p.estado==='aceptada'"
+                [class.badge-red]="p.estado==='rechazada'">
+            {{ p.estado | titlecase }}
+          </span>
+          <button class="link-primary" (click)="verDetallePostulacion(p)">Ver detalle</button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noPost>
+      <p class="empty">No tenés postulaciones con esos filtros.</p>
+    </ng-template>
+  </section>
+</div>
