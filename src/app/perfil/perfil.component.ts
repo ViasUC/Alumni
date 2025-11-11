@@ -1,3 +1,5 @@
+// ✅ Cambios mínimos hechos, lo demás queda igual
+
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
@@ -27,7 +29,6 @@ export class PerfilComponent implements OnInit {
   editando = false;
   mostrarPopup = false;
 
-  // PERFIL REAL DEL BACKEND
   perfil: any = {
     nombre: '',
     apellido: '',
@@ -40,48 +41,30 @@ export class PerfilComponent implements OnInit {
     completitud: 0
   };
 
-  // DATOS QUE SIGUEN SIENDO MOCK
   portafolio = {
-    descripcion: 'Experiencia en desarrollo web y proyectos académicos.',
-    skills: 'Angular, Spring Boot, PostgreSQL',
-    visibilidad: 'Pública',
-    ultimaActualizacion: '2025-11-01',
+    descripcion: '',
+    skills: '',
+    visibilidad: '',
+    ultimaActualizacion: '',
   };
 
-  evidencias: Evidencia[] = [
-    {
-      id: 1,
-      titulo: 'Proyecto de Investigación',
-      descripcion: 'Proyecto realizado en la UCA',
-      tipo: 'Documento',
-      fecha: '15 abr. 2025',
-      propia: true,
-    },
-    {
-      id: 2,
-      titulo: 'Certificado de Curso Online',
-      descripcion: 'Curso completado en Udemy',
-      tipo: 'Certificado',
-      fecha: '20 mar. 2025',
-      propia: true,
-    },
-  ];
+  evidencias: Evidencia[] = [];
 
   ngOnInit(): void {
     this.cargarDatosUsuario();
   }
 
-  // ✅ Obtiene usuario logueado desde SessionStorage y consulta al backend
   cargarDatosUsuario() {
     const user = sessionStorage.getItem('user');
     if (!user) return;
 
     const userObj = JSON.parse(user);
-    const userId = userObj.idUsuario;
+    const userId = Number(userObj.idUsuario);
 
     const query = `
-      query {
-        usuarioById(id: ${userId}) {
+      query PerfilUsuario($id: Int!) {
+        usuarioById(id: $id) {
+          idUsuario
           nombre
           apellido
           email
@@ -89,16 +72,44 @@ export class PerfilComponent implements OnInit {
           ubicacion
           rolPrincipal
           completitud
+
+          adminData {
+            titulo
+            descripcion
+          }
+
+          egresadoData {
+            anioEgreso
+          }
+        }
+
+        portafolioPorUsuario(idUsuario: $id) {
+          idPortafolio
+          descripcion
+          skills
+          visibilidad
+          ultimaActualizacion
+
+          evidencias {
+            idEvidencia
+            titulo
+            descripcion
+            tipo
+            recurso
+          }
         }
       }
     `;
 
-    this.http.post<any>('http://localhost:8080/graphql', { query })
-      .subscribe({
-        next: (res) => {
-          const u = res.data?.usuarioById;
-          if (!u) return;
-
+    this.http.post<any>('http://localhost:8080/graphql', {
+      query,
+      variables: { id: userId }
+    })
+    .subscribe({
+      next: (res) => {
+        // === PERFIL ===
+        const u = res.data?.usuarioById;
+        if (u) {
           this.perfil = {
             nombre: u.nombre,
             apellido: u.apellido,
@@ -106,13 +117,41 @@ export class PerfilComponent implements OnInit {
             telefono: u.telefono,
             ubicacion: u.ubicacion,
             rol: u.rolPrincipal,
-            completitud: u.completitud
+            completitud: u.completitud,
+            titulo: u.adminData?.titulo ?? null,
+            descripcion: u.adminData?.descripcion ?? null,
+            anioEgreso: u.egresadoData?.anioEgreso ?? null
           };
-        },
-        error: (err) => {
-          console.error("❌ Error cargando perfil:", err);
         }
-      });
+
+        // === PORTAFOLIO ===
+        const p = res.data?.portafolioPorUsuario;
+
+        if (p) {
+          this.portafolio = {
+            descripcion: p.descripcion,
+            skills: p.skills,
+            visibilidad: p.visibilidad,
+            ultimaActualizacion: p.ultimaActualizacion
+          };
+
+          // === EVIDENCIAS ===
+          this.evidencias = (p.evidencias || []).map((e: any) => ({
+            id: e.idEvidencia,     // ✅ Mapeo correcto
+            titulo: e.titulo,
+            descripcion: e.descripcion,
+            tipo: e.tipo,
+            fecha: p.ultimaActualizacion, // ✅ Por ahora esto
+            propia: true
+          }));
+        } else {
+          // ✅ Evita romper si no hay portafolio
+          this.evidencias = [];
+        }
+      },
+
+      error: (err) => console.error("❌ Error cargando perfil:", err)
+    });
   }
 
   habilitarEdicion() {
