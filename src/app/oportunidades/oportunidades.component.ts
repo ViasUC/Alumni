@@ -68,6 +68,8 @@ export class OportunidadesComponent {
   popup: 'detalle' | 'postulacion' | 'editar' | 'eliminar' | 'confirmar' | 'postulante' | 'perfilPostulante' | null = null;
   seleccionada: any = null;
   postulanteSeleccionado: any;
+data: any;
+postular: any;
 
   abrirDetalle(op: any) {
     this.seleccionada = op;

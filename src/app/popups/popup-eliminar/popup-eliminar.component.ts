@@ -10,6 +10,14 @@ import { CommonModule } from '@angular/common';
 })
 export class PopupEliminarComponent {
   @Input() data: any;
+  @Input() mensaje: string = '¿Deseás eliminar esta oportunidad?';
   @Output() cancelar = new EventEmitter<void>();
   @Output() eliminar = new EventEmitter<void>();
+  onCancelar() {
+    this.cancelar.emit();
+  }
+
+  onEliminar() {
+    this.eliminar.emit();
+  }
 }

@@ -1,7 +1,7 @@
 <div class="overlay">
   <div class="modal">
-    <h3>Eliminar Oportunidad</h3>
-    <p>¿Seguro que querés eliminar <b>{{ data?.titulo }}</b>?</p>
+    <h3>Confirmar acción</h3>
+    <p>{{ mensaje }}</p>
     <div class="actions">
       <button class="btn-secondary" (click)="cancelar.emit()">Cancelar</button>
       <button class="btn-danger" (click)="eliminar.emit()">Eliminar</button>

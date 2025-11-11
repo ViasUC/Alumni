@@ -12,13 +12,12 @@
     <p><strong>Estado:</strong> {{ data?.estado }}</p>
 
     <div class="actions">
-      <button
-        *ngIf="!postulado"
-        class="btn-primary"
-        (click)="onPostular()"
-      >
+      <!-- mostramos el botón solo si NO es soloLectura -->
+      <button *ngIf="!data?.soloLectura" class="btn-primary" (click)="postular.emit(data)">
         Postular
       </button>
+      <button class="btn-secondary" (click)="cerrar.emit()">Cerrar</button>
+    </div>
 
       <button
         *ngIf="postulado"
@@ -28,7 +27,6 @@
         ✅ Postulado
       </button>
 
-      <button class="btn-secondary" (click)="cerrar.emit()">Cerrar</button>
+      <!--<button class="btn-secondary" (click)="cerrar.emit()">Cerrar</button> -->
     </div>
   </div>
-</div>
