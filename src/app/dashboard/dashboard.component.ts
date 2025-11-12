@@ -31,9 +31,7 @@ import { Router, RouterLink } from '@angular/router';
 export class DashboardComponent {
   private router = inject(Router);
 
-  // ✅ el nombre ya NO es fijo
-  nombre = 'Usuario';
-
+  nombre = 'Usuario'; // acá viene "Julia Mendoza" de la base
   perfilCompletado = signal(75);
 
   kpis = {
@@ -43,13 +41,10 @@ export class DashboardComponent {
   };
 
   constructor() {
-    // ✅ Leer usuario guardado en sessionStorage
     const userString = sessionStorage.getItem('user');
     if (userString) {
       const user = JSON.parse(userString);
-
-      // tomamos nombre real del back
-      this.nombre = user.nombre ?? 'Usuario';
+      this.nombre = user?.nombre ?? 'Usuario';
     }
   }
 
@@ -66,10 +61,13 @@ export class DashboardComponent {
   irA(ruta: string) {
     this.router.navigate([ruta]);
   }
-  iniciales(full: string): string {
-    const p = (full || '').trim().split(/\s+/);
-    const n = p[0]?.[0] || '';
-    const a = p[1]?.[0] || (p.length > 1 ? p.at(-1)![0] : '');
-    return (n + a).toUpperCase();
+
+  // ✅ Misma función usada en Red Personal y Descubrir
+  ini(full: string = this.nombre): string {
+    if (!full) return '';
+    const partes = full.trim().split(/\s+/);
+    const inicialNombre = partes[0]?.[0] ?? '';
+    const inicialApellido = partes.length > 1 ? partes[partes.length - 1][0] : '';
+    return (inicialNombre + inicialApellido).toUpperCase();
   }
 }

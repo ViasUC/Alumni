@@ -443,14 +443,15 @@
   gap: 1.4rem;
 }
 
-.avatar-top {
-  width: 46px;
-  height: 46px;
+/* avatar redondo con iniciales */
+.avatar {
+  width: 46px; height: 46px;
   border-radius: 50%;
   background: #003a99;
-  display: grid;
-  place-items: center;
-  color: #fff;
-  font-weight: 600;
-  border: none;
+  display: grid; place-items: center;
+}
+
+.avatar-initials {
+  color: #fff; font-weight: 800; font-size: 16px; line-height: 1;
+  user-select: none;
 }

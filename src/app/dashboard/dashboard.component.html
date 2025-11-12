@@ -12,9 +12,10 @@
     <button mat-raised-button color="accent">EX ALUMNOS</button>
   </nav>
 
-  <button class="avatar-top" aria-label="Perfil" (click)="irAlPerfil()">
-    {{ iniciales(nombre) }}
-  </button>
+<button mat-icon-button class="avatar" aria-label="Perfil" (click)="irAlPerfil()">
+  <span class="avatar-initials">{{ ini() }}</span>
+</button>
+
 
   <button (click)="logout()" class="logout-btn">
     <span class="material-icons" style="vertical-align: middle;">logout</span>
@@ -65,7 +66,7 @@
           <mat-icon>work_outline</mat-icon>
           <div>
             <mat-card-title>OPORTUNIDADES</mat-card-title>
-            <mat-card-subtitle>{{ kpis.oportunidades }} oportunidades disponibles</mat-card-subtitle>
+            <mat-card-subtitle>Oportunidades disponibles</mat-card-subtitle>
           </div>
         </mat-card-header>
       </mat-card>
@@ -76,7 +77,7 @@
           <mat-icon>checklist_rtl</mat-icon>
           <div>
             <mat-card-title>MI ACTIVIDAD</mat-card-title>
-            <mat-card-subtitle>{{ kpis.postulaciones }} movimientos recientes</mat-card-subtitle>
+            <mat-card-subtitle>Movimientos recientes</mat-card-subtitle>
           </div>
         </mat-card-header>
       </mat-card>
