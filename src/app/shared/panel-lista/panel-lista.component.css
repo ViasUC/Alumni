@@ -58,3 +58,18 @@
   transform: none;
   box-shadow: none;
 }
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #e9efff;
+  border: 2px solid #ffffff;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: #0b3db6;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+}
+
+.avatar-initials { font-size: .9rem; line-height: 1; }

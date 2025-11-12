@@ -19,7 +19,7 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () =>
-      import('./login/login.component').then(m => m.LoginComponent)
+      import('./login/login.component').then((m) => m.LoginComponent),
   },
 
   // ✅ Dashboard protegido
@@ -27,7 +27,9 @@ export const routes: Routes = [
     path: 'dashboard',
     canActivate: [canActivateAuth],
     loadComponent: () =>
-      import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
+      import('./dashboard/dashboard.component').then(
+        (m) => m.DashboardComponent
+      ),
   },
 
   // ✅ Perfil protegido
@@ -35,7 +37,7 @@ export const routes: Routes = [
     path: 'perfil',
     canActivate: [canActivateAuth],
     loadComponent: () =>
-      import('./perfil/perfil.component').then(m => m.PerfilComponent)
+      import('./perfil/perfil.component').then((m) => m.PerfilComponent),
   },
 
   // ✅ Oportunidades protegida
@@ -43,7 +45,9 @@ export const routes: Routes = [
     path: 'oportunidades',
     canActivate: [canActivateAuth],
     loadComponent: () =>
-      import('./oportunidades/oportunidades.component').then(m => m.OportunidadesComponent)
+      import('./oportunidades/oportunidades.component').then(
+        (m) => m.OportunidadesComponent
+      ),
   },
 
   // ✅ Descubrir protegido
@@ -51,7 +55,9 @@ export const routes: Routes = [
     path: 'descubrir',
     canActivate: [canActivateAuth],
     loadComponent: () =>
-      import('./descubrir/descubrir.component').then(m => m.DescubrirComponent)
+      import('./descubrir/descubrir.component').then(
+        (m) => m.DescubrirComponent
+      ),
   },
 
   // ✅ Humano protegido
@@ -59,16 +65,25 @@ export const routes: Routes = [
     path: 'inicio',
     canActivate: [canActivateAuth],
     loadComponent: () =>
-      import('./humano/humano.component').then(m => m.HumanoComponent)
+      import('./humano/humano.component').then((m) => m.HumanoComponent),
   },
 
   {
-  path: 'mi-actividad',
-  loadComponent: () =>
-    import('./mi-actividad/mi-actividad.component').then(m => m.MiActividadComponent),
+    path: 'mi-actividad',
+    loadComponent: () =>
+      import('./mi-actividad/mi-actividad.component').then(
+        (m) => m.MiActividadComponent
+      ),
   },
 
+  {
+    path: 'red-personal',
+    loadComponent: () =>
+      import('./red-personal/red-personal.component').then(
+        (m) => m.RedPersonalComponent
+      ),
+  },
 
   // Ruta por defecto
-  { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: 'login' },
 ];

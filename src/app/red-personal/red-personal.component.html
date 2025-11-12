@@ -1,0 +1,117 @@
+<app-panel-lista activo="red"></app-panel-lista>
+
+<div class="red-page">
+  <h1>Red Personal</h1>
+
+  <!-- 1) MIS CONEXIONES -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Mis conexiones</h2>
+    </div>
+
+    <div class="list" *ngIf="conexiones.length; else sinConex">
+      <div class="item" *ngFor="let u of conexiones">
+        <!-- avatar con iniciales -->
+        <div class="avatar">{{ ini(u.nombre) }}</div>
+
+        <div class="text">
+          <h3>{{ u.nombre }}</h3>
+          <p>{{ u.rol }} • {{ u.carrera || '—' }} • {{ u.ubicacion || '—' }}</p>
+        </div>
+
+        <div class="actions">
+          <button
+            class="btn-primary"
+            [disabled]="u.endorsed"
+            (click)="solicitarEndorse(u)"
+          >
+            {{ u.endorsed ? 'Endorseado' : 'Endorsear' }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <ng-template #sinConex><p class="empty">Aún no tienes conexiones.</p></ng-template>
+  </section>
+
+  <!-- 2) SOLICITUDES PENDIENTES -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Solicitudes pendientes</h2>
+    </div>
+
+    <div class="list" *ngIf="solicitudesPendientes.length; else sinPend">
+      <div class="item" *ngFor="let u of solicitudesPendientes">
+        <!-- avatar con iniciales -->
+        <div class="avatar">{{ ini(u.nombre) }}</div>
+
+        <div class="text">
+          <h3>{{ u.nombre }}</h3>
+          <p>{{ u.rol }} • {{ u.carrera || '—' }} • {{ u.ubicacion || '—' }}</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn-primary" (click)="aceptarSolicitud(u)">Aceptar</button>
+          <button class="btn-danger"  (click)="rechazarSolicitud(u)">Rechazar</button>
+        </div>
+      </div>
+    </div>
+    <ng-template #sinPend><p class="empty">No hay solicitudes por ahora.</p></ng-template>
+  </section>
+
+  <!-- 3) ENDORSEMENTS -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Endorsements Realizados y Recibidos</h2>
+    </div>
+
+    <div class="endorse-grid">
+      <div>
+        <h3 class="sub">Recibidos</h3>
+        <div class="list" *ngIf="endorsementsRecibidos.length; else sinRecib">
+          <div class="item" *ngFor="let e of endorsementsRecibidos">
+            <!-- avatar pequeño con iniciales -->
+            <div class="avatar small">{{ ini(e.nombre) }}</div>
+            <div class="text">
+              <h4>{{ e.nombre }}</h4>
+              <small class="meta">Fecha: {{ e.fecha }}</small>
+            </div>
+
+            <!-- eliminar recibido -->
+            <div class="actions">
+              <button class="link-danger" (click)="eliminarEndorseRecibido(e)">Eliminar</button>
+            </div>
+          </div>
+        </div>
+        <ng-template #sinRecib><p class="empty">Aún no recibiste endorsements.</p></ng-template>
+      </div>
+
+      <div>
+        <h3 class="sub">Realizados</h3>
+        <div class="list" *ngIf="endorsementsRealizados.length; else sinReal">
+          <div class="item" *ngFor="let e of endorsementsRealizados">
+            <!-- avatar pequeño con iniciales -->
+            <div class="avatar small">{{ ini(e.nombre) }}</div>
+            <div class="text">
+              <h4>{{ e.nombre }}</h4>
+              <small class="meta">Fecha: {{ e.fecha }}</small>
+            </div>
+
+            <!-- eliminar realizado -->
+            <div class="actions">
+              <button class="link-danger" (click)="eliminarEndorseRealizado(e)">Eliminar</button>
+            </div>
+          </div>
+        </div>
+        <ng-template #sinReal><p class="empty">Todavía no endorsaste a nadie.</p></ng-template>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- POPUP ENDORSEAR -->
+<app-popup-endorse
+  *ngIf="abrirPopup"
+  [usuario]="usuarioSeleccionado"
+  (cancelar)="cancelarEndorse()"
+  (confirmar)="confirmarEndorse()"
+></app-popup-endorse>

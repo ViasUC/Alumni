@@ -1,0 +1,12 @@
+<div class="overlay" (click)="cancelar.emit()">
+  <div class="popup" (click)="$event.stopPropagation()">
+    <h2>Endorsear a {{ usuario?.nombre }}</h2>
+    <p class="msg">
+      ¿Querés endorsar el perfil de este egresado como reconocimiento profesional?
+    </p>
+    <div class="actions">
+      <button class="btn-secondary" (click)="cancelar.emit()">Cancelar</button>
+      <button class="btn-primary" (click)="confirmar.emit()">Confirmar</button>
+    </div>
+  </div>
+</div>

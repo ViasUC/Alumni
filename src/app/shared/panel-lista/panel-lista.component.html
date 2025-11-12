@@ -42,7 +42,8 @@
     </a>
   </nav>
 
-  <div class="avatar">
-    <span class="circle"></span>
+  <div class="avatar" [attr.title]="nombreUsuario || 'Mi perfil'">
+    <span class="avatar-initials">{{ iniciales }}</span>
   </div>
+
 </header>
