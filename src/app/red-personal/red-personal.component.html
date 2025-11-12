@@ -77,9 +77,10 @@
             </div>
 
             <!-- eliminar recibido -->
-            <div class="actions">
-              <button class="link-danger" (click)="eliminarEndorseRecibido(e)">Eliminar</button>
-            </div>
+          <div class="actions">
+            <button class="link-danger" (click)="pedirEliminar('recibido', e.id)">Eliminar</button>
+          </div>
+
           </div>
         </div>
         <ng-template #sinRecib><p class="empty">Aún no recibiste endorsements.</p></ng-template>
@@ -98,8 +99,9 @@
 
             <!-- eliminar realizado -->
             <div class="actions">
-              <button class="link-danger" (click)="eliminarEndorseRealizado(e)">Eliminar</button>
+              <button class="link-danger" (click)="pedirEliminar('realizado', e.id)">Eliminar</button>
             </div>
+
           </div>
         </div>
         <ng-template #sinReal><p class="empty">Todavía no endorsaste a nadie.</p></ng-template>
@@ -115,3 +117,11 @@
   (cancelar)="cancelarEndorse()"
   (confirmar)="confirmarEndorse()"
 ></app-popup-endorse>
+
+<!-- POPUP CONFIRMAR ELIMINACIÓN DE ENDORSEMENT -->
+<app-popup-eliminar
+  *ngIf="popup === 'eliminarEndorse'"
+  [mensaje]="'¿Deseás eliminar este endorsement?'"
+  (cancelar)="cerrarPopup()"
+  (eliminar)="eliminarEndorseConfirmado()"
+></app-popup-eliminar>
