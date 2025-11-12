@@ -66,4 +66,10 @@ export class DashboardComponent {
   irA(ruta: string) {
     this.router.navigate([ruta]);
   }
+  iniciales(full: string): string {
+    const p = (full || '').trim().split(/\s+/);
+    const n = p[0]?.[0] || '';
+    const a = p[1]?.[0] || (p.length > 1 ? p.at(-1)![0] : '');
+    return (n + a).toUpperCase();
+  }
 }

@@ -12,8 +12,8 @@
     <button mat-raised-button color="accent">EX ALUMNOS</button>
   </nav>
 
-  <button mat-icon-button class="avatar" aria-label="Perfil" (click)="irAlPerfil()">
-    <mat-icon>account_circle</mat-icon>
+  <button class="avatar-top" aria-label="Perfil" (click)="irAlPerfil()">
+    {{ iniciales(nombre) }}
   </button>
 
   <button (click)="logout()" class="logout-btn">
@@ -27,13 +27,6 @@
   <header class="hero-head">
     <div class="greet">
       <h2>Dashboard ExAlumnos</h2>
-    </div>
-    <div class="meter">
-      <span>Perfil completado</span>
-      <div class="meter-bar">
-        <div class="meter-fill" [style.width.%]="perfilCompletado()"></div>
-      </div>
-      <strong>{{ perfilCompletado() }}%</strong>
     </div>
   </header>
 

@@ -131,7 +131,7 @@ h1 { margin: 0 0 12px; }
 /* Avatares con iniciales (idéntico a Descubrir) */
 .avatar {
   display:grid; place-items:center;
-  background:#0b4dd9; color:#fff; font-weight:800;
+  background: #003a99; color:#fff; font-weight:800;
   border-radius:50%; user-select:none; flex:0 0 auto;
   box-shadow: 0 4px 10px rgba(0,0,0,.08);
 }
