@@ -138,15 +138,14 @@ export class PerfilComponent implements OnInit {
 
           // === EVIDENCIAS ===
           this.evidencias = (p.evidencias || []).map((e: any) => ({
-            id: e.idEvidencia,     // ✅ Mapeo correcto
+            id: e.idEvidencia,
             titulo: e.titulo,
             descripcion: e.descripcion,
             tipo: e.tipo,
-            fecha: p.ultimaActualizacion, // ✅ Por ahora esto
+            fecha: p.ultimaActualizacion,
             propia: true
           }));
         } else {
-          // ✅ Evita romper si no hay portafolio
           this.evidencias = [];
         }
       },
@@ -169,20 +168,17 @@ export class PerfilComponent implements OnInit {
 
   confirmarGuardado() {
 
-  const user = sessionStorage.getItem('user');
-  if (!user) return;
+    const user = sessionStorage.getItem('user');
+    if (!user) return;
 
-  const userObj = JSON.parse(user);
-  const userId = Number(userObj.idUsuario);
+    const userObj = JSON.parse(user);
+    const userId = Number(userObj.idUsuario);
 
-  // ✅ MUTATION GRAPHQL
-  const mutation = `
-    mutation ActualizarAlumno($id: ID!, $input: AlumnoInput) {
-      actualizarAlumno(id: $id, input: $input) {
-        idUsuario
-        carrera
-        semestre
-        usuario {
+    // ✅ MUTATION CORRECTA
+    const mutation = `
+      mutation ActualizarUsuario($id: Int!, $input: UsuarioInput) {
+        actualizarUsuario(idUsuario: $id, input: $input) {
+          idUsuario
           nombre
           apellido
           telefono
@@ -190,44 +186,46 @@ export class PerfilComponent implements OnInit {
           email
         }
       }
-    }
-  `;
+    `;
 
-  // ✅ SOLO ENVIAMOS LO QUE EXISTE EN UsuarioInput
-  const inputPayload = {
-    usuario: {
+    // ❗ NO lleva "usuario: { ... }"
+    // UsuarioInput es plano: nombre, apellido, email, telefono, ubicacion
+    const inputPayload = {
       nombre: this.perfil.nombre,
       apellido: this.perfil.apellido,
       telefono: this.perfil.telefono,
-      ubicacion: this.perfil.ubicacion
-    }
-  };
+      ubicacion: this.perfil.ubicacion,
+      email: this.perfil.email
+    };
 
-  this.http.post<any>("http://localhost:8080/graphql", {
-    query: mutation,
-    variables: {
-      id: userId,
-      input: inputPayload
-    }
-  })
-  .subscribe({
-    next: (res) => {
-      console.log("✅ Perfil guardado:", res);
+    this.http.post<any>("http://localhost:8080/graphql", {
+      query: mutation,
+      variables: {
+        id: userId,
+        input: inputPayload
+      }
+    })
+    .subscribe({
+      next: (res) => {
+        console.log("✅ Usuario actualizado:", res);
 
-      // Cerrar popup y modo edición
-      this.mostrarPopup = false;
-      this.editando = false;
+        if (!res.data?.actualizarUsuario) {
+          alert("No se pudo actualizar el usuario.");
+          return;
+        }
 
-      // ✅ Recargar datos reales desde backend
-      this.cargarDatosUsuario();
-    },
-    error: (err) => {
-      console.error("❌ Error guardando perfil:", err);
-      alert("Ocurrió un error al guardar.");
-    }
-  });
+        this.mostrarPopup = false;
+        this.editando = false;
 
-}
+        this.cargarDatosUsuario();
+      },
+      error: (err) => {
+        console.error("❌ Error guardando perfil:", err);
+        alert("Ocurrió un error al guardar.");
+      }
+    });
+
+  }
 
   cerrarPopup() {
     this.mostrarPopup = false;

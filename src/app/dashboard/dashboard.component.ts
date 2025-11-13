@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 
+import { HttpClient } from '@angular/common/http';
+
 /* Angular Material */
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -29,10 +31,12 @@ import { Router, RouterLink } from '@angular/router';
   styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent {
-  private router = inject(Router);
 
-  nombre = 'Usuario'; // acá viene "Julia Mendoza" de la base
-  perfilCompletado = signal(75);
+  private router = inject(Router);
+  private http = inject(HttpClient);
+
+  nombre = 'Usuario';
+  perfilCompletado = signal(0);   // ← ahora se carga desde backend
 
   kpis = {
     oportunidades: 10,
@@ -42,12 +46,52 @@ export class DashboardComponent {
 
   constructor() {
     const userString = sessionStorage.getItem('user');
+
     if (userString) {
       const user = JSON.parse(userString);
       this.nombre = user?.nombre ?? 'Usuario';
+
+      // 🔥 Cargar completitud real desde el backend
+      this.cargarCompletitud(user.idUsuario);
     }
   }
 
+  // =======================================================
+  // 🔍 CONSULTAR COMPLETITUD DEL USUARIO DESDE BACKEND
+  // =======================================================
+  cargarCompletitud(idUsuario: number) {
+
+    const query = `
+      query GetUsuario($id: Int!) {
+        usuarioById(id: $id) {
+          idUsuario
+          nombre
+          completitud
+        }
+      }
+    `;
+
+    this.http.post<any>("http://localhost:8080/graphql", {
+      query,
+      variables: { id: idUsuario }
+    })
+    .subscribe({
+      next: (res) => {
+        const u = res.data?.usuarioById;
+        if (u) {
+          this.perfilCompletado.set(u.completitud ?? 0);
+          this.nombre = u.nombre ?? this.nombre;
+        }
+      },
+      error: (err) => {
+        console.error("❌ Error cargando completitud:", err);
+      }
+    });
+  }
+
+  // =======================================================
+  // 🔧 ACCIONES
+  // =======================================================
   logout() {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
@@ -62,7 +106,6 @@ export class DashboardComponent {
     this.router.navigate([ruta]);
   }
 
-  // ✅ Misma función usada en Red Personal y Descubrir
   ini(full: string = this.nombre): string {
     if (!full) return '';
     const partes = full.trim().split(/\s+/);
