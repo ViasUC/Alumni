@@ -1,0 +1,53 @@
+<div class="overlay" (click)="cerrar.emit()">
+  <div class="popup" (click)="$event.stopPropagation()">
+    <div class="popup-head">
+      <h2>Perfil de {{ perfil?.nombre }}</h2>
+      <button class="x" (click)="cerrar.emit()">×</button>
+    </div>
+
+    <section class="card">
+      <h3>Datos personales</h3>
+
+      <div class="grid">
+        <label>
+          <span>Nombre</span>
+          <input [value]="perfil?.nombre" readonly />
+        </label>
+
+        <label>
+          <span>Ubicación</span>
+          <input [value]="perfil?.ubicacion || '—'" readonly />
+        </label>
+
+        <label>
+          <span>Teléfono</span>
+          <input [value]="perfil?.telefono || '—'" readonly />
+        </label>
+
+        <label>
+          <span>Email</span>
+          <input [value]="perfil?.email || '—'" readonly />
+        </label>
+
+        <label>
+          <span>Título universitario</span>
+          <input [value]="perfil?.titulo || '—'" readonly />
+        </label>
+
+        <label>
+          <span>Año de egreso</span>
+          <input [value]="perfil?.anioEgreso || '—'" readonly />
+        </label>
+
+        <label class="full">
+          <span>Rol principal</span>
+          <input [value]="perfil?.rol || '—'" readonly />
+        </label>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button class="btn" (click)="cerrar.emit()">Cerrar</button>
+    </div>
+  </div>
+</div>

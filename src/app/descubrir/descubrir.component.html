@@ -18,18 +18,24 @@
   <!-- listado -->
   <div class="lista">
     <ng-container *ngIf="usuariosFiltrados.length; else sinResultados">
+
       <div class="usuario-card" *ngFor="let u of usuariosFiltrados">
-        <div class="avatar-mini">
-          {{ u.nombre[0] }}{{ u.apellido[0] }}
-        </div>
-        <div class="info">
-          <h2>{{ u.nombre }} {{ u.apellido }}</h2>
-          <p class="meta">
-            {{ u.carrera }} • {{ u.rol }} • {{ u.ubicacion }}
-          </p>
+
+        <!-- lado izquierdo: avatar + datos → abre el popup -->
+        <div class="left" (click)="abrirPerfil(u)" style="cursor:pointer">
+          <div class="avatar-mini">
+            {{ u.nombre[0] }}{{ u.apellido[0] }}
+          </div>
+          <div class="info">
+            <h2>{{ u.nombre }} {{ u.apellido }}</h2>
+            <p class="meta">
+              {{ u.carrera }} • {{ u.rol }} • {{ u.ubicacion }}
+            </p>
+          </div>
         </div>
 
-        <div class="actions">
+        <!-- acciones → evitamos que hagan click en el popup -->
+        <div class="actions" (click)="$event.stopPropagation()">
           <!-- ya somos contactos -->
           <button
             *ngIf="u.conectado"
@@ -57,6 +63,7 @@
           </button>
         </div>
       </div>
+
     </ng-container>
 
     <ng-template #sinResultados>
@@ -64,3 +71,10 @@
     </ng-template>
   </div>
 </div>
+
+<!-- POPUP PERFIL BÁSICO -->
+<app-popup-perfil-basico
+  *ngIf="verPerfil && perfilSeleccionado"
+  [perfil]="perfilSeleccionado"
+  (cerrar)="cerrarPerfil()"
+></app-popup-perfil-basico>
