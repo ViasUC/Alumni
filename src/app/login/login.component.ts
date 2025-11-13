@@ -1,3 +1,4 @@
+// src/app/login/login.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +10,7 @@ import { AuthService } from '../services/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
   email = '';
@@ -19,28 +20,39 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  constructor() {
+    console.log('[LoginComponent] Construido');
+  }
+
   onSubmit() {
+    console.log('[LoginComponent] onSubmit() disparado');
+    console.log('[LoginComponent] Email:', this.email, 'Password:', this.password);
+
     this.errorMsg = null;
 
     this.authService.login(this.email, this.password).subscribe({
       next: (user) => {
+        console.log('[LoginComponent] next() recibido:', user);
+
         if (!user) {
-          this.errorMsg = "Credenciales inválidas";
+          console.log('[LoginComponent] User null -> credenciales inválidas');
+          this.errorMsg = 'Credenciales inválidas';
           return;
         }
 
-        // ✅ Guardar el usuario en sessionStorage
         sessionStorage.setItem('user', JSON.stringify(user));
+        console.log('[LoginComponent] Usuario guardado en sessionStorage:', user);
 
-        console.log("✅ Usuario logueado:", user);
-
-        // ✅ Redirige al dashboard
         this.router.navigateByUrl('/dashboard');
+        console.log('[LoginComponent] Navegando a /dashboard');
       },
-      error: err => {
-        console.error(err);
-        this.errorMsg = "Credenciales inválidas";
-      }
+      error: (err) => {
+        console.error('[LoginComponent] ERROR en login:', err);
+        this.errorMsg = 'Credenciales inválidas';
+      },
+      complete: () => {
+        console.log('[LoginComponent] Observable login COMPLETADO');
+      },
     });
   }
 }

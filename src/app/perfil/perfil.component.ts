@@ -80,6 +80,7 @@ export class PerfilComponent implements OnInit {
 
           egresadoData {
             anioEgreso
+            titulo
           }
         }
 
@@ -118,7 +119,7 @@ export class PerfilComponent implements OnInit {
             ubicacion: u.ubicacion,
             rol: u.rolPrincipal,
             completitud: u.completitud,
-            titulo: u.adminData?.titulo ?? null,
+            titulo: u.egresadoData?.titulo ?? null,
             descripcion: u.adminData?.descripcion ?? null,
             anioEgreso: u.egresadoData?.anioEgreso ?? null
           };
@@ -167,9 +168,66 @@ export class PerfilComponent implements OnInit {
   }
 
   confirmarGuardado() {
-    this.mostrarPopup = false;
-    this.editando = false;
-  }
+
+  const user = sessionStorage.getItem('user');
+  if (!user) return;
+
+  const userObj = JSON.parse(user);
+  const userId = Number(userObj.idUsuario);
+
+  // ✅ MUTATION GRAPHQL
+  const mutation = `
+    mutation ActualizarAlumno($id: ID!, $input: AlumnoInput) {
+      actualizarAlumno(id: $id, input: $input) {
+        idUsuario
+        carrera
+        semestre
+        usuario {
+          nombre
+          apellido
+          telefono
+          ubicacion
+          email
+        }
+      }
+    }
+  `;
+
+  // ✅ SOLO ENVIAMOS LO QUE EXISTE EN UsuarioInput
+  const inputPayload = {
+    usuario: {
+      nombre: this.perfil.nombre,
+      apellido: this.perfil.apellido,
+      telefono: this.perfil.telefono,
+      ubicacion: this.perfil.ubicacion
+    }
+  };
+
+  this.http.post<any>("http://localhost:8080/graphql", {
+    query: mutation,
+    variables: {
+      id: userId,
+      input: inputPayload
+    }
+  })
+  .subscribe({
+    next: (res) => {
+      console.log("✅ Perfil guardado:", res);
+
+      // Cerrar popup y modo edición
+      this.mostrarPopup = false;
+      this.editando = false;
+
+      // ✅ Recargar datos reales desde backend
+      this.cargarDatosUsuario();
+    },
+    error: (err) => {
+      console.error("❌ Error guardando perfil:", err);
+      alert("Ocurrió un error al guardar.");
+    }
+  });
+
+}
 
   cerrarPopup() {
     this.mostrarPopup = false;
