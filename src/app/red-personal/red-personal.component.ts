@@ -3,7 +3,11 @@ import { CommonModule } from '@angular/common';
 import { PanelListaComponent } from '../shared/panel-lista/panel-lista.component';
 import { PopupEndorseComponent } from '../popups/popup-endorse/popup-endorse.component';
 import { PopupEliminarComponent } from '../popups/popup-eliminar/popup-eliminar.component';
-
+import {
+  PopupPerfilBasicoComponent,
+  PerfilBasico,
+} from '../popups/popup-perfil-basico/popup-perfil-basico.component';
+import { PopupPerfilPostulanteComponent } from '../popups/popup-perfil-postulante/popup-perfil-postulante.component';
 
 interface UsuarioMini {
   id: number;
@@ -16,7 +20,7 @@ interface UsuarioMini {
 
 interface EndorseItem {
   id: number;
-  nombre: string;   // guardamos el nombre para calcular iniciales y mostrar
+  nombre: string;
   fecha: string;
 }
 
@@ -28,18 +32,25 @@ interface EndorseItem {
     PanelListaComponent,
     PopupEndorseComponent,
     PopupEliminarComponent,
+    PopupPerfilBasicoComponent,
+    PopupPerfilPostulanteComponent,
   ],
   templateUrl: './red-personal.component.html',
   styleUrls: ['./red-personal.component.css'],
 })
 export class RedPersonalComponent {
-  // POPUP
+  // --- POPUP ENDORSE ---
   abrirPopup = false;
   usuarioSeleccionado: UsuarioMini | null = null;
-  // estado de popup de eliminar
-  popup: '' | 'eliminarEndorse' = '';
-  private eliminarTarget: { tipo: 'recibido' | 'realizado'; id: number } | null = null;
 
+  // --- POPUPS GENÉRICOS ---
+  popup: '' | 'eliminarEndorse' | 'perfilCompleto' | 'perfilBasico' = '';
+  private eliminarTarget: { tipo: 'recibido' | 'realizado'; id: number } | null =
+    null;
+
+  // --- POPUPS PERFIL ---
+  perfilBasicoSeleccionado: PerfilBasico | null = null;
+  perfilCompletoSeleccionado: any = null;
 
   // --- MOCKS ---
   conexiones: UsuarioMini[] = [
@@ -49,7 +60,7 @@ export class RedPersonalComponent {
       rol: 'Egresada',
       carrera: 'Ing. Informática',
       ubicacion: 'Asunción',
-      endorsed: false,
+      endorsed: true, // ya la endorsamos
     },
     {
       id: 2,
@@ -57,7 +68,7 @@ export class RedPersonalComponent {
       rol: 'Egresado',
       carrera: 'Ing. Informática',
       ubicacion: 'San Lorenzo',
-      endorsed: true,
+      endorsed: false,
     },
     {
       id: 3,
@@ -86,12 +97,14 @@ export class RedPersonalComponent {
     },
   ];
 
+  // Recibidos: me endorsan a mí
   endorsementsRecibidos: EndorseItem[] = [
     { id: 2, nombre: 'Carlos López', fecha: '2025-10-22' },
   ];
 
+  // Realizados: yo endorsé a…
   endorsementsRealizados: EndorseItem[] = [
-    { id: 5, nombre: 'Sofía Villalba', fecha: '2025-10-10' },
+    { id: 1, nombre: 'María Fernández', fecha: '2025-10-10' },
   ];
 
   // === Helpers ===
@@ -102,58 +115,115 @@ export class RedPersonalComponent {
     return (a + b).toUpperCase();
   }
 
-  // === Acciones ===
+  private mapUsuarioToPerfilBasico(u: UsuarioMini): PerfilBasico {
+    return {
+      nombre: u.nombre,
+      ubicacion: u.ubicacion ?? '–',
+      telefono: '+595 000 000 000',
+      email: 'correo@ejemplo.com',
+      titulo: u.carrera || 'Egresado/a',
+      anioEgreso: 2025,
+      rol: u.rol, // <- ajustado al tipo PerfilBasico
+    };
+  }
 
-  // Mis conexiones → Endorsear
+  private mapUsuarioToPerfilCompleto(u: UsuarioMini): any {
+    return {
+      nombre: u.nombre,
+      ubicacion: u.ubicacion ?? 'Asunción, Paraguay',
+      telefono: '+595 971 000 000',
+      email: 'postulante@uca.edu.py',
+      titulo: u.carrera || 'Ing. Informática',
+      anioEgreso: 2024,
+      rol: u.rol,
+      descripcion:
+        'Experiencia en desarrollo web y participación en proyectos universitarios.',
+      skills: 'Angular, Spring Boot, PostgreSQL',
+      visibilidad: 'Pública',
+      ultimaActualizacion: '2025-11-01',
+      evidencias: [
+        {
+          tipo: 'Documento',
+          titulo: 'Proyecto de investigación',
+          descripcion: 'Sistema de gestión académica.',
+          fecha: '2025-10-10',
+        },
+        {
+          tipo: 'Certificado',
+          titulo: 'Certificado de curso',
+          descripcion: 'Curso de React',
+          fecha: '2025-09-05',
+        },
+      ],
+    };
+  }
+
+  // === Mis conexiones → Endorsear ===
   solicitarEndorse(u: UsuarioMini) {
     this.usuarioSeleccionado = u;
     this.abrirPopup = true;
   }
+
   cancelarEndorse() {
     this.abrirPopup = false;
     this.usuarioSeleccionado = null;
   }
+
   confirmarEndorse() {
     if (!this.usuarioSeleccionado) return;
 
-    // marcar botón como endoseado
     const idx = this.conexiones.findIndex(
       (c) => c.id === this.usuarioSeleccionado!.id
     );
     if (idx >= 0) this.conexiones[idx].endorsed = true;
 
-    // registrar en "Realizados"
     const hoy = new Date().toISOString().slice(0, 10);
-    this.endorsementsRealizados.unshift({
-      id: this.usuarioSeleccionado.id,
-      nombre: this.usuarioSeleccionado.nombre,
-      fecha: hoy,
-    });
 
-    // cerrar popup
+    const yaExiste = this.endorsementsRealizados.some(
+      (e) => e.id === this.usuarioSeleccionado!.id
+    );
+    if (!yaExiste) {
+      this.endorsementsRealizados.unshift({
+        id: this.usuarioSeleccionado.id,
+        nombre: this.usuarioSeleccionado.nombre,
+        fecha: hoy,
+      });
+    }
+
     this.cancelarEndorse();
   }
 
-  // Solicitudes pendientes
+  // === Solicitudes pendientes ===
   aceptarSolicitud(u: UsuarioMini) {
     this.conexiones.unshift({ ...u, endorsed: false });
     this.solicitudesPendientes = this.solicitudesPendientes.filter(
       (x) => x.id !== u.id
     );
   }
+
   rechazarSolicitud(u: UsuarioMini) {
     this.solicitudesPendientes = this.solicitudesPendientes.filter(
       (x) => x.id !== u.id
     );
   }
 
-  // abrir confirmación
+  // === Ver perfiles ===
+  verPerfilConexion(u: UsuarioMini) {
+    this.perfilCompletoSeleccionado = this.mapUsuarioToPerfilCompleto(u);
+    this.popup = 'perfilCompleto';
+  }
+
+  verPerfilPendiente(u: UsuarioMini) {
+    this.perfilBasicoSeleccionado = this.mapUsuarioToPerfilBasico(u);
+    this.popup = 'perfilBasico';
+  }
+
+  // === Eliminar endorsements ===
   pedirEliminar(tipo: 'recibido' | 'realizado', id: number) {
     this.eliminarTarget = { tipo, id };
     this.popup = 'eliminarEndorse';
   }
 
-  // confirmar eliminación (se llama desde el popup)
   eliminarEndorseConfirmado() {
     if (!this.eliminarTarget) return;
     const { tipo, id } = this.eliminarTarget;
@@ -163,18 +233,25 @@ export class RedPersonalComponent {
         (x) => x.id !== id
       );
     } else {
+      // Elimino de realizados
       this.endorsementsRealizados = this.endorsementsRealizados.filter(
         (x) => x.id !== id
       );
+      // ✅ y vuelvo a habilitar "Endorsear" en Mis conexiones
+      const idx = this.conexiones.findIndex((c) => c.id === id);
+      if (idx >= 0) {
+        this.conexiones[idx].endorsed = false;
+      }
     }
 
-    // TODO: DELETE al backend cuando conectes la API
     this.cerrarPopup();
   }
 
-  // cerrar popup genérico
+  // === Cerrar popups ===
   cerrarPopup() {
     this.popup = '';
     this.eliminarTarget = null;
+    this.perfilBasicoSeleccionado = null;
+    this.perfilCompletoSeleccionado = null;
   }
 }

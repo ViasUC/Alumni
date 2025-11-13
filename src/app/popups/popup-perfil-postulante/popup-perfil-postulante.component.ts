@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./popup-perfil-postulante.component.css'],
 })
 export class PopupPerfilPostulanteComponent {
+  @Input() data: any;
   @Input() postulante: any;
   @Output() cerrar = new EventEmitter<void>();
 

@@ -1,72 +1,87 @@
-<div class="overlay">
-  <div class="popup perfil-popup">
-    <div class="popup-header">
-      <h2>Perfil de {{ perfil.nombre }}</h2>
-      <button class="close-btn" (click)="cerrar.emit()">×</button>
+<div class="overlay" (click)="cerrar.emit()">
+  <div class="popup" (click)="$event.stopPropagation()">
+
+    <!-- ENCABEZADO -->
+    <div class="popup-head">
+      <h2>Perfil de {{ perfil?.nombre }}</h2>
+      <button class="x" (click)="cerrar.emit()">×</button>
     </div>
 
+    <!-- GRID DOS COLUMNAS -->
     <div class="perfil-grid">
-      <!-- Datos personales -->
+
+      <!-- ========================= -->
+      <!-- COLUMNA IZQUIERDA: DATOS -->
+      <!-- ========================= -->
       <section class="card">
         <h3>Datos personales</h3>
-        <div class="grid-2">
+
+        <div class="grid">
           <label>
             <span>Nombre</span>
-            <input [value]="perfil.nombre" readonly />
+            <input [value]="perfil?.nombre" readonly />
           </label>
+
           <label>
             <span>Ubicación</span>
-            <input [value]="perfil.ubicacion" readonly />
+            <input [value]="perfil?.ubicacion || '—'" readonly />
           </label>
+
           <label>
             <span>Teléfono</span>
-            <input [value]="perfil.telefono" readonly />
+            <input [value]="perfil?.telefono || '—'" readonly />
           </label>
+
           <label>
             <span>Email</span>
-            <input [value]="perfil.email" readonly />
+            <input [value]="perfil?.email || '—'" readonly />
           </label>
+
           <label>
             <span>Título universitario</span>
-            <input [value]="perfil.titulo" readonly />
+            <input [value]="perfil?.titulo || perfil?.titulo || '—'" readonly />
           </label>
+
           <label>
             <span>Año de egreso</span>
-            <input [value]="perfil.anioEgreso" readonly />
+            <input [value]="perfil?.anioEgreso || '—'" readonly />
           </label>
-          <label>
-            <span>Rol principal</span>
-            <input [value]="perfil.rol" readonly />
-          </label>
-        </div>
 
-        <div class="mini-progress">
-          <p>Completitud</p>
-          <div class="circle">{{ perfil.completitud }}%</div>
+          <label class="full">
+            <span>Rol principal</span>
+            <input [value]="perfil?.rol || perfil?.rol || '—'" readonly />
+          </label>
         </div>
       </section>
 
-      <!-- Portafolio -->
+      <!-- ====================== -->
+      <!-- COLUMNA DERECHA: PORTA -->
+      <!-- ====================== -->
       <section class="card">
         <h3>Portafolio</h3>
+
         <label>
           <span>Descripción</span>
           <textarea rows="3" readonly>{{ perfil.descripcion }}</textarea>
         </label>
+
         <label>
           <span>Skills</span>
           <input [value]="perfil.skills" readonly />
         </label>
+
         <label>
           <span>Visibilidad</span>
           <input [value]="perfil.visibilidad" readonly />
         </label>
+
         <label>
           <span>Última actualización</span>
           <input [value]="perfil.ultimaActualizacion" readonly />
         </label>
 
-        <h4>Evidencias vinculadas</h4>
+        <h4 class="ev-title">Evidencias vinculadas</h4>
+
         <div *ngFor="let ev of perfil.evidencias" class="ev">
           <div>
             <strong>{{ ev.titulo }}</strong>
@@ -75,11 +90,13 @@
           </div>
         </div>
       </section>
+
     </div>
 
+    <!-- BOTÓN CERRAR -->
     <div class="popup-actions">
-      <button class="btn-secondary" (click)="cerrar.emit()">Cerrar</button>
+      <button class="btn" (click)="cerrar.emit()">Cerrar</button>
     </div>
+
   </div>
 </div>
-

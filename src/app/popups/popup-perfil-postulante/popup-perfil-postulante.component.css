@@ -1,93 +1,119 @@
+/* Overlay */
 .overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,.35);
   display: grid;
   place-items: center;
-  z-index: 999;
+  z-index: 200;
 }
 
-.perfil-popup {
+/* Caja del popup */
+.popup {
   background: #fff;
-  width: min(1100px, 95vw);
+  width: 900px;
   max-height: 90vh;
   overflow-y: auto;
   border-radius: 18px;
-  padding: 1.5rem;
-  box-shadow: 0 12px 40px rgba(0,0,0,.2);
+  padding: 20px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.15);
 }
 
-.popup-header {
+/* Header */
+.popup-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
 }
 
-.close-btn {
+.popup-head h2 {
+  margin: 0;
+}
+
+.x {
+  background: none;
   border: none;
-  background: #f3f4f6;
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  font-size: 18px;
+  font-size: 22px;
   cursor: pointer;
 }
 
+/* Grid de dos columnas */
 .perfil-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 22px;
+  margin-bottom: 18px;
 }
 
+/* Card */
 .card {
-  background: #fff;
+  background: #fafafa;
+  padding: 16px;
   border-radius: 14px;
-  border: 1px solid #edf0f4;
-  padding: 1rem;
+  border: 1px solid #eee;
 }
 
-.grid-2 {
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+/* Grid interior */
+.grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: .75rem;
+  gap: 12px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
 }
 
 label span {
-  display: block;
-  font-size: .7rem;
+  font-size: 0.85rem;
   color: #555;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 input, textarea {
-  width: 100%;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: .45rem .6rem;
-  background: #f6f7f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px;
+  background: #fff;
 }
 
-textarea {
-  resize: vertical;
+/* Campo que ocupa toda la fila */
+label.full {
+  grid-column: span 2;
 }
 
-.mini-progress .circle {
-  width: 70px;
-  height: 70px;
-  border: 6px solid #1976d2;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-weight: 600;
-  color: #0f172a;
-  margin-top: .5rem;
+/* Evidencias */
+.ev-title {
+  margin-top: 18px;
+  margin-bottom: 8px;
 }
 
 .ev {
-  background: #f9fafb;
+  background: white;
   border-radius: 10px;
-  padding: .5rem .75rem;
-  margin-bottom: .5rem;
+  padding: 10px;
+  border: 1px solid #eee;
+  margin-bottom: 10px;
+}
+
+/* Botón cerrar */
+.popup-actions {
+  text-align: right;
+  margin-top: 12px;
+}
+
+.btn {
+  background: #ebebeb;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
 }
