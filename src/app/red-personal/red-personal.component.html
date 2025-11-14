@@ -36,37 +36,39 @@
     </ng-template>
   </section>
 
-  <!-- 2) SOLICITUDES PENDIENTES -->
-  <section class="panel">
-    <div class="panel-head">
-      <h2>Solicitudes pendientes</h2>
-    </div>
+<!-- 🟠 SOLICITUDES RECIBIDAS -->
+<section class="panel">
+  <div class="panel-head">
+    <h2>Solicitudes recibidas</h2>
+  </div>
 
-    <div class="list" *ngIf="solicitudesPendientes.length; else sinPend">
-      <div class="item" *ngFor="let u of solicitudesPendientes">
-        <!-- avatar + texto: perfil básico -->
-        <div class="left" (click)="verPerfilPendiente(u)">
-          <div class="avatar md">{{ ini(u.nombre) }}</div>
-          <div class="text">
-            <h3>{{ u.nombre }}</h3>
-            <p>{{ u.rol }} • {{ u.carrera || '—' }} • {{ u.ubicacion || '—' }}</p>
-          </div>
-        </div>
+  <div class="list" *ngIf="solicitudesPendientes.length; else noPendientes">
+    <div class="item" *ngFor="let u of solicitudesPendientes">
 
-        <div class="actions" (click)="$event.stopPropagation()">
-          <button class="btn-primary" (click)="aceptarSolicitud(u)">
-            Aceptar
-          </button>
-          <button class="btn-danger" (click)="rechazarSolicitud(u)">
-            Rechazar
-          </button>
+      <!-- Avatar + datos (igual a conexiones) -->
+      <div class="left" (click)="verPerfilPendiente(u)">
+        <div class="avatar md">{{ ini(u.nombre) }}</div>
+        <div class="text">
+          <h3>{{ u.nombre }}</h3>
+          <p>{{ u.rol }} • {{ u.ubicacion }}</p>
         </div>
       </div>
+
+      <!-- Botones con estilos ORIGINALES -->
+      <div class="actions">
+        <button class="btn-primary" (click)="aceptarSolicitud(u)">Aceptar</button>
+        <button class="btn-danger" (click)="rechazarSolicitud(u)">Rechazar</button>
+      </div>
+
     </div>
-    <ng-template #sinPend>
-      <p class="empty">No hay solicitudes por ahora.</p>
-    </ng-template>
-  </section>
+  </div>
+
+  <ng-template #noPendientes>
+    <p class="empty">No tienes solicitudes pendientes.</p>
+  </ng-template>
+</section>
+
+
 
   <!-- 3) ENDORSEMENTS -->
   <section class="panel">

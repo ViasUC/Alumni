@@ -45,9 +45,17 @@ export class RedPersonalComponent implements OnInit {
 
   constructor(private http: HttpClient) {}
 
+  // ================================
+  //   ESTADOS
+  // ================================
   conexiones: UsuarioMini[] = [];
   solicitudesPendientes: SolicitudPendiente[] = [];
 
+  // Endorse
+  endorsementsRecibidos: any[] = [];
+  endorsementsRealizados: any[] = [];
+
+  // Popups
   abrirPopup = false;
   popup: '' | 'eliminarEndorse' | 'perfilCompleto' | 'perfilBasico' = '';
   usuarioSeleccionado: UsuarioMini | null = null;
@@ -56,6 +64,7 @@ export class RedPersonalComponent implements OnInit {
   perfilCompletoSeleccionado: any = null;
 
   private idLogueado: number = 0;
+  private eliminarTarget: { tipo: 'recibido' | 'realizado'; id: number } | null = null;
 
   ngOnInit(): void {
     this.cargarDatos();
@@ -97,15 +106,20 @@ export class RedPersonalComponent implements OnInit {
       }
     `;
 
-    const qPendientes = `
-      query($id: Int!) {
-        solicitudesPendientes(idUsuario: $id) {
-          idSolicitud
-          idUsuarioOrigen
-          estado
-        }
-      }
-    `;
+const qPendientes = `
+  query($id: Int!) {
+    solicitudesPendientes(idUsuario: $id) {
+      idSolicitud
+      idUsuarioOrigen
+      idUsuarioDestino
+      estado
+      fechaSolicitud
+      fechaRespuesta
+    }
+  }
+`;
+
+
 
     Promise.all([
       this.http.post<any>("http://localhost:8080/graphql", {
@@ -113,9 +127,7 @@ export class RedPersonalComponent implements OnInit {
         variables: { id: this.idLogueado }
       }).toPromise(),
 
-      this.http.post<any>("http://localhost:8080/graphql", {
-        query: qUsuarios
-      }).toPromise(),
+      this.http.post<any>("http://localhost:8080/graphql", { query: qUsuarios }).toPromise(),
 
       this.http.post<any>("http://localhost:8080/graphql", {
         query: qPendientes,
@@ -128,13 +140,6 @@ export class RedPersonalComponent implements OnInit {
       const usuarios = resUsers.data?.usuarios ?? [];
       const pendientes = resPend.data?.solicitudesPendientes ?? [];
 
-      console.log("🔗 Conexiones:", conexiones);
-      console.log("📌 Usuarios:", usuarios);
-      console.log("🟠 Pendientes:", pendientes);
-
-      // =====================================================
-      // 🔵 PROCESAR CONEXIONES
-      // =====================================================
       const idsAmigos = new Set<number>();
 
       conexiones.forEach((c: any) => {
@@ -151,35 +156,100 @@ export class RedPersonalComponent implements OnInit {
           id: Number(u.idUsuario),
           nombre: `${u.nombre} ${u.apellido}`,
           rol: u.rolPrincipal,
-          carrera: "",
           ubicacion: u.ubicacion ?? "-",
           endorsed: false
         }));
 
-      // =====================================================
-      // 🟠 PROCESAR SOLICITUDES PENDIENTES (CORREGIDO)
-      // =====================================================
-      this.solicitudesPendientes = pendientes.map((s: any) => {
-        const userOrigen = usuarios.find((u: any) => u.idUsuario === s.idUsuarioOrigen);
+this.solicitudesPendientes = pendientes.map((s: any) => {
+  const userOrigen = usuarios.find(
+    (u: any) => Number(u.idUsuario) === Number(s.idUsuarioOrigen)
+  );
 
-        return {
-          idSolicitud: Number(s.idSolicitud),
-          idUsuarioOrigen: Number(s.idUsuarioOrigen),
-          nombre: `${userOrigen.nombre} ${userOrigen.apellido}`,
-          rol: userOrigen.rolPrincipal,
-          ubicacion: userOrigen.ubicacion ?? "-"
-        };
-      });
+  return {
+    idSolicitud: Number(s.idSolicitud),
+    idUsuarioOrigen: Number(s.idUsuarioOrigen),
+    nombre: userOrigen
+      ? `${userOrigen.nombre} ${userOrigen.apellido}`
+      : "Usuario desconocido",
+    rol: userOrigen?.rolPrincipal ?? "—",
+    ubicacion: userOrigen?.ubicacion ?? "—"
+  };
+});
 
-      console.log("🟧 Solicitudes pendientes PROCESADAS:", this.solicitudesPendientes);
+
+      console.log("🟧 Solicitudes pendientes:", this.solicitudesPendientes);
     });
   }
 
   // ==========================================================
-  // ✔ ACEPTAR SOLICITUD
+  // 🔵 VER PERFIL DE UNA CONEXIÓN
+  // ==========================================================
+  verPerfilConexion(u: UsuarioMini) {
+    this.perfilCompletoSeleccionado = {
+      nombre: u.nombre,
+      ubicacion: u.ubicacion,
+      telefono: '+595 971 000000',
+      email: 'email@ejemplo.com',
+      titulo: u.carrera ?? 'Egresado/a',
+      anioEgreso: 2024,
+      rol: u.rol,
+      descripcion: 'Perfil público del usuario.',
+      skills: '—',
+      visibilidad: 'Pública',
+      ultimaActualizacion: '—',
+      evidencias: []
+    };
+    this.popup = 'perfilCompleto';
+  }
+
+  // ==========================================================
+  // 🟠 VER PERFIL BÁSICO (SOLICITUD PENDIENTE)
+  // ==========================================================
+  verPerfilPendiente(u: SolicitudPendiente) {
+    this.perfilBasicoSeleccionado = {
+      nombre: u.nombre,
+      ubicacion: u.ubicacion,
+      telefono: '+595 000 000 000',
+      email: 'correo@ejemplo.com',
+      titulo: 'Egresado/a',
+      anioEgreso: 2025,
+      rol: u.rol,
+    };
+    this.popup = 'perfilBasico';
+  }
+
+  // ==========================================================
+  // 🟢 ENDORSE — INICIAR
+  // ==========================================================
+  solicitarEndorse(u: UsuarioMini) {
+    this.usuarioSeleccionado = u;
+    this.abrirPopup = true;
+  }
+
+  cancelarEndorse() {
+    this.abrirPopup = false;
+    this.usuarioSeleccionado = null;
+  }
+
+  confirmarEndorse() {
+    if (!this.usuarioSeleccionado) return;
+
+    const idx = this.conexiones.findIndex(c => c.id === this.usuarioSeleccionado!.id);
+    if (idx >= 0) this.conexiones[idx].endorsed = true;
+
+    this.endorsementsRealizados.unshift({
+      id: this.usuarioSeleccionado.id,
+      nombre: this.usuarioSeleccionado.nombre,
+      fecha: new Date().toISOString().slice(0, 10)
+    });
+
+    this.cancelarEndorse();
+  }
+
+  // ==========================================================
+  // ❌ ACEPTAR / RECHAZAR SOLICITUD
   // ==========================================================
   aceptarSolicitud(s: SolicitudPendiente) {
-
     const q = `
       mutation($id: Int!) {
         aceptarSolicitud(idSolicitud: $id) {
@@ -197,11 +267,7 @@ export class RedPersonalComponent implements OnInit {
     });
   }
 
-  // ==========================================================
-  // ✔ RECHAZAR SOLICITUD
-  // ==========================================================
   rechazarSolicitud(s: SolicitudPendiente) {
-
     const q = `
       mutation($id: Int!) {
         rechazarSolicitud(idSolicitud: $id)
@@ -218,27 +284,44 @@ export class RedPersonalComponent implements OnInit {
   }
 
   // ==========================================================
-  // 🔍 Ver perfiles
+  // 💥 ELIMINAR ENDORSE
   // ==========================================================
-  verPerfilPendiente(u: SolicitudPendiente) {
-    this.perfilBasicoSeleccionado = {
-      nombre: u.nombre,
-      ubicacion: u.ubicacion ?? '-',
-      telefono: '+595 000 000 000',
-      email: 'correo@ejemplo.com',
-      titulo: 'Egresado/a',
-      anioEgreso: 2025,
-      rol: u.rol,
-    };
-    this.popup = 'perfilBasico';
+  pedirEliminar(tipo: 'recibido' | 'realizado', id: number) {
+    this.eliminarTarget = { tipo, id };
+    this.popup = 'eliminarEndorse';
   }
 
+  eliminarEndorseConfirmado() {
+    if (!this.eliminarTarget) return;
+
+    const { tipo, id } = this.eliminarTarget;
+
+    if (tipo === 'recibido') {
+      this.endorsementsRecibidos = this.endorsementsRecibidos.filter(e => e.id !== id);
+    } else {
+      this.endorsementsRealizados = this.endorsementsRealizados.filter(e => e.id !== id);
+
+      const idx = this.conexiones.findIndex(c => c.id === id);
+      if (idx >= 0) this.conexiones[idx].endorsed = false;
+    }
+
+    this.cerrarPopup();
+  }
+
+  // ==========================================================
+  // 🔻 CERRAR POPUPS
+  // ==========================================================
   cerrarPopup() {
     this.popup = '';
+    this.usuarioSeleccionado = null;
+    this.eliminarTarget = null;
     this.perfilBasicoSeleccionado = null;
     this.perfilCompletoSeleccionado = null;
   }
 
+  // ==========================================================
+  // 🔤 INICIALES (AVATAR)
+  // ==========================================================
   ini(fullName: string): string {
     const parts = fullName.trim().split(/\s+/);
     const a = parts[0]?.[0] ?? '';
