@@ -1,26 +1,251 @@
-body { font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+/* === TIPOGRAFÍA GLOBAL (Poppins) === */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* === VARIABLES GLOBALES === */
+:root {
+  --primary: #0a1cd9;
+  --primary-700: #0a18b5;
 
-:root{
-  --primary:#0a1cd9;
-  --primary-700:#0a18b5;
-  --accent:#22c55e;
-  --info:#0ea5e9;
-  --warning:#f59e0b;
-  --danger:#ef4444;
-  --purple:#7c3aed;
-  --ink:#0f172a;
-  --muted:#6b7280;
-  --surface:#ffffff;
-  --bg:#f6f7fb;
+  --accent: #22c55e;
+  --info: #0ea5e9;
+  --warning: #f59e0b;
+  --danger: #d00000;   /* color oficial de eliminar */
+  --purple: #7c3aed;
+
+  --ink: #0f172a;
+  --muted: #6b7280;
+
+  /* Colores corporativos */
+  --surface: #ffffff;   /* cards blancas */
+  --bg: #d1cbca;        /* fondo oficial elegido */
 }
-body{ background: var(--bg); }
 
-body {
-  background-color: #d6d2d1;
-  font-family: "Roboto", sans-serif;
+/* === RESET BÁSICO === */
+html, body {
+  height: 100%;
   margin: 0;
   padding: 0;
+}
+
+/* === FONDO GLOBAL === */
+body {
+  background: var(--bg);
+}
+
+/* === FUENTE GLOBAL === */
+body, button, input, textarea, select {
+  font-family: "Poppins", sans-serif !important;
+}
+
+/* === NO ROMPER ICONOS MATERIAL === */
+mat-icon,
+.material-icons {
+  font-family: "Material Icons" !important;
+}
+
+/* === BOTONES ESTÁNDAR DE LA PLATAFORMA === */
+.btn-primary {
+  background: #0065ff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.45rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: #e9eaee;
+  color: #1f2937;
+  border: none;
+  border-radius: 10px;
+  padding: 0.45rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-disabled {
+  background: #dfe5ff;
+  color: #4e5b87;
+  border: none;
+  border-radius: 10px;
+  padding: 0.45rem 1rem;
+  font-weight: 500;
+}
+
+.link-primary {
+  background: none;
+  border: none;
+  color: #0056d6;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.link-danger {
+  background: none;
+  border: none;
+  color: var(--danger);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ============================================
+   BOTONES CÁPSULA — FORMATO GLOBAL IMPOSITIVO
+=============================================== */
+
+/* Primario (Postular, Conectar, Guardar, etc.) */
+.btn-primary {
+  background: #0057ff !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 999px !important;
+  padding: 0.55rem 1.35rem !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06) !important;
+  cursor: pointer !important;
+}
+
+/* Secundario (Cerrar, Cancelar, etc.) */
+.btn-secondary {
+  background: #e9eaee !important;
+  color: #1f2937 !important;
+  border-radius: 999px !important;
+  padding: 0.55rem 1.35rem !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  border: none !important;
+}
+
+/* Peligro (Eliminar, Rechazar, etc.) */
+.btn-danger {
+  background: #fee2e2 !important;
+  color: #d00000 !important;
+  border: none !important;
+  border-radius: 999px !important;
+  padding: 0.55rem 1.35rem !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+}
+
+/* Botón verde de éxito (Despostular, Ya conectado) */
+.btn-success {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+  border-radius: 999px !important;
+  padding: 0.55rem 1.35rem !important;
+  font-weight: 600 !important;
+  border: none !important;
+}
+
+/* El “Solicitud enviada” / “Pendiente” */
+.btn-pending {
+  background: #e5e7eb !important;
+  color: #4b5563 !important;
+  border-radius: 999px !important;
+  padding: 0.55rem 1.35rem !important;
+  font-weight: 600 !important;
+  border: none !important;
+}
+
+/* Ya conectado (disabled) */
+.btn-connected {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+  border-radius: 999px !important;
+  padding: 0.55rem 1.35rem !important;
+  font-weight: 600 !important;
+  border: none !important;
+}
+
+/* NO permitir que estilos locales cambien botones */
+.actions button,
+.usuario-card button,
+.op-item button,
+.item button {
+  all: unset;
+  display: inline-block;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.actions button.btn-primary,
+.usuario-card button.btn-primary,
+.op-item button.btn-primary,
+.item button.btn-primary {
+  all: revert;
+}
+
+.actions button[class*="btn-"],
+.usuario-card button[class*="btn-"],
+.op-item button[class*="btn-"],
+.item button[class*="btn-"] {
+  all: revert;
+}
+
+.link-primary {
+  background: none !important;
+  border: none !important;
+  color: #0057ff !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+}
+
+.link-danger {
+  background: none !important;
+  border: none !important;
+  color: #d00000 !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+}
+
+/* ============================================
+   PÍLDORAS GLOBALES PARA ACCIONES DE TEXTO
+=============================================== */
+
+/* Base de TODAS las píldoras */
+.pill {
+  display: inline-block;
+  padding: 0.30rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  text-decoration: none;
+  user-select: none;
+  white-space: nowrap;
+  font-family: "Poppins", sans-serif !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+/* AZUL — Editar / Ver detalles / Ver postulantes */
+.pill-primary {
+  background: #0057ff;
+  color: #fff;
+}
+
+/* GRIS — Cerrar / Neutral */
+.pill-secondary {
+  background: #e9eaee;
+  color: #1f2937;
+}
+
+/* ROJO — Eliminar */
+.pill-danger {
+  background: #fee2e2;
+  color: #d00000;
+}
+
+/* VERDE — Despostular / Ya conectado */
+.pill-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* NARANJA — Cerrada / Estado */
+.pill-warning {
+  background: #fdeacc;
+  color: #b45309;
 }
