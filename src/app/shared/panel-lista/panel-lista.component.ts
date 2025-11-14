@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -16,10 +16,26 @@ export class PanelListaComponent implements OnInit {
   iniciales: string = '';
   activo: string = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    this.detectarActivo();
     this.cargarUsuario();
+  }
+
+  /** Detecta URL y marca automáticamente la pestaña activa */
+  private detectarActivo(): void {
+    const url = this.router.url;
+
+    if (url.startsWith('/oportunidades')) this.activo = 'oportunidades';
+    else if (url.startsWith('/mi-actividad')) this.activo = 'actividad';
+    else if (url.startsWith('/descubrir')) this.activo = 'descubrir';
+    else if (url.startsWith('/red-personal')) this.activo = 'red';
+    else if (url.startsWith('/perfil')) this.activo = 'perfil';
+    else this.activo = '';
   }
 
   private cargarUsuario(): void {
@@ -32,8 +48,6 @@ export class PanelListaComponent implements OnInit {
 
       this.nombreUsuario = `${nombre} ${apellido}`.trim();
       this.iniciales = this.getIniciales(nombre, apellido);
-
-      console.log("[PanelLista] Usuario cargado:", this.nombreUsuario, "→", this.iniciales);
     } else {
       console.warn("[PanelLista] No se encontró usuario en AuthService.");
       this.nombreUsuario = '';
@@ -43,15 +57,8 @@ export class PanelListaComponent implements OnInit {
 
   private getIniciales(nombre: string, apellido: string): string {
     let ini = '';
-
-    if (nombre && nombre.length > 0) {
-      ini += nombre.charAt(0).toUpperCase();
-    }
-
-    if (apellido && apellido.length > 0) {
-      ini += apellido.charAt(0).toUpperCase();
-    }
-
+    if (nombre) ini += nombre[0].toUpperCase();
+    if (apellido) ini += apellido[0].toUpperCase();
     return ini;
   }
 }
