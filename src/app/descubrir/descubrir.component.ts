@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PanelListaComponent } from '../shared/panel-lista/panel-lista.component';
 import {
-  PopupPerfilBasicoComponent,
-  PerfilBasico
+  PerfilBasico,
+  PopupPerfilBasicoComponent
 } from '../popups/popup-perfil-basico/popup-perfil-basico.component';
+import { PanelListaComponent } from '../shared/panel-lista/panel-lista.component';
 
 interface UsuarioDescubrir {
   id: number;
@@ -36,15 +36,33 @@ export class DescubrirComponent implements OnInit {
   termino = '';
   usuarios: UsuarioDescubrir[] = [];
 
-  // ---- popup de perfil básico ----
   verPerfil = false;
   perfilSeleccionado: PerfilBasico | null = null;
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    const query = `
-      query DescubrirUsuarios {
+    console.log("🚀 ngOnInit() iniciado");
+
+    // ================================
+    // OBTENER USUARIO LOGUEADO
+    // ================================
+    const userString = sessionStorage.getItem("user");
+    if (!userString) {
+      console.error("⚠️ No hay usuario logueado en sessionStorage");
+      return;
+    }
+
+    const user = JSON.parse(userString);
+
+    const idLogueado = Number(user.idUsuario);
+    console.log("🔑 ID del usuario logueado =", idLogueado);
+
+    // ============================
+    // QUERY 1: obtener todos los usuarios
+    // ============================
+    const queryUsuarios = `
+      query {
         usuarios {
           idUsuario
           nombre
@@ -55,62 +73,96 @@ export class DescubrirComponent implements OnInit {
       }
     `;
 
-    this.http
-      .post<any>('http://localhost:8080/graphql', { query })
-      .subscribe({
-        next: (res) => {
-          const lista = res.data?.usuarios || [];
+    // ============================
+    // QUERY 2: obtener conexiones
+    // ============================
+    const queryConexiones = `
+      query($id: Int!) {
+        conexionesPorUsuario(idUsuario: $id) {
+          idUsuario1
+          idUsuario2
+        }
+      }
+    `;
 
-          this.usuarios = lista.map((u: any) => ({
-            id: u.idUsuario,
+    console.log("📡 Enviando ambas queries...");
+
+    Promise.all([
+      this.http.post<any>('http://localhost:8080/graphql', { query: queryUsuarios }).toPromise(),
+      this.http.post<any>('http://localhost:8080/graphql', {
+        query: queryConexiones,
+        variables: { id: idLogueado }
+      }).toPromise()
+    ])
+      .then(([resUsuarios, resConexiones]) => {
+
+        const listaUsuarios = resUsuarios.data?.usuarios || [];
+        const conexiones = resConexiones.data?.conexionesPorUsuario || [];
+
+        console.log("📌 Lista total de usuarios:", listaUsuarios);
+        console.log("📌 Conexiones encontradas:", conexiones);
+
+        // === 1) Lista de amigos ===
+        const idsAmigos = new Set<number>();
+
+        conexiones.forEach((c: any) => {
+          const u1 = Number(c.idUsuario1);
+          const u2 = Number(c.idUsuario2);
+
+          if (u1 === idLogueado) idsAmigos.add(u2);
+          if (u2 === idLogueado) idsAmigos.add(u1);
+        });
+
+        console.log("👥 IDs de amigos:", [...idsAmigos]);
+
+        // === 2) Filtrar usuarios ===
+        this.usuarios = listaUsuarios
+          .filter((u: any) => Number(u.idUsuario) !== idLogueado) // quitar logueado
+          .filter((u: any) => !idsAmigos.has(Number(u.idUsuario))) // quitar amigos
+          .map((u: any) => ({
+            id: Number(u.idUsuario),
             nombre: u.nombre,
             apellido: u.apellido,
-            carrera: "",            // lo podés llenar más adelante
+            carrera: "",
             rol: u.rolPrincipal,
             ubicacion: u.ubicacion ?? "–",
             conectado: false,
             solicitudEnviada: false
           }));
-        },
-        error: (err) => console.error('❌ Error cargando usuarios:', err),
-      });
+
+        console.log("🎉 Usuarios finales a mostrar:", this.usuarios);
+      })
+      .catch((err) => console.error("❌ Error cargando Descubrir:", err));
   }
 
-  // Filtro en memoria
   get usuariosFiltrados(): UsuarioDescubrir[] {
     const t = this.termino.trim().toLowerCase();
     if (!t) return this.usuarios;
 
-    return this.usuarios.filter((u) => {
-      return (
-        u.nombre.toLowerCase().includes(t) ||
-        u.apellido.toLowerCase().includes(t) ||
-        u.carrera.toLowerCase().includes(t) ||
-        u.rol?.toLowerCase().includes(t)
-      );
-    });
+    return this.usuarios.filter((u) =>
+      u.nombre.toLowerCase().includes(t) ||
+      u.apellido.toLowerCase().includes(t) ||
+      u.carrera.toLowerCase().includes(t) ||
+      u.rol?.toLowerCase().includes(t)
+    );
   }
 
   conectar(u: UsuarioDescubrir) {
-    if (u.conectado) return;
     u.solicitudEnviada = true;
-    // luego POST /solicitudes
   }
 
   cancelarSolicitud(u: UsuarioDescubrir) {
     u.solicitudEnviada = false;
-    // luego DELETE /solicitudes/:id
   }
 
-  // ===== Popup perfil básico =====
   abrirPerfil(u: UsuarioDescubrir) {
     this.perfilSeleccionado = {
       nombre: `${u.nombre} ${u.apellido}`,
       ubicacion: u.ubicacion,
-      telefono: '',            // cuando tengas estos campos en el back, los mapeás acá
+      telefono: '',
       email: '',
       titulo: u.carrera || '',
-      anioEgreso: undefined,   // idem
+      anioEgreso: undefined,
       rol: u.rol,
     };
     this.verPerfil = true;
@@ -121,4 +173,3 @@ export class DescubrirComponent implements OnInit {
     this.perfilSeleccionado = null;
   }
 }
-
