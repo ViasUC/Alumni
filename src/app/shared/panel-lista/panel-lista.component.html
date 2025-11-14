@@ -2,42 +2,23 @@
   <a class="back-btn" routerLink="/dashboard">Volver al inicio</a>
 
   <nav class="tabs">
-    <a
-      class="tab"
-      [class.active]="activo === 'oportunidades'"
-      routerLink="/oportunidades"
-    >
+    <a class="tab" [class.active]="activo === 'oportunidades'" routerLink="/oportunidades">
       OPORTUNIDADES
     </a>
-    <a
-      class="tab"
-      [class.active]="activo === 'actividad'"
-      routerLink="/mi-actividad"
-    >
+    <a class="tab" [class.active]="activo === 'actividad'" routerLink="/mi-actividad">
       MI ACTIVIDAD
     </a>
-    <a
-      class="tab"
-      [class.active]="activo === 'descubrir'"
-      routerLink="/descubrir"
-    >
+    <a class="tab" [class.active]="activo === 'descubrir'" routerLink="/descubrir">
       DESCUBRIR
     </a>
-    <a
-      class="tab"
-      [class.active]="activo === 'red'"
-      routerLink="/red-personal"
-    >
+    <a class="tab" [class.active]="activo === 'red'" routerLink="/red-personal">
       RED PERSONAL
     </a>
-    <!-- ESTOS DOS quedan “decorativos” -->
+
     <span class="tab tab-disabled">PORTAFOLIO</span>
     <span class="tab tab-disabled">POSGRADOS</span>
-    <a
-      class="tab"
-      [class.active]="activo === 'perfil'"
-      routerLink="/perfil"
-    >
+
+    <a class="tab" [class.active]="activo === 'perfil'" routerLink="/perfil">
       MI PERFIL
     </a>
   </nav>
@@ -45,5 +26,4 @@
   <div class="avatar" [attr.title]="nombreUsuario || 'Mi perfil'">
     <span class="avatar-initials">{{ iniciales }}</span>
   </div>
-
 </header>

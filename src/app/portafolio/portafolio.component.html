@@ -44,18 +44,3 @@
     </div>
   </div>
 </div>
-
-<!-- POPUPS -->
-<app-popup-portafolio-editar
-  *ngIf="popup === 'editar'"
-  [data]="seleccionada"
-  (cerrar)="cerrarPopup()"
-  (guardar)="guardarEvidencia($event)">
-</app-popup-portafolio-editar>
-
-<app-popup-portafolio-eliminar
-  *ngIf="popup === 'eliminar'"
-  [data]="seleccionada"
-  (cancelar)="cerrarPopup()"
-  (eliminar)="confirmarEliminar()">
-</app-popup-portafolio-eliminar>

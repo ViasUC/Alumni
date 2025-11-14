@@ -1,30 +1,57 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-panel-lista',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterModule],
   templateUrl: './panel-lista.component.html',
   styleUrls: ['./panel-lista.component.css']
 })
 export class PanelListaComponent implements OnInit {
-  @Input() activo: 'oportunidades' | 'actividad' | 'descubrir' | 'red' | 'portafolio' | 'posgrados' | 'perfil' = 'oportunidades';
-  @Input() nombreUsuario: string | null = null; // opcional
 
-  iniciales = 'U?';
+  nombreUsuario: string = '';
+  iniciales: string = '';
+  activo: string = '';
 
-  ngOnInit() {
-    // Si no te pasan el nombre, intentá leerlo de sessionStorage
-    const base = this.nombreUsuario ?? sessionStorage.getItem('userName') ?? 'Horacio Aranda';
-    this.iniciales = this.getInitials(base);
+  constructor(private authService: AuthService) {}
+
+  ngOnInit(): void {
+    this.cargarUsuario();
   }
 
-  private getInitials(fullName: string): string {
-    const parts = fullName.trim().split(/\s+/);
-    const first = parts[0]?.[0] ?? '';
-    const last = parts.length > 1 ? parts[parts.length - 1][0] : '';
-    return (first + last).toUpperCase();
+  private cargarUsuario(): void {
+    const user = this.authService.getUsuarioActual();
+    console.log("USER FROM AUTH:", user);
+
+    if (user) {
+      const nombre = user.nombre || '';
+      const apellido = user.apellido || '';
+
+      this.nombreUsuario = `${nombre} ${apellido}`.trim();
+      this.iniciales = this.getIniciales(nombre, apellido);
+
+      console.log("[PanelLista] Usuario cargado:", this.nombreUsuario, "→", this.iniciales);
+    } else {
+      console.warn("[PanelLista] No se encontró usuario en AuthService.");
+      this.nombreUsuario = '';
+      this.iniciales = '';
+    }
+  }
+
+  private getIniciales(nombre: string, apellido: string): string {
+    let ini = '';
+
+    if (nombre && nombre.length > 0) {
+      ini += nombre.charAt(0).toUpperCase();
+    }
+
+    if (apellido && apellido.length > 0) {
+      ini += apellido.charAt(0).toUpperCase();
+    }
+
+    return ini;
   }
 }
