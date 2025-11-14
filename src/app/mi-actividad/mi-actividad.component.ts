@@ -42,12 +42,11 @@ interface Postulacion {
     FormsModule,
     PanelListaComponent,
     PopupDetalleComponent,
-    PopupPostulacionComponent,
     PopupEditarComponent,
     PopupEliminarComponent,
     PopupPostulanteComponent,
-    PopupConfirmarComponent,
-  ],
+    PopupConfirmarComponent
+],
   templateUrl: './mi-actividad.component.html',
   styleUrls: ['./mi-actividad.component.css'],
 })

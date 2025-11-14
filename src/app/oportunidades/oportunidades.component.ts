@@ -16,7 +16,6 @@ import { PopupPerfilPostulanteComponent } from "../popups/popup-perfil-postulant
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     PanelListaComponent,
     PopupDetalleComponent,
     PopupPostulacionComponent,
