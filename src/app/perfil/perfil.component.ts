@@ -166,66 +166,80 @@ export class PerfilComponent implements OnInit {
     this.mostrarPopup = true;
   }
 
-  confirmarGuardado() {
+confirmarGuardado() {
 
-    const user = sessionStorage.getItem('user');
-    if (!user) return;
+  const user = sessionStorage.getItem('user');
+  if (!user) return;
 
-    const userObj = JSON.parse(user);
-    const userId = Number(userObj.idUsuario);
+  const userObj = JSON.parse(user);
+  const userId = Number(userObj.idUsuario);
 
-    // ✅ MUTATION CORRECTA
-    const mutation = `
-      mutation ActualizarUsuario($id: Int!, $input: UsuarioInput) {
-        actualizarUsuario(idUsuario: $id, input: $input) {
-          idUsuario
-          nombre
-          apellido
-          telefono
-          ubicacion
-          email
+  // === Mutation Usuario ===
+  const mutationUsuario = `
+    mutation ActualizarUsuario($id: Int!, $input: UsuarioInput) {
+      actualizarUsuario(idUsuario: $id, input: $input) {
+        idUsuario
+        nombre
+        apellido
+        telefono
+        ubicacion
+        email
+      }
+    }
+  `;
+
+  const inputUsuario = {
+    nombre: this.perfil.nombre,
+    apellido: this.perfil.apellido,
+    telefono: this.perfil.telefono,
+    ubicacion: this.perfil.ubicacion,
+    email: this.perfil.email
+  };
+
+  // === Ejecutar actualizarUsuario ===
+  this.http.post<any>("http://localhost:8080/graphql", {
+    query: mutationUsuario,
+    variables: { id: userId, input: inputUsuario }
+  })
+  .subscribe({
+    next: (res) => {
+      console.log("Usuario actualizado:", res);
+
+      // === SEGUNDA MUTATION (Egresado) ===
+      const mutationEgresado = `
+        mutation ActualizarEgresado($id: Int!, $input: EgresadoInput!) {
+          actualizarEgresado(id: $id, input: $input) {
+            idUsuario
+            anioEgreso
+            titulo
+          }
         }
-      }
-    `;
+      `;
 
-    // ❗ NO lleva "usuario: { ... }"
-    // UsuarioInput es plano: nombre, apellido, email, telefono, ubicacion
-    const inputPayload = {
-      nombre: this.perfil.nombre,
-      apellido: this.perfil.apellido,
-      telefono: this.perfil.telefono,
-      ubicacion: this.perfil.ubicacion,
-      email: this.perfil.email
-    };
+      const inputEgresado = {
+        anioEgreso: Number(this.perfil.anioEgreso),
+        titulo: this.perfil.titulo
+      };
 
-    this.http.post<any>("http://localhost:8080/graphql", {
-      query: mutation,
-      variables: {
-        id: userId,
-        input: inputPayload
-      }
-    })
-    .subscribe({
-      next: (res) => {
-        console.log("✅ Usuario actualizado:", res);
+      this.http.post<any>("http://localhost:8080/graphql", {
+        query: mutationEgresado,
+        variables: { id: userId, input: inputEgresado }
+      })
+      .subscribe({
+        next: (res2) => {
+          console.log("Egresado actualizado:", res2);
+          this.mostrarPopup = false;
+          this.editando = false;
+          this.cargarDatosUsuario();
+        },
+        error: (err2) => console.error("Error actualizando egresado:", err2)
+      });
 
-        if (!res.data?.actualizarUsuario) {
-          alert("No se pudo actualizar el usuario.");
-          return;
-        }
+    },
+    error: (err) => console.error("Error actualizando usuario:", err)
+  });
+}
 
-        this.mostrarPopup = false;
-        this.editando = false;
-
-        this.cargarDatosUsuario();
-      },
-      error: (err) => {
-        console.error("❌ Error guardando perfil:", err);
-        alert("Ocurrió un error al guardar.");
-      }
-    });
-
-  }
 
   cerrarPopup() {
     this.mostrarPopup = false;
