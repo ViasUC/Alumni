@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-
 import { HttpClient } from '@angular/common/http';
 
 /* Angular Material */
@@ -36,7 +35,7 @@ export class DashboardComponent {
   private http = inject(HttpClient);
 
   nombre = 'Usuario';
-  perfilCompletado = signal(0);   // ← ahora se carga desde backend
+  perfilCompletado = signal(0);
 
   kpis = {
     oportunidades: 10,
@@ -45,15 +44,34 @@ export class DashboardComponent {
   };
 
   constructor() {
+
+    // ============================
+    // 🔥 LEER USUARIO COMO PERFIL
+    // ============================
     const userString = sessionStorage.getItem('user');
 
-    if (userString) {
-      const user = JSON.parse(userString);
-      this.nombre = user?.nombre ?? 'Usuario';
-
-      // 🔥 Cargar completitud real desde el backend
-      this.cargarCompletitud(user.idUsuario);
+    if (!userString) {
+      console.error("❌ No hay usuario en sessionStorage");
+      return;
     }
+
+    const userObj = JSON.parse(userString);
+
+    // Nombre completo
+    this.nombre = `${userObj.nombre ?? ''} ${userObj.apellido ?? ''}`.trim();
+
+    // ID de usuario
+    const idUsuario = Number(userObj.idUsuario);
+
+    if (isNaN(idUsuario)) {
+      console.error("❌ idUsuario inválido:", userObj);
+      return;
+    }
+
+    // ============================
+    // 🔥 CARGAR COMPLETITUD REAL
+    // ============================
+    this.cargarCompletitud(idUsuario);
   }
 
   // =======================================================
@@ -62,10 +80,11 @@ export class DashboardComponent {
   cargarCompletitud(idUsuario: number) {
 
     const query = `
-      query GetUsuario($id: Int!) {
+      query PerfilUsuario($id: Int!) {
         usuarioById(id: $id) {
           idUsuario
           nombre
+          apellido
           completitud
         }
       }
@@ -77,12 +96,17 @@ export class DashboardComponent {
     })
     .subscribe({
       next: (res) => {
+
         const u = res.data?.usuarioById;
-        if (u) {
-          this.perfilCompletado.set(u.completitud ?? 0);
-          this.nombre = u.nombre ?? this.nombre;
-        }
+        if (!u) return;
+
+        // 🔥 Actualizar completitud
+        this.perfilCompletado.set(u.completitud ?? 0);
+
+        // 🔥 Mantener nombre completo SIN perder apellido
+        this.nombre = `${u.nombre ?? ''} ${u.apellido ?? ''}`.trim();
       },
+
       error: (err) => {
         console.error("❌ Error cargando completitud:", err);
       }
@@ -90,10 +114,9 @@ export class DashboardComponent {
   }
 
   // =======================================================
-  // 🔧 ACCIONES
+  // 🔧 ACCIONES BÁSICAS
   // =======================================================
   logout() {
-    sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
     this.router.navigateByUrl('/login');
   }
