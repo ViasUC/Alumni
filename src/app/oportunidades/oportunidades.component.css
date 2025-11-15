@@ -77,3 +77,12 @@
 .btn-danger:hover {
   background: #c62828 !important; /* rojo más oscuro */
 }
+
+.btn-success {
+  background: #23964f !important;
+  color: #fff !important;
+  border-radius: 999px !important;
+  padding: 0.55rem 1.35rem !important;
+  font-weight: 600 !important;
+  border: none !important;
+}

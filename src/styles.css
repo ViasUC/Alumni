@@ -130,8 +130,8 @@ mat-icon,
 
 /* Botón verde de éxito (Despostular, Ya conectado) */
 .btn-success {
-  background: #dcfce7 !important;
-  color: #166534 !important;
+  background: #23964f !important;
+  color: #fff !important;
   border-radius: 999px !important;
   padding: 0.55rem 1.35rem !important;
   font-weight: 600 !important;
