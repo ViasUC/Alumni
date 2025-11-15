@@ -44,13 +44,13 @@
           </span>
 
           <!-- como son mías: solo estas 3 -->
-          <button class="link-primary" (click)="editarOportunidad(op)">
+          <button class="btn-primary" (click)="editarOportunidad(op)">
             Editar
           </button>
-          <button class="link-danger" (click)="eliminarOportunidad(op)">
+          <button class="btn-danger" (click)="eliminarOportunidad(op)">
             Eliminar
           </button>
-          <button class="link-primary" (click)="abrirPostulantes(op)">
+          <button class="btn-primary" (click)="abrirPostulantes(op)">
             Ver postulantes
           </button>
         </div>
@@ -98,10 +98,10 @@
           {{ p.estado | titlecase }}
         </span>
 
-        <button class="link-danger" (click)="despostularPostulacion(p)">
+        <button class="btn-danger" (click)="despostularPostulacion(p)">
           Despostular
         </button>
-        <button class="link-primary" (click)="verDetallePostulacion(p)">
+        <button class="btn-primary" (click)="verDetallePostulacion(p)">
           Ver detalles
         </button>
       </div>

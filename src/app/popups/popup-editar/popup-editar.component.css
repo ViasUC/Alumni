@@ -59,13 +59,18 @@
 }
 
 .btn-danger {
-  background: #ef4444;
-  color: #fff;
+  background: #e53935 !important; /* rojo fuerte */
+  color: #fff !important;          /* texto blanco */
   border: none;
-  padding: 0.5rem 1.1rem;
-  border-radius: 10px;
+  border-radius: 999px;
+  padding: 8px 18px;
   font-weight: 600;
   cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: #c62828 !important; /* rojo más oscuro */
 }
 
 /* formularios dentro del popup editar */

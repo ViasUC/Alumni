@@ -62,3 +62,18 @@
 
 .link-primary { color: #0057ff; }
 .link-danger  { color: #d00000; }
+
+.btn-danger {
+  background: #e53935 !important; /* rojo fuerte */
+  color: #fff !important;          /* texto blanco */
+  border: none;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: #c62828 !important; /* rojo más oscuro */
+}
