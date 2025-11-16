@@ -22,7 +22,8 @@
         </div>
 
         <div class="actions">
-          <!-- mías -->
+
+          <!-- Mías -->
           <ng-container *ngIf="op.creadaPorUsuario; else noPropias">
             <button class="link-primary" (click)="abrirEditar(op)">Editar</button>
             <button class="link-danger" (click)="abrirEliminar(op)">Eliminar</button>
@@ -31,7 +32,7 @@
             </button>
           </ng-container>
 
-          <!-- generales -->
+          <!-- No mías -->
           <ng-template #noPropias>
             <button
               *ngIf="!op.postulado"
@@ -40,6 +41,7 @@
             >
               Ver detalles
             </button>
+
             <button
               *ngIf="!op.postulado"
               class="link-primary"
@@ -47,6 +49,7 @@
             >
               Postular
             </button>
+
             <button
               *ngIf="op.postulado"
               class="btn-success"
@@ -55,6 +58,7 @@
               ✅ Despostular
             </button>
           </ng-template>
+
         </div>
       </div>
     </div>
@@ -62,6 +66,7 @@
 </div>
 
 <!-- POPUPS -->
+
 <app-popup-detalle
   *ngIf="popup === 'detalle'"
   [data]="seleccionada"
@@ -94,7 +99,6 @@
   (guardar)="cerrarPopup()">
 </app-popup-confirmar>
 
-<!-- popup lista de postulantes -->
 <app-popup-postulante
   *ngIf="popup === 'postulante'"
   [data]="seleccionada"
@@ -102,7 +106,6 @@
   (verPerfil)="verPerfilPostulante($event)">
 </app-popup-postulante>
 
-<!-- popup perfil de postulante -->
 <app-popup-perfil-postulante
   *ngIf="popup === 'perfilPostulante'"
   [postulante]="postulanteSeleccionado"
