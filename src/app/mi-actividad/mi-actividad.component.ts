@@ -1,15 +1,14 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PanelListaComponent } from '../shared/panel-lista/panel-lista.component';
 
 // popups que ya tenés
+import { PopupConfirmarComponent } from '../popups/popup-confirmar/popup-confirmar.component';
 import { PopupDetalleComponent } from '../popups/popup-detalle/popup-detalle.component';
-import { PopupPostulacionComponent } from '../popups/popup-postulacion/popup-postulacion.component';
 import { PopupEditarComponent } from '../popups/popup-editar/popup-editar.component';
 import { PopupEliminarComponent } from '../popups/popup-eliminar/popup-eliminar.component';
 import { PopupPostulanteComponent } from '../popups/popup-postulante/popup-postulante.component';
-import { PopupConfirmarComponent } from '../popups/popup-confirmar/popup-confirmar.component';
 
 interface Oportunidad {
   id: number;
