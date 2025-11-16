@@ -44,49 +44,148 @@ export class OportunidadesComponent {
   }
 
   // ====================================================
+// DESPOSTULAR
+// ====================================================
+despostular(op: any) {
+
+  console.log("🔴 DESPOSTULAR → oportunidad", op.idOportunidad);
+
+  const usuarioStr = localStorage.getItem("usuario");
+  const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
+
+  const mutation = `
+    mutation ($idPostulante: Int!, $idOportunidad: Int!) {
+      eliminarPostulacion(
+        idPostulante: $idPostulante,
+        idOportunidad: $idOportunidad
+      )
+    }
+  `;
+
+  const variables = {
+    idPostulante: Number(usuario.idUsuario),
+    idOportunidad: Number(op.idOportunidad),
+  };
+
+  fetch("http://localhost:8080/graphql", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: mutation, variables })
+  })
+    .then(r => r.json())
+    .then(res => {
+      console.log("🟡 RESPUESTA DESPOSTULAR:", res);
+
+      if (res.data?.eliminarPostulacion) {
+        console.log("✔ DESPOSTULADO!");
+        op.postulado = false;   // 🔥 Esto actualiza la UI
+      }
+    })
+    .catch(err => console.error("❌ Error despostulando:", err));
+}
+
+  cargarPostulacionesUsuario() {
+  const usuarioStr = localStorage.getItem("usuario");
+  const user = usuarioStr ? JSON.parse(usuarioStr) : null;
+  const idUsuario = Number(user?.idUsuario);
+
+  const query = `
+    query ($idUsuario: Int!) {
+      postulacionesPorUsuario(idUsuario: $idUsuario) {
+        idOportunidad
+      }
+    }
+  `;
+
+  return this.http.post<any>("http://localhost:8080/graphql", {
+    query,
+    variables: { idUsuario }
+  });
+}
+
+  // ====================================================
   // CARGAR OPORTUNIDADES
   // ====================================================
-  cargarOportunidades() {
-    const query = `
-      query {
-        oportunidades {
-          idOportunidad
-          idCreador
-          titulo
-          descripcion
-          requisitos
-          ubicacion
-          modalidad
-          tipo
-          fechaPublicacion
-          fechaCierre
-          estado
-        }
+cargarOportunidades() {
+  const query = `
+    query {
+      oportunidades {
+        idOportunidad
+        idCreador
+        titulo
+        descripcion
+        requisitos
+        ubicacion
+        modalidad
+        tipo
+        fechaPublicacion
+        fechaCierre
+        estado
       }
-    `;
+    }
+  `;
 
-    this.http.post<any>("http://localhost:8080/graphql", { query })
-      .subscribe({
-        next: (res) => {
+  this.http.post<any>("http://localhost:8080/graphql", { query })
+    .subscribe({
+      next: (res) => {
 
-          const usuarioStr = localStorage.getItem("usuario");
-          const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
+        const usuarioStr = localStorage.getItem("usuario");
+        const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
 
-          const idUsuarioActual = Number(
-            usuario?.idUsuario ?? usuario?.idusuario ?? usuario?.id
-          );
+        const idUsuarioActual = Number(
+          usuario?.idUsuario ?? usuario?.idusuario ?? usuario?.id
+        );
 
-          this.oportunidades = (res.data?.oportunidades ?? []).map((op: any) => ({
-            ...op,
-            id: op.idOportunidad,
-            creadaPorUsuario: op.idCreador === idUsuarioActual,
-            postulante: [],
-            postulado: false
-          }));
-        },
-        error: err => console.error("❌ Error cargando oportunidades:", err)
-      });
-  }
+        this.oportunidades = (res.data?.oportunidades ?? []).map((op: any) => ({
+          ...op,
+          id: op.idOportunidad,
+          creadaPorUsuario: op.idCreador === idUsuarioActual,
+          postulante: [],
+          postulado: false
+        }));
+
+// Luego cargar postulaciones del usuario
+this.cargarPostulacionesUsuario().subscribe((resp: any) => {
+
+  console.log("📌 RESPUESTA POSTULACIONES:", resp);
+
+  const userPosts = resp.data?.postulacionesPorUsuario ?? [];
+  console.log("📌 LISTA DE POSTULACIONES:", userPosts);
+
+  console.log("📌 LISTA DE OPORTUNIDADES ANTES DE MARCAR:", this.oportunidades);
+
+  this.oportunidades = this.oportunidades.map(op => {
+    const fuePostulado = userPosts.some((p: any) => {
+
+      const match =
+        Number(p.idOportunidad) === Number(op.idOportunidad);
+
+      console.log(
+        `🔍 comparando op.idOportunidad=${op.idOportunidad} ` +
+        `con p.idOportunidad=${p.idOportunidad} => MATCH=${match}`
+      );
+
+      return match;
+    });
+
+    if (fuePostulado) {
+      console.log(`✅ MARCADO COMO POSTULADO → oportunidad ${op.idOportunidad}`);
+    }
+
+    return {
+      ...op,
+      postulado: fuePostulado
+    };
+  });
+
+  console.log("📌 LISTA DE OPORTUNIDADES FINAL:", this.oportunidades);
+});
+
+      },
+      error: err => console.error("❌ Error cargando oportunidades:", err)
+    });
+}
+
 
   // POPUPS
   abrirDetalle(op: any) { this.seleccionada = op; this.popup = 'detalle'; }
@@ -107,13 +206,50 @@ export class OportunidadesComponent {
     this.popup = 'perfilPostulante';
   }
 
-  togglePostulacion(op: any) {
-    op.postulado = !op.postulado;
-    if (op.postulado) {
-      this.seleccionada = op;
-      this.popup = 'postulacion';
+togglePostulacion(op: any) {
+
+  const usuarioStr = localStorage.getItem("usuario");
+  const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
+
+  const idPostulante = Number(usuario.idUsuario);
+  const idOfertante = Number(op.idCreador);
+
+  const mutation = `
+    mutation Postular(
+      $idOportunidad: Int!,
+      $idPostulante: Int!,
+      $idOfertante: Int!
+    ) {
+      crearPostulacion(
+        idOportunidad: $idOportunidad,
+        idPostulante: $idPostulante,
+        idOfertante: $idOfertante
+      ) {
+        idPostulacion
+      }
     }
-  }
+  `;
+
+  const variables = {
+    idOportunidad: Number(op.idOportunidad),
+    idPostulante,
+    idOfertante
+  };
+
+  fetch("http://localhost:8080/graphql", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: mutation, variables })
+  })
+    .then(r => r.json())
+    .then(res => {
+      console.log("🟢 POSTULACIÓN CREADA:", res);
+
+      op.postulado = true; // marcas en UI
+    })
+    .catch(err => console.error("❌ Error postulando:", err));
+}
+
 
   marcarPostulado(op: any) {
     const found = this.oportunidades.find(o => o.id === op.id);
