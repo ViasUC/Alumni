@@ -6,7 +6,6 @@
     <h1>Descubrir</h1>
 
     <div class="search-box">
-      <span class="icon">🔍</span>
       <input
         type="text"
         placeholder="Buscar usuarios…"
@@ -48,7 +47,7 @@
           <!-- solicitud enviada -->
           <div *ngIf="!u.conectado && u.solicitudEnviada" class="solicitud-wrap">
             <button class="btn-pending" disabled>Solicitud enviada</button>
-            <button class="link-cancel" (click)="cancelarSolicitud(u)">
+            <button class="btn-danger" (click)="cancelarSolicitud(u)">
               Descartar
             </button>
           </div>

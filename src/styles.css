@@ -130,8 +130,8 @@ mat-icon,
 
 /* Botón verde de éxito (Despostular, Ya conectado) */
 .btn-success {
-  background: #dcfce7 !important;
-  color: #166534 !important;
+  background: #23964f !important;
+  color: #fff !important;
   border-radius: 999px !important;
   padding: 0.55rem 1.35rem !important;
   font-weight: 600 !important;
@@ -248,4 +248,42 @@ mat-icon,
 .pill-warning {
   background: #fdeacc;
   color: #b45309;
+}
+
+/* BASE: igual al botón +Agregar Oportunidad */
+.pill-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.2s ease;
+}
+
+/* Azul (igual estilo “Agregar Oportunidad”) */
+.pill-blue {
+  background: #0f62fe;
+  color: #fff;
+}
+.pill-blue:hover {
+  background: #0852d6;
+}
+
+/* Gris (como botón “Cerrar”) */
+.pill-gray {
+  background: #f4f4f4;
+  color: #333;
+}
+.pill-gray:hover {
+  background: #e4e4e4;
+}
+
+/* Rojo */
+.pill-red {
+  background: #fff;
+  color: #d00000;
+}
+.pill-red:hover {
+  background: #ffd6d6;
 }

@@ -25,9 +25,9 @@
 
           <!-- Mías -->
           <ng-container *ngIf="op.creadaPorUsuario; else noPropias">
-            <button class="link-primary" (click)="abrirEditar(op)">Editar</button>
-            <button class="link-danger" (click)="abrirEliminar(op)">Eliminar</button>
-            <button class="link-primary" (click)="abrirPostulantes(op)">
+            <button class="btn-primary" (click)="abrirEditar(op)">Editar</button>
+            <button class="btn-danger" (click)="abrirEliminar(op)">Eliminar</button>
+            <button class="btn-primary" (click)="abrirPostulantes(op)">
               Ver postulantes
             </button>
           </ng-container>
@@ -36,7 +36,7 @@
           <ng-template #noPropias>
             <button
               *ngIf="!op.postulado"
-              class="link-primary"
+              class="btn-primary"
               (click)="abrirDetalle(op)"
             >
               Ver detalles
@@ -44,7 +44,7 @@
 
             <button
               *ngIf="!op.postulado"
-              class="link-primary"
+              class="btn-primary"
               (click)="togglePostulacion(op)"
             >
               Postular
@@ -52,10 +52,10 @@
 
             <button
               *ngIf="op.postulado"
-              class="btn-success"
+              class="btn-danger"
               (click)="togglePostulacion(op)"
             >
-              ✅ Despostular
+            Despostular
             </button>
           </ng-template>
 
