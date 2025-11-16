@@ -47,7 +47,7 @@ export class DescubrirComponent implements OnInit {
   // INIT - CARGA DATOS
   // ==========================================================
   ngOnInit(): void {
-    console.log("🚀 ngOnInit() iniciado");
+    console.log("🚀 Descubrir ngOnInit()");
 
     const userString = sessionStorage.getItem("user");
     if (!userString) return;
@@ -87,7 +87,6 @@ export class DescubrirComponent implements OnInit {
       }
     `;
 
-    // Ejecutamos TODO junto
     Promise.all([
       this.http.post<any>('http://localhost:8080/graphql', { query: Q_USUARIOS }).toPromise(),
       this.http.post<any>('http://localhost:8080/graphql', {
@@ -109,20 +108,20 @@ export class DescubrirComponent implements OnInit {
       console.log("📌 Conexiones:", conexiones);
       console.log("📌 Solicitudes enviadas:", enviadas);
 
-      // === Lista de amigos ===
+      // Lista de amigos
       const idsAmigos = new Set<number>();
       conexiones.forEach((c: any) => {
         if (c.idUsuario1 === idLogueado) idsAmigos.add(c.idUsuario2);
         if (c.idUsuario2 === idLogueado) idsAmigos.add(c.idUsuario1);
       });
 
-      // === Solicitudes enviadas ===
+      // Solicitudes enviadas
       const mapaSolicitudes = new Map<number, number>();
       enviadas.forEach((s: any) =>
         mapaSolicitudes.set(Number(s.idUsuarioDestino), s.idSolicitud)
       );
 
-      // === Cargar usuarios finales ===
+      // Usuarios finales
       this.usuarios = listaUsuarios
         .filter((u: any) => Number(u.idUsuario) !== idLogueado)
         .filter((u: any) => !idsAmigos.has(Number(u.idUsuario)))
@@ -144,7 +143,7 @@ export class DescubrirComponent implements OnInit {
   }
 
   // ==========================================================
-  // BÚSQUEDA
+  // BUSCAR
   // ==========================================================
   get usuariosFiltrados(): UsuarioDescubrir[] {
     const t = this.termino.trim().toLowerCase();
@@ -162,6 +161,8 @@ export class DescubrirComponent implements OnInit {
   // ENVIAR SOLICITUD
   // ==========================================================
   conectar(u: UsuarioDescubrir) {
+    console.log("📨 Enviando solicitud a", u.id);
+
     const user = JSON.parse(sessionStorage.getItem("user")!);
     const idOrigen = Number(user.idUsuario);
 
@@ -190,7 +191,6 @@ export class DescubrirComponent implements OnInit {
   // CANCELAR SOLICITUD
   // ==========================================================
   cancelarSolicitud(u: UsuarioDescubrir) {
-
     if (!u.idSolicitud) {
       u.solicitudEnviada = false;
       return;
@@ -212,19 +212,49 @@ export class DescubrirComponent implements OnInit {
   }
 
   // ==========================================================
-  // POPUP PERFIL
+  // ABRIR POPUP PERFIL REAL
   // ==========================================================
   abrirPerfil(u: UsuarioDescubrir) {
-    this.perfilSeleccionado = {
-      nombre: `${u.nombre} ${u.apellido}`,
-      ubicacion: u.ubicacion,
-      telefono: '',
-      email: '',
-      titulo: u.carrera || '',
-      anioEgreso: undefined,
-      rol: u.rol,
-    };
-    this.verPerfil = true;
+    console.log("🔍 Cargando perfil para:", u.id);
+
+    const query = `
+      query PerfilUsuario($id: Int!) {
+        usuarioById(id: $id) {
+          nombre
+          apellido
+          email
+          telefono
+          ubicacion
+          rolPrincipal
+          egresadoData {
+            anioEgreso
+            titulo
+          }
+        }
+      }
+    `;
+
+    this.http.post<any>('http://localhost:8080/graphql', {
+      query,
+      variables: { id: u.id }
+    }).subscribe(res => {
+      console.log("📥 Respuesta perfil:", res);
+
+      const data = res.data?.usuarioById;
+      if (!data) return;
+
+      this.perfilSeleccionado = {
+        nombre: `${data.nombre} ${data.apellido}`,
+        ubicacion: data.ubicacion ?? "–",
+        telefono: data.telefono ?? "–",
+        email: data.email ?? "–",
+        titulo: data.egresadoData?.titulo ?? "—",
+        anioEgreso: data.egresadoData?.anioEgreso ?? undefined,
+        rol: data.rolPrincipal
+      };
+
+      this.verPerfil = true;
+    });
   }
 
   cerrarPerfil() {
