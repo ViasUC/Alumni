@@ -163,25 +163,31 @@ export class MiActividadComponent {
   // =====================================================
   // FILTROS
   // =====================================================
-  get oportunidadesFiltradas() {
-    return this.misOportunidades.filter(op => {
-      const f1 = !this.filtroFechaOpo ||
-                 op.fechaPublicacion?.startsWith(this.filtroFechaOpo);
-      const f2 = this.filtroEstadoOpo === 'todas' ||
-                 op.estado === this.filtroEstadoOpo;
-      return f1 && f2;
-    });
-  }
+get oportunidadesFiltradas() {
+  return this.misOportunidades.filter(op => {
+    const f1 =
+      !this.filtroFechaOpo ||
+      op.fechaPublicacion?.substring(0, 10) === this.filtroFechaOpo;
 
-  get postulacionesFiltradas() {
-    return this.misPostulaciones.filter(p => {
-      const f1 = !this.filtroFechaPost ||
-                 p.fechaPostulacion?.startsWith(this.filtroFechaPost);
-      const f2 = this.filtroEstadoPost === 'todas' ||
-                 p.estado === this.filtroEstadoPost;
-      return f1 && f2;
-    });
-  }
+    const f2 =
+      this.filtroEstadoOpo === 'todas' ||
+      op.estado === this.filtroEstadoOpo;
+
+    return f1 && f2;
+  });
+}
+
+
+get postulacionesFiltradas() {
+  return this.misPostulaciones.filter(p => {
+    const f1 = !this.filtroFechaPost ||
+               p.fechaPostulacion?.startsWith(this.filtroFechaPost);
+    const f2 = this.filtroEstadoPost === 'todas' ||
+               p.estado === this.filtroEstadoPost;
+    return f1 && f2;
+  });
+}
+
 
   // =====================================================
   // ACCIONES POPUP

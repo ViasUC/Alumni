@@ -21,9 +21,10 @@
           <span>Estado</span>
           <select [(ngModel)]="filtroEstadoOpo">
             <option value="todas">Todas</option>
-            <option value="activa">Activa</option>
-            <option value="cerrada">Cerrada</option>
+            <option value="activo">Activo</option>
+            <option value="cerrado">Cerrado</option>
             <option value="borrador">Borrador</option>
+            <option value="pausada">Pausada</option>
           </select>
         </label>
       </div>
@@ -87,7 +88,7 @@
         <label>
           <span>Estado</span>
           <select [(ngModel)]="filtroEstadoPost">
-            <option value="Todas">Todas</option>
+            <option value="todas">Todas</option>
             <option value="activo">Activo</option>
             <option value="cerrado">Cerrado</option>
             <option value="pausada">Pausada</option>
