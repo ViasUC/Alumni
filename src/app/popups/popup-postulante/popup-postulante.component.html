@@ -1,5 +1,8 @@
 <div class="overlay">
-  <!-- VISTA 1: lista de postulantes -->
+
+  <!-- ============================
+       VISTA 1: Lista de postulantes
+       ============================ -->
   <div class="popup" *ngIf="!vistaDetalle">
     <h2>Postulantes a la oportunidad</h2>
 
@@ -8,13 +11,22 @@
         <li
           *ngFor="let p of postulantes"
           class="postulante-item"
-          (click)="verPerfilPostulante(p)"
+          (click)="verPerfilCompleto(p.idUsuario)"
         >
           <div class="info">
-            <div class="nombre">{{ p.nombre }}</div>
-            <div class="fecha">Postulado el {{ p.fechaPostulacion }}</div>
+            <div class="nombre">{{ p.nombre }} {{ p.apellido }}</div>
+            <div class="fecha">
+              Postulado el {{ p.fechaPostulacion | date : "dd/MM/yyyy HH:mm" }}
+            </div>
           </div>
-          <button class="btn-ver" type="button">Ver perfil</button>
+
+          <button
+            class="btn-ver"
+            type="button"
+            (click)="verPerfilCompleto(p.idUsuario)"
+          >
+            Ver perfil
+          </button>
         </li>
       </ul>
     </ng-container>
@@ -28,79 +40,101 @@
     </div>
   </div>
 
-  <!-- VISTA 2: perfil del postulante -->
+  <!-- ============================
+       VISTA 2: Perfil del postulante
+       ============================ -->
   <div class="popup popup-detalle" *ngIf="vistaDetalle && postulanteSeleccionado">
+
     <div class="perfil-header">
-      <h2>Perfil de {{ postulanteSeleccionado.nombre }}</h2>
+      <h2>
+        Perfil de {{ postulanteSeleccionado.nombre }}
+        {{ postulanteSeleccionado.apellido }}
+      </h2>
+
       <button class="close-icon" (click)="volverALista()">×</button>
     </div>
 
     <div class="perfil-grid">
-      <!-- datos personales -->
+
+      <!-- ============================
+           Datos Personales
+           ============================ -->
       <section class="card">
         <h3>Datos personales</h3>
 
         <div class="grid-fields">
+
           <label>
             <span>Nombre</span>
-            <input [value]="postulanteSeleccionado.nombre" readonly />
+            <input
+              [value]="postulanteSeleccionado.nombre + ' ' + postulanteSeleccionado.apellido"
+              readonly
+            />
           </label>
 
           <label>
             <span>Ubicación</span>
-            <input [value]="postulanteSeleccionado.ubicacion" readonly />
+            <input
+              [value]="postulanteSeleccionado.ubicacion"
+              readonly
+            />
           </label>
 
           <label>
             <span>Teléfono</span>
-            <input [value]="postulanteSeleccionado.telefono" readonly />
+            <input
+              [value]="postulanteSeleccionado.telefono"
+              readonly
+            />
           </label>
 
           <label>
             <span>Email</span>
-            <input [value]="postulanteSeleccionado.email" readonly />
-          </label>
-
-          <label>
-            <span>Título universitario</span>
-            <input [value]="postulanteSeleccionado.titulo" readonly />
-          </label>
-
-          <label>
-            <span>Año de egreso</span>
-            <input [value]="postulanteSeleccionado.anioEgreso" readonly />
+            <input
+              [value]="postulanteSeleccionado.email"
+              readonly
+            />
           </label>
 
           <label>
             <span>Rol principal</span>
-            <input [value]="postulanteSeleccionado.rol" readonly />
+            <input
+              [value]="postulanteSeleccionado.rolPrincipal"
+              readonly
+            />
           </label>
-        </div>
 
-        <div class="mini-progress">
-          <p>Completitud</p>
-          <div class="circle">
-            <span>{{ postulanteSeleccionado.completitud }}%</span>
-          </div>
+          <label>
+            <span>Completitud</span>
+            <input
+              [value]="postulanteSeleccionado.completitud + '%'"
+              readonly
+            />
+          </label>
+
         </div>
       </section>
 
-      <!-- portafolio -->
+      <!-- ============================
+           Portafolio
+           ============================ -->
       <section class="card">
         <h3>Portafolio</h3>
 
         <label>
           <span>Descripción</span>
-          <textarea rows="3" readonly>
-{{ postulanteSeleccionado.portafolio?.descripcion }}
-          </textarea>
+          <textarea
+            rows="3"
+            readonly
+            [value]="postulanteSeleccionado.descripcion"
+          ></textarea>
         </label>
 
         <label>
           <span>Skills</span>
           <input
             readonly
-            [value]="postulanteSeleccionado.portafolio?.skills"
+            [value]="postulanteSeleccionado.skills"
           />
         </label>
 
@@ -108,7 +142,7 @@
           <span>Visibilidad</span>
           <input
             readonly
-            [value]="postulanteSeleccionado.portafolio?.visibilidad"
+            [value]="postulanteSeleccionado.visibilidad"
           />
         </label>
 
@@ -116,23 +150,24 @@
           <span>Última actualización</span>
           <input
             readonly
-            [value]="postulanteSeleccionado.portafolio?.ultimaActualizacion"
+            [value]="postulanteSeleccionado.ultimaActualizacion"
           />
         </label>
 
         <h4 class="sub">Evidencias vinculadas</h4>
+
         <div
           class="evidencia"
-          *ngFor="let ev of postulanteSeleccionado.portafolio?.evidencias"
+          *ngFor="let ev of postulanteSeleccionado.evidencias"
         >
           <div>
             <h5>{{ ev.titulo }}</h5>
             <p>{{ ev.descripcion }}</p>
-            <small>{{ ev.tipo }} • {{ ev.fecha }}</small>
+            <small>{{ ev.tipo }}</small>
           </div>
         </div>
+
       </section>
     </div>
   </div>
 </div>
-

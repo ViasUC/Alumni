@@ -202,9 +202,49 @@ this.cargarPostulacionesUsuario().subscribe((resp: any) => {
   abrirPostulantes(op: any) { this.seleccionada = op; this.popup = 'postulante'; }
 
   verPerfilPostulante(p: any) {
-    this.postulanteSeleccionado = p;
+  console.log("📌 VER PERFIL → postulante:", p);
+
+  const query = `
+    query ($idUsuario: Int!) {
+      usuarioById(id: $idUsuario) {
+        idUsuario
+        nombre
+        apellido
+        email
+        telefono
+        ubicacion
+        titulo
+        anioEgreso
+        rolPrincipal
+        completitud
+
+        portafolio {
+          descripcion
+          skills
+          visibilidad
+          ultimaActualizacion
+          evidencias {
+            titulo
+            descripcion
+            tipo
+            fecha
+          }
+        }
+      }
+    }
+  `;
+
+  this.http.post<any>("http://localhost:8080/graphql", {
+    query,
+    variables: { idUsuario: Number(p.idUsuario) }
+  }).subscribe(res => {
+    console.log("📌 PERFIL COMPLETO RECIBIDO:", res);
+
+    this.postulanteSeleccionado = res.data?.usuarioById ?? null;
     this.popup = 'perfilPostulante';
-  }
+  });
+}
+
 
 togglePostulacion(op: any) {
 
