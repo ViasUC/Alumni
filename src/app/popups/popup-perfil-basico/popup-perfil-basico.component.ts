@@ -1,14 +1,14 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 export interface PerfilBasico {
   nombre: string;
   ubicacion?: string;
   telefono?: string;
   email?: string;
-  titulo?: string;        // Título universitario
+  titulo?: string;
   anioEgreso?: number;
-  rol?: string;           // Egresado, Alumno, etc.
+  rol?: string;
 }
 
 @Component({
