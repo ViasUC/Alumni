@@ -24,6 +24,7 @@ import { PopupPerfilPostulanteComponent } from "../popups/popup-perfil-postulant
     PopupConfirmarComponent,
     PopupPostulanteComponent,
     PopupPerfilPostulanteComponent
+    
   ],
   templateUrl: './oportunidades.component.html',
   styleUrls: ['./oportunidades.component.css']

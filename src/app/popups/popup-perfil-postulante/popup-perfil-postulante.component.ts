@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
+
 @Component({
   selector: 'app-popup-perfil-postulante',
   standalone: true,
@@ -10,10 +11,18 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class PopupPerfilPostulanteComponent {
 
-  @Input() data: any;   // <--- AHORA CONSISTENTE
+  // 👇 Ambos inputs, para soportar pantallas nuevas y viejas
+  @Input() postulante: any = null;
+  @Input() data: any = null;
+
   @Output() cerrar = new EventEmitter<void>();
 
+  // 👇 Getter único para evitar romper compatibilidad
   get perfil() {
-    return this.data;
+    return this.postulante ?? this.data;
+  }
+
+  cerrarPopup() {
+    this.cerrar.emit();
   }
 }
