@@ -1,6 +1,6 @@
 .perfil-page {
-  background: #d1cbca; /* mismo gris que usás */
-  min-height: calc(100vh - 64px); /* por si tenés topbar fija */
+  background: #d1cbca;
+  min-height: calc(100vh - 64px);
   padding: 2.5rem 3rem;
 }
 
@@ -119,52 +119,6 @@ textarea {
   margin-left: 0.8rem;
 }
 
-.btn-primary {
-  background: #0065ff;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 0.45rem 1rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-secondary {
-  background: #e9eaee;
-  color: #1f2937;
-  border: none;
-  border-radius: 10px;
-  padding: 0.45rem 1rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.btn-disabled {
-  background: #dfe5ff;
-  color: #4e5b87;
-  border: none;
-  border-radius: 10px;
-  padding: 0.45rem 1rem;
-  font-weight: 500;
-}
-
-.link-primary {
-  background: none;
-  border: none;
-  color: #0056d6;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.link-danger {
-  background: none;
-  border: none;
-  color: #d00000;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* popup */
 .overlay {
   position: fixed;
   inset: 0;
@@ -197,4 +151,23 @@ textarea {
   .form-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.form-column label {
+  margin-bottom: 1rem;
+}
+
+.form-column label:last-child {
+  margin-bottom: 0;
+}
+
+.portafolio-header {
+  margin-bottom: 1.4rem;
+}
+
+.ev-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
 }

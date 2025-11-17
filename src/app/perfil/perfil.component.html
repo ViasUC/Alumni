@@ -14,7 +14,7 @@
       </button>
       <ng-container *ngIf="editando">
         <button class="btn-primary" (click)="guardarEdicion()">Listo</button>
-        <button class="btn-secondary" (click)="cancelarEdicion()">Cancelar</button>
+        <button class="btn-danger" (click)="cancelarEdicion()">Cancelar</button>
       </ng-container>
     </div>
   </div>
@@ -112,8 +112,8 @@
           <small>{{ ev.tipo }} • {{ ev.fecha }}</small>
         </div>
         <div class="ev-actions" *ngIf="ev.propia">
-          <button class="link-primary">Editar</button>
-          <button class="link-danger">Eliminar</button>
+          <button class="btn-primary-disabled" disabled>Editar</button>
+          <button class="btn-danger-disabled" disabled>Eliminar</button>
         </div>
       </div>
     </section>

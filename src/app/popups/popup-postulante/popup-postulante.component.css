@@ -76,16 +76,6 @@
   text-align: right;
 }
 
-.btn-secondary {
-  background: #e4e7eb;
-  border: none;
-  border-radius: 20px;
-  padding: 0.35rem 1.35rem;
-  font-weight: 500;
-}
-
-/* ========== DETALLE ========== */
-
 .popup-detalle {
   width: min(1100px, 92vw);
   max-height: 92vh;

@@ -46,10 +46,8 @@
 
           <!-- solicitud enviada -->
           <div *ngIf="!u.conectado && u.solicitudEnviada" class="solicitud-wrap">
-            <button class="btn-pending" disabled>Solicitud enviada</button>
-            <button class="btn-danger" (click)="cancelarSolicitud(u)">
-              Descartar
-            </button>
+            <button class="btn-disabled" disabled>Solicitud Enviada</button>
+            <button class="btn-danger" (click)="cancelarSolicitud(u)">Descartar</button>
           </div>
 
           <!-- botón conectar -->

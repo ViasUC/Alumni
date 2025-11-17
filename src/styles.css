@@ -43,57 +43,8 @@ mat-icon,
   font-family: "Material Icons" !important;
 }
 
-/* === BOTONES ESTÁNDAR DE LA PLATAFORMA === */
-.btn-primary {
-  background: #0065ff;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 0.45rem 1rem;
-  font-weight: 600;
-  cursor: pointer;
-}
+/* BOTONES */
 
-.btn-secondary {
-  background: #e9eaee;
-  color: #1f2937;
-  border: none;
-  border-radius: 10px;
-  padding: 0.45rem 1rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.btn-disabled {
-  background: #dfe5ff;
-  color: #4e5b87;
-  border: none;
-  border-radius: 10px;
-  padding: 0.45rem 1rem;
-  font-weight: 500;
-}
-
-.link-primary {
-  background: none;
-  border: none;
-  color: #0056d6;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.link-danger {
-  background: none;
-  border: none;
-  color: var(--danger);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* ============================================
-   BOTONES CÁPSULA — FORMATO GLOBAL IMPOSITIVO
-=============================================== */
-
-/* Primario (Postular, Conectar, Guardar, etc.) */
 .btn-primary {
   background: #0057ff !important;
   color: #fff !important;
@@ -106,7 +57,22 @@ mat-icon,
   cursor: pointer !important;
 }
 
-/* Secundario (Cerrar, Cancelar, etc.) */
+.btn-primary-disabled {
+  background: #0057ff !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 999px !important;
+  padding: 0.55rem 1.35rem !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06) !important;
+  cursor: not-allowed !important;
+}
+
+.btn-primary:hover {
+  background: #0852d6 !important;
+}
+
 .btn-secondary {
   background: #e9eaee !important;
   color: #1f2937 !important;
@@ -117,10 +83,9 @@ mat-icon,
   border: none !important;
 }
 
-/* Peligro (Eliminar, Rechazar, etc.) */
 .btn-danger {
-  background: #fee2e2 !important;
-  color: #d00000 !important;
+  background: #e53935 !important;
+  color: #fff !important;
   border: none !important;
   border-radius: 999px !important;
   padding: 0.55rem 1.35rem !important;
@@ -128,37 +93,44 @@ mat-icon,
   font-size: 0.9rem !important;
 }
 
-/* Botón verde de éxito (Despostular, Ya conectado) */
-.btn-success {
-  background: #23964f !important;
+.btn-danger-disabled {
+  background: #e53935 !important;
   color: #fff !important;
+  border: none !important;
   border-radius: 999px !important;
   padding: 0.55rem 1.35rem !important;
   font-weight: 600 !important;
-  border: none !important;
+  font-size: 0.9rem !important;
+  cursor: not-allowed !important;
 }
 
-/* El “Solicitud enviada” / “Pendiente” */
-.btn-pending {
-  background: #e5e7eb !important;
-  color: #4b5563 !important;
-  border-radius: 999px !important;
-  padding: 0.55rem 1.35rem !important;
-  font-weight: 600 !important;
-  border: none !important;
+.btn-danger:hover {
+  background: #c62828 !important;
 }
 
-/* Ya conectado (disabled) */
 .btn-connected {
-  background: #dcfce7 !important;
-  color: #166534 !important;
+  background: #1e8b47 !important;
+  color: #fff !important;
+  border: none !important;
   border-radius: 999px !important;
   padding: 0.55rem 1.35rem !important;
   font-weight: 600 !important;
-  border: none !important;
+  font-size: 0.9rem !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06) !important;
+  cursor: not-allowed !important;
 }
 
-/* NO permitir que estilos locales cambien botones */
+.btn-disabled {
+  background: #91969d !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 999px !important;
+  padding: 0.55rem 1.35rem !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  cursor: not-allowed !important;
+}
+
 .actions button,
 .usuario-card button,
 .op-item button,
@@ -183,107 +155,11 @@ mat-icon,
   all: revert;
 }
 
-.link-primary {
-  background: none !important;
-  border: none !important;
-  color: #0057ff !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  padding: 0 !important;
-}
-
+button,
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.link-primary,
 .link-danger {
-  background: none !important;
-  border: none !important;
-  color: #d00000 !important;
-  font-weight: 600 !important;
   cursor: pointer !important;
-  padding: 0 !important;
-}
-
-/* ============================================
-   PÍLDORAS GLOBALES PARA ACCIONES DE TEXTO
-=============================================== */
-
-/* Base de TODAS las píldoras */
-.pill {
-  display: inline-block;
-  padding: 0.30rem 0.75rem;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 0.88rem;
-  cursor: pointer;
-  text-decoration: none;
-  user-select: none;
-  white-space: nowrap;
-  font-family: "Poppins", sans-serif !important;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-}
-
-/* AZUL — Editar / Ver detalles / Ver postulantes */
-.pill-primary {
-  background: #0057ff;
-  color: #fff;
-}
-
-/* GRIS — Cerrar / Neutral */
-.pill-secondary {
-  background: #e9eaee;
-  color: #1f2937;
-}
-
-/* ROJO — Eliminar */
-.pill-danger {
-  background: #fee2e2;
-  color: #d00000;
-}
-
-/* VERDE — Despostular / Ya conectado */
-.pill-success {
-  background: #dcfce7;
-  color: #166534;
-}
-
-/* NARANJA — Cerrada / Estado */
-.pill-warning {
-  background: #fdeacc;
-  color: #b45309;
-}
-
-/* BASE: igual al botón +Agregar Oportunidad */
-.pill-btn {
-  border: none;
-  border-radius: 999px;
-  padding: 8px 16px;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: 0.2s ease;
-}
-
-/* Azul (igual estilo “Agregar Oportunidad”) */
-.pill-blue {
-  background: #0f62fe;
-  color: #fff;
-}
-.pill-blue:hover {
-  background: #0852d6;
-}
-
-/* Gris (como botón “Cerrar”) */
-.pill-gray {
-  background: #f4f4f4;
-  color: #333;
-}
-.pill-gray:hover {
-  background: #e4e4e4;
-}
-
-/* Rojo */
-.pill-red {
-  background: #fff;
-  color: #d00000;
-}
-.pill-red:hover {
-  background: #ffd6d6;
 }

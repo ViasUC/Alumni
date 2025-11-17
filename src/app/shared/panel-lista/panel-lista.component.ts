@@ -26,6 +26,11 @@ export class PanelListaComponent implements OnInit {
     this.cargarUsuario();
   }
 
+  irAlPerfil(): void {
+  this.router.navigate(['/perfil']);
+}
+
+
   /** Detecta URL y marca automáticamente la pestaña activa */
   private detectarActivo(): void {
     const url = this.router.url;

@@ -21,12 +21,14 @@
         </div>
 
         <div class="actions">
-          <button
-            class="btn-primary"
-            [disabled]="u.endorsed"
-            (click)="solicitarEndorse(u)"
-          >
-            {{ u.endorsed ? 'Endorseado' : 'Endorsear' }}
+          <!-- CUANDO TODAVÍA NO ENDORSEÓ -->
+          <button *ngIf="!u.endorsed" class="btn-primary" (click)="solicitarEndorse(u)">
+            Endorsear
+          </button>
+
+          <!-- CUANDO YA ENDORSEÓ -->
+          <button *ngIf="u.endorsed" class="btn-connected" disabled>
+            Endorseado
           </button>
         </div>
       </div>
