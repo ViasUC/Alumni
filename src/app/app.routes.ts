@@ -84,6 +84,14 @@ export const routes: Routes = [
       ),
   },
 
+  {
+    path: 'registrar',
+    loadComponent: () =>
+      import('./registrar/registrar.component').then(
+        (m) => m.RegistrarComponent
+      ),
+  },
+
   // Ruta por defecto
   { path: '**', redirectTo: 'login' },
 ];
