@@ -1,56 +1,37 @@
 // src/app/portafolio/portafolio.component.ts
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { PopupEditarComponent } from '../popups/popup-editar/popup-editar.component';
 import { PopupEliminarComponent } from '../popups/popup-eliminar/popup-eliminar.component';
+
 @Component({
   selector: 'app-portafolio',
   standalone: true,
   imports: [
     CommonModule,
     RouterLink,
-        PopupEditarComponent,
+    PopupEditarComponent,
     PopupEliminarComponent
-
   ],
   templateUrl: './portafolio.component.html',
   styleUrls: ['./portafolio.component.css']
 })
 export class PortafolioComponent {
 
-  evidencias = [
-    {
-      id: 1,
-      titulo: 'Proyecto de Investigación',
-      descripcion: 'Proyecto de investigación realizado en la Universidad Católica',
-      fecha: '2025-04-15'
-    },
-    {
-      id: 2,
-      titulo: 'Certificado de Curso Online',
-      descripcion: 'Certificado de curso en línea completado de Udemy',
-      fecha: '2025-03-20'
-    },
-    {
-      id: 3,
-      titulo: 'Publicación Académica',
-      descripcion: 'Artículo publicado en una revista académica',
-      fecha: '2024-11-05'
-    },
-    {
-      id: 4,
-      titulo: 'Curso de Machine Learning',
-      descripcion: 'Curso de Machine Learning completado en línea',
-      fecha: '2024-10-13'
-    }
-  ];
+  // 🚀 Ahora el portafolio viene del backend
+  @Input() data: any = null;
+
+  get evidencias() {
+    const evidencias = this.data?.evidencias ?? [];
+    console.log("📌 Evidencias recibidas en PortafolioComponent:", evidencias);
+    return evidencias;
+  }
 
   popup: 'editar' | 'eliminar' | null = null;
   seleccionada: any = null;
 
-  // abre popup vacío
   abrirAgregar() {
     this.seleccionada = null;
     this.popup = 'editar';
@@ -67,25 +48,28 @@ export class PortafolioComponent {
   }
 
   guardarEvidencia(data: any) {
+    if (!this.data) return;
+
     if (this.seleccionada) {
-      // editar
-      const idx = this.evidencias.findIndex(e => e.id === this.seleccionada.id);
-      if (idx > -1) {
-        this.evidencias[idx] = { ...this.evidencias[idx], ...data };
-      }
+      // editar evidencia existente
+      const idx = this.data.evidencias.findIndex((e: any) => e.id === this.seleccionada.id);
+      if (idx > -1) this.data.evidencias[idx] = { ...this.data.evidencias[idx], ...data };
     } else {
-      // agregar
-      this.evidencias.push({
+      // agregar nueva evidencia
+      this.data.evidencias.push({
         ...data,
-        id: Math.floor(Math.random() * 100000)
+        id: Math.floor(Math.random() * 999999)
       });
     }
+
     this.cerrarPopup();
   }
 
   confirmarEliminar() {
+    if (!this.data) return;
+
     if (this.seleccionada) {
-      this.evidencias = this.evidencias.filter(e => e.id !== this.seleccionada.id);
+      this.data.evidencias = this.data.evidencias.filter((e: any) => e.id !== this.seleccionada.id);
     }
     this.cerrarPopup();
   }
