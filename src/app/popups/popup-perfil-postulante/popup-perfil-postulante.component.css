@@ -2,7 +2,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.35);
+  background: rgba(0, 0, 0, .35);
   display: grid;
   place-items: center;
   z-index: 200;
@@ -15,8 +15,8 @@
   max-height: 90vh;
   overflow-y: auto;
   border-radius: 18px;
-  padding: 20px;
-  box-shadow: 0 12px 40px rgba(0,0,0,.15);
+  padding: 22px 26px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .15);
 }
 
 /* Header */
@@ -24,7 +24,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .popup-head h2 {
@@ -42,46 +42,62 @@
 .perfil-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 22px;
-  margin-bottom: 18px;
+  gap: 26px;
+  /* MÁS ESPACIO ENTRE LAS DOS COLUMNAS */
+  margin-bottom: 20px;
 }
 
 /* Card */
 .card {
   background: #fafafa;
-  padding: 16px;
+  padding: 20px 18px;
   border-radius: 14px;
   border: 1px solid #eee;
 }
 
+/* Títulos dentro de las cards */
 .card h3 {
   margin-top: 0;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  /* MÁS ESPACIO DE RESPIRO */
 }
 
 /* Grid interior */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 16px;
+  /* MÁS ESPACIADO ENTRE CAMPOS */
 }
 
+/* Campos */
 label {
   display: flex;
   flex-direction: column;
+  gap: 6px;
+  /* SEPARA LABEL DE INPUT */
+  margin-bottom: 6px;
+  /* SEPARA CADA BLOQUE */
 }
 
 label span {
-  font-size: 0.85rem;
-  color: #555;
-  margin-bottom: 3px;
+  font-size: 0.9rem;
+  color: #444;
 }
 
-input, textarea {
+/* Inputs */
+input,
+textarea {
   border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 8px;
+  border-radius: 10px;
+  padding: 10px 12px;
   background: #fff;
+  font-size: 0.9rem;
+}
+
+textarea {
+  min-height: 65px;
+  resize: vertical;
 }
 
 /* Campo que ocupa toda la fila */
@@ -89,31 +105,101 @@ label.full {
   grid-column: span 2;
 }
 
-/* Evidencias */
+/* Separadores / Subtítulos */
 .ev-title {
-  margin-top: 18px;
-  margin-bottom: 8px;
+  margin-top: 22px;
+  /* MUCHO MÁS AIRE */
+  margin-bottom: 12px;
+  font-weight: 600;
 }
 
+/* Evidencias */
 .ev {
   background: white;
-  border-radius: 10px;
-  padding: 10px;
+  border-radius: 12px;
+  padding: 14px 16px;
   border: 1px solid #eee;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
+  /* SEPARACIÓN ENTRE EVIDENCIAS */
 }
 
 /* Botón cerrar */
 .popup-actions {
   text-align: right;
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
 .btn {
   background: #ebebeb;
   border: none;
-  padding: 8px 18px;
+  padding: 8px 20px;
   border-radius: 20px;
   cursor: pointer;
   font-weight: 500;
+}
+
+/* POPUP SIN SCROLL, MÁS HORIZONTAL, TODO EN PANTALLA */
+:host ::ng-deep .popup {
+  width: 85vw !important;       /* ancho real grande */
+  max-width: 1100px !important; /* límite perfecto */
+  height: auto !important;      /* NO forzar altura */
+  max-height: none !important;  /* evita scroll vertical */
+  overflow: visible !important; /* ADIÓS scroll */
+  padding: 24px 30px !important;
+  border-radius: 18px !important;
+}
+
+/* DOS COLUMNAS MÁS AMPLIAS PARA QUE TODO ENTRE */
+:host ::ng-deep .perfil-grid {
+  display: grid !important;
+  grid-template-columns: 1.1fr 0.9fr !important; /* izquierda más grande */
+  gap: 28px !important;
+}
+
+/* CARDS MÁS COMPACTAS */
+:host ::ng-deep .card {
+  padding: 18px 20px !important;
+  background: #fafafa !important;
+  border-radius: 14px !important;
+  border: 1px solid #eee !important;
+}
+
+/* CAMPOS MÁS COMPACTOS ENTRE SÍ */
+:host ::ng-deep .grid label {
+  margin-bottom: 10px !important;
+}
+
+/* Inputs con tamaño cómodo */
+:host ::ng-deep input,
+:host ::ng-deep textarea {
+  padding: 8px 10px !important;
+  font-size: 0.88rem !important;
+}
+
+/* Evidencias más compactas para que no estiren la pantalla */
+:host ::ng-deep .ev {
+  padding: 10px 12px !important;
+  margin-bottom: 10px !important;
+}
+
+/* POPUP MÁS CHICO PERO HORIZONTAL Y SIN SCROLL */
+:host ::ng-deep .popup {
+  width: 70vw !important;        /* antes 85vw */
+  max-width: 900px !important;   /* antes 1100px */
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 24px 28px !important;
+  border-radius: 18px !important;
+}
+
+/* Mantener dos columnas sin desbordar */
+:host ::ng-deep .perfil-grid {
+  grid-template-columns: 1fr 1fr !important;
+  gap: 24px !important;
+}
+
+/* Cards compactas */
+:host ::ng-deep .card {
+  padding: 16px 18px !important;
 }

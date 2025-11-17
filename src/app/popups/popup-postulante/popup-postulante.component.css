@@ -14,13 +14,13 @@
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 14px 40px rgba(15, 23, 42, 0.15);
-  padding: 1.7rem 2rem 1.3rem;
+  padding: 1.9rem 2rem 1.6rem;
   min-width: 520px;
   max-width: 1100px;
 }
 
 .popup h2 {
-  margin: 0 0 1rem;
+  margin: 0 0 1.2rem;
   font-size: 1.25rem;
   font-weight: 700;
 }
@@ -29,10 +29,10 @@
 .lista-postulantes {
   list-style: none;
   padding: 0;
-  margin: 0 0 1.4rem 0;
+  margin: 0 0 1.6rem 0;
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.8rem;
 }
 
 .postulante-item {
@@ -86,7 +86,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.1rem;
+  margin-bottom: 1.3rem;
 }
 
 .close-icon {
@@ -99,58 +99,70 @@
   cursor: pointer;
 }
 
+/* GRID PRINCIPAL */
 .perfil-grid {
   display: grid;
   grid-template-columns: 1.03fr 0.97fr;
-  gap: 1.1rem;
+  gap: 1.5rem; /* ← MÁS SEPARACIÓN ENTRE LAS DOS COLUMNAS */
 }
 
+/* CARD */
 .card {
   background: #fff;
   border: 1px solid #edf0f4;
   border-radius: 16px;
-  padding: 1rem 1rem 1.1rem;
+  padding: 1.2rem 1.2rem 1.25rem;
 }
 
 .card h3 {
   margin-top: 0;
-  margin-bottom: 0.8rem;
+  margin-bottom: 1rem; /* ← MÁS ESPACIO DE RESPIRO */
 }
 
+/* CAMPOS */
 .grid-fields {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.6rem 0.6rem;
-  margin-bottom: 1rem;
+  gap: 0.9rem 1rem;  /* ← MÁS ESPACIO ENTRE INPUTS */
+  margin-bottom: 1.2rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* ← ESPACIO ENTRE label Y input */
 }
 
 label span {
   display: block;
-  font-size: 0.65rem;
+  font-size: 0.70rem;
   font-weight: 600;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
 }
 
+/* INPUTS */
 input,
 textarea {
   width: 100%;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 0.3rem 0.4rem;
-  font-size: 0.75rem;
+  border-radius: 10px; /* ← más redondeado y lindo */
+  padding: 0.45rem 0.6rem; /* ← MÁS ESPACIO INTERNO */
+  font-size: 0.82rem;
 }
 
 textarea {
   resize: none;
+  min-height: 60px; /* ← MÁS ALTO */
 }
 
+/* PROGRESO */
 .mini-progress {
-  margin-top: 0.6rem;
+  margin-top: 1rem;
 }
 
 .mini-progress p {
-  margin: 0 0 0.4rem;
+  margin: 0 0 0.5rem;
 }
 
 .mini-progress .circle {
@@ -163,16 +175,20 @@ textarea {
   font-weight: 700;
 }
 
+/* SUBTÍTULOS */
 .sub {
-  margin-top: 1.1rem;
-  margin-bottom: 0.45rem;
+  margin-top: 1.4rem;   /* ← MÁS ESPACIO ENTRE SECCIONES */
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+  font-size: 0.95rem;
 }
+
 
 .evidencia {
   background: #f5f6fa;
   border-radius: 12px;
-  padding: 0.55rem 0.6rem;
-  margin-bottom: 0.45rem;
+  padding: 0.75rem 0.8rem;
+  margin-bottom: 0.7rem;
 }
 
 .evidencia h5 {
@@ -180,12 +196,68 @@ textarea {
 }
 
 .evidencia p {
-  margin: 0.18rem 0;
-  font-size: 0.74rem;
+  margin: 0.28rem 0;
+  font-size: 0.78rem;
   color: #4b5563;
 }
 
 .evidencia small {
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   color: #6b7280;
+}
+
+.card label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.card input,
+.card textarea {
+  width: 100%;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.82rem;
+}
+
+.card .sub {
+  margin-top: 20px !important;
+  margin-bottom: 10px !important;
+}
+
+.evidencia {
+  margin-bottom: 14px !important;
+  padding: 0.75rem !important;
+}
+
+/* ========================
+   ACHICAR POPUP COMPLETO
+   ======================== */
+
+/* Reduce el ancho máximo */
+.popup.popup-detalle {
+  max-width: 900px !important;   /* antes 1100px */
+  width: 90vw;                   /* adaptable sin romper */
+  padding: 1.6rem 1.8rem !important;
+}
+
+/* Reducir separación de columnas para que entre mejor */
+.perfil-grid {
+  grid-template-columns: 1fr 1fr !important;
+  gap: 0.9rem !important;
+}
+
+/* Ajuste de cards internas para que no se estiren demasiado */
+.card {
+  padding: 0.9rem 0.9rem 1rem !important;
+}
+
+/* Inputs más compactos (el tamaño visual sigue igual) */
+.card input,
+.card textarea {
+  font-size: 0.78rem !important;
+  padding: 0.35rem 0.5rem !important;
 }
