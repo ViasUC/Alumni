@@ -88,6 +88,20 @@
             />
           </div>
 
+        <!-- Rol -->
+        <label class="lbl">Rol</label>
+        <div class="input underline">
+          <span class="icon">🎓</span>
+          <select [(ngModel)]="rol">
+            <option value="" disabled selected>Seleccionar rol</option>
+            <option value="alumno">Alumno</option>
+            <option value="profesor">Profesor</option>
+            <option value="egresado">Egresado</option>
+            <option value="empresa">Empresa</option>
+          </select>
+        </div>
+
+
           <button class="btn-primary" type="submit">Registrarme</button>
 
           <p *ngIf="errorMsg" class="error">{{ errorMsg }}</p>

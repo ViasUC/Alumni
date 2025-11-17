@@ -19,6 +19,7 @@ throw new Error('Method not implemented.');
   apellido = '';
   email = '';
   password = '';
+  rol: string = '';
   errorMsg = '';
 
   registrar() {
@@ -26,7 +27,8 @@ throw new Error('Method not implemented.');
       nombre: this.nombre,
       apellido: this.apellido,
       email: this.email,
-      password: this.password
+      password: this.password,
+      rol: this.rol
     });
   }
 }

@@ -151,3 +151,13 @@
   .grid { grid-template-columns: 1fr; }
   .hero-img { max-width: 360px; }
 }
+
+.input select {
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 6px 2px;
+  font-size: 15px;
+  width: 100%;
+  color: #333;
+}
