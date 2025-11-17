@@ -1,41 +1,21 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PanelListaComponent } from '../shared/panel-lista/panel-lista.component';
+import { HttpClient } from '@angular/common/http';
 
-// popups que ya tenés
-import { PopupConfirmarComponent } from '../popups/popup-confirmar/popup-confirmar.component';
+// panel y popups
+import { PanelListaComponent } from '../shared/panel-lista/panel-lista.component';
 import { PopupDetalleComponent } from '../popups/popup-detalle/popup-detalle.component';
 import { PopupEditarComponent } from '../popups/popup-editar/popup-editar.component';
 import { PopupEliminarComponent } from '../popups/popup-eliminar/popup-eliminar.component';
 import { PopupPostulanteComponent } from '../popups/popup-postulante/popup-postulante.component';
-
-interface Oportunidad {
-  id: number;
-  titulo: string;
-  descripcion: string;
-  ubicacion?: string;
-  modalidad?: string;
-  fechaPublicacion: string;
-  estado: 'activa' | 'cerrada' | 'borrador';
-  creadaPorUsuario: boolean;
-  postulantes?: any[];
-}
-
-interface Postulacion {
-  id: number;
-  oportunidadTitulo: string;
-  descripcion?: string;
-  ubicacion?: string;
-  modalidad?: string;
-  fechaPostulacion: string;
-  // 👇 ahora solo estos dos estados
-  estado: 'activa' | 'cerrada';
-}
+import { PopupConfirmarComponent } from '../popups/popup-confirmar/popup-confirmar.component';
 
 @Component({
   selector: 'app-mi-actividad',
   standalone: true,
+  templateUrl: './mi-actividad.component.html',
+  styleUrls: ['./mi-actividad.component.css'],
   imports: [
     CommonModule,
     FormsModule,
@@ -45,120 +25,234 @@ interface Postulacion {
     PopupEliminarComponent,
     PopupPostulanteComponent,
     PopupConfirmarComponent
-],
-  templateUrl: './mi-actividad.component.html',
-  styleUrls: ['./mi-actividad.component.css'],
+  ]
 })
 export class MiActividadComponent {
-  popup: '' | 'detalle' | 'editar' | 'eliminar' | 'postulante' | 'confirmar' = '';
-  seleccionada: any = null;
-  // 👇 para saber si estoy eliminando una oportunidad mía o despostulando
-  motivoPopup: 'eliminarOportunidad' | 'despostular' | null = null;
 
-  // filtros
+  popup: any = '';
+  motivoPopup: any = null;
+  seleccionada: any = null;
+
   filtroFechaOpo = '';
   filtroEstadoOpo = 'todas';
+
   filtroFechaPost = '';
-  filtroEstadoPost = 'todas'; // 👈 ahora matchea con activa/cerrada
+  filtroEstadoPost = 'todas';
 
-  // SOLO las oportunidades que yo creé
-  misOportunidades: Oportunidad[] = [
-    {
-      id: 1,
-      titulo: 'Asistente de Laboratorio UCA',
-      descripcion: 'Soporte técnico en laboratorios de la FACYT.',
-      ubicacion: 'Campus UCA',
-      modalidad: 'Presencial',
-      fechaPublicacion: '2025-11-03',
-      estado: 'activa',
-      creadaPorUsuario: true,
-      postulantes: [
-        { id: 101, nombre: 'María Fernández', fechaPostulacion: '05 nov. 2025' },
-        { id: 102, nombre: 'Carlos López', fechaPostulacion: '04 nov. 2025' },
-      ],
-    },
-    {
-      id: 2,
-      titulo: 'Programa Alumni - Mentorías',
-      descripcion: 'Mentorías para alumnos de informática.',
-      ubicacion: 'Asunción',
-      modalidad: 'Híbrido',
-      fechaPublicacion: '2025-10-20',
-      estado: 'cerrada',
-      creadaPorUsuario: true,
-      postulantes: [],
-    },
-  ];
+  oportunidades: any[] = [];
+  misOportunidades: any[] = [];
+  misPostulaciones: any[] = [];
 
-  // SOLO las oportunidades externas a las que me postulé
-  misPostulaciones: Postulacion[] = [
-    {
-      id: 10,
-      oportunidadTitulo: 'Pasantía en Geocom',
-      descripcion: 'Programa de pasantías para estudiantes de informática.',
-      ubicacion: 'Asunción',
-      modalidad: 'Presencial',
-      fechaPostulacion: '2025-11-04',
-      estado: 'activa',
-    },
-    {
-      id: 11,
-      oportunidadTitulo: 'Proyecto de Innovación FACYT',
-      descripcion: 'Proyecto temporal en el área de innovación.',
-      ubicacion: 'Remoto',
-      modalidad: 'Remoto',
-      fechaPostulacion: '2025-10-15',
-      estado: 'cerrada',
-    },
-  ];
+  constructor(private http: HttpClient) {}
 
-  // ====== getters con filtros ======
-  get oportunidadesFiltradas(): Oportunidad[] {
-    return this.misOportunidades.filter((op) => {
-      const okFecha =
-        !this.filtroFechaOpo || op.fechaPublicacion === this.filtroFechaOpo;
-      const okEstado =
-        this.filtroEstadoOpo === 'todas' || op.estado === this.filtroEstadoOpo;
-      return okFecha && okEstado;
+  // =====================================================
+  // INIT
+  // =====================================================
+  ngOnInit() {
+    console.log("🔥 MI ACTIVIDAD INIT");
+    this.cargarTodo();
+  }
+
+  cargarTodo() {
+    const usuarioStr = localStorage.getItem("usuario");
+    const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
+
+    const idUsuario = Number(
+      usuario?.idUsuario ?? usuario?.idusuario ?? usuario?.id
+    );
+
+    this.cargarOportunidades(idUsuario);
+  }
+
+  // =====================================================
+  // CARGAR OPORTUNIDADES (MISMAS QUE OPORTUNIDADES.TS)
+  // =====================================================
+  cargarOportunidades(idUsuario: number) {
+
+    const query = `
+      query {
+        oportunidades {
+          idOportunidad
+          idCreador
+          titulo
+          descripcion
+          requisitos
+          ubicacion
+          modalidad
+          tipo
+          fechaPublicacion
+          fechaCierre
+          estado
+        }
+      }
+    `;
+
+    this.http.post<any>("http://localhost:8080/graphql", { query })
+      .subscribe({
+        next: (res) => {
+
+          const lista = res.data?.oportunidades ?? [];
+
+          this.oportunidades = lista.map((op: any) => ({
+            ...op,
+            id: op.idOportunidad,
+            creadaPorUsuario: Number(op.idCreador) === Number(idUsuario),
+            postulado: false
+          }));
+
+          this.marcarPostulaciones(idUsuario);
+        },
+        error: err => console.error("❌ Error cargando oportunidades:", err)
+      });
+  }
+
+  // =====================================================
+  // MARCAR POSTULACIONES → MISMO CÓDIGO QUE OPORTUNIDADES.TS
+  // =====================================================
+  marcarPostulaciones(idUsuario: number) {
+
+    const query = `
+      query ($idUsuario: Int!) {
+        postulacionesPorUsuario(idUsuario: $idUsuario) {
+          idOportunidad
+          fechaPostulacion
+        }
+      }
+    `;
+
+    this.http.post<any>("http://localhost:8080/graphql", {
+      query,
+      variables: { idUsuario }
+    })
+    .subscribe(resp => {
+
+      const userPosts = resp.data?.postulacionesPorUsuario ?? [];
+
+      // marcar postulado dentro de la lista
+      this.oportunidades = this.oportunidades.map(op => ({
+        ...op,
+        postulado: userPosts.some((p: any) =>
+          Number(p.idOportunidad) === Number(op.idOportunidad)
+        )
+      }));
+
+      // separar las que yo creé
+      this.misOportunidades = this.oportunidades.filter(
+        op => op.creadaPorUsuario
+      );
+
+      // separar las que yo postulé
+      this.misPostulaciones = this.oportunidades
+        .filter(op => op.postulado && !op.creadaPorUsuario)
+        .map(op => ({
+          id: op.idOportunidad,
+          idOportunidad: op.idOportunidad,
+          oportunidadTitulo: op.titulo,
+          descripcion: op.descripcion,
+          ubicacion: op.ubicacion,
+          modalidad: op.modalidad,
+          fechaPostulacion:
+            userPosts.find((p: any) =>
+              Number(p.idOportunidad) === Number(op.idOportunidad)
+            )?.fechaPostulacion ?? "",
+          estado: op.estado?.toLowerCase() ?? "activo"
+        }));
     });
   }
 
-  get postulacionesFiltradas(): Postulacion[] {
-    return this.misPostulaciones.filter((p) => {
-      const okFecha =
-        !this.filtroFechaPost || p.fechaPostulacion === this.filtroFechaPost;
-      const okEstado =
-        this.filtroEstadoPost === 'todas' || p.estado === this.filtroEstadoPost;
-      return okFecha && okEstado;
+  // =====================================================
+  // FILTROS
+  // =====================================================
+  get oportunidadesFiltradas() {
+    return this.misOportunidades.filter(op => {
+      const f1 = !this.filtroFechaOpo ||
+                 op.fechaPublicacion?.startsWith(this.filtroFechaOpo);
+      const f2 = this.filtroEstadoOpo === 'todas' ||
+                 op.estado === this.filtroEstadoOpo;
+      return f1 && f2;
     });
   }
 
-  // ====== acciones oportunidades ======
-  editarOportunidad(op: Oportunidad) {
-    this.seleccionada = { ...op };
+  get postulacionesFiltradas() {
+    return this.misPostulaciones.filter(p => {
+      const f1 = !this.filtroFechaPost ||
+                 p.fechaPostulacion?.startsWith(this.filtroFechaPost);
+      const f2 = this.filtroEstadoPost === 'todas' ||
+                 p.estado === this.filtroEstadoPost;
+      return f1 && f2;
+    });
+  }
+
+  // =====================================================
+  // ACCIONES POPUP
+  // =====================================================
+  editarOportunidad(op: any) {
+    this.seleccionada = op;
     this.popup = 'editar';
   }
 
-  eliminarOportunidad(op: Oportunidad) {
+  eliminarOportunidad(op: any) {
     this.seleccionada = op;
     this.motivoPopup = 'eliminarOportunidad';
     this.popup = 'eliminar';
   }
 
-  abrirPostulantes(op: Oportunidad) {
+  abrirPostulantes(op: any) {
     this.seleccionada = op;
     this.popup = 'postulante';
   }
 
-  // ====== acciones postulaciones ======
-  despostularPostulacion(p: Postulacion) {
-    // en vez de borrar al toque, mostramos confirmación
-    this.seleccionada = p;
-    this.motivoPopup = 'despostular';
-    this.popup = 'eliminar';
-  }
+despostularPostulacion(p: any) {
 
-  verDetallePostulacion(p: Postulacion) {
+  console.log("🔴 DESPOSTULAR → postulacion", p);
+
+  const usuarioStr = localStorage.getItem("usuario");
+  const user = usuarioStr ? JSON.parse(usuarioStr) : null;
+  const idUsuario = Number(user?.idUsuario);
+
+  const mutation = `
+    mutation ($idPostulante: Int!, $idOportunidad: Int!) {
+      eliminarPostulacion(
+        idPostulante: $idPostulante,
+        idOportunidad: $idOportunidad
+      )
+    }
+  `;
+
+  const variables = {
+    idPostulante: idUsuario,
+    idOportunidad: Number(p.id)
+  };
+
+  fetch("http://localhost:8080/graphql", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: mutation, variables })
+  })
+    .then(r => r.json())
+    .then(res => {
+
+      console.log("🟢 RESPUESTA DESPOSTULAR:", res);
+
+      if (res.data?.eliminarPostulacion) {
+
+        console.log("✔ DESPOSTULADO!");
+
+        // 🔥 Solo eliminamos esa una
+        this.misPostulaciones = this.misPostulaciones.filter(
+          x => x.id !== p.id
+        );
+
+        // 🔥 Recargar solo postulaciones SIN romper nada
+        this.marcarPostulaciones(idUsuario);
+      }
+    })
+    .catch(err => console.error("❌ Error despostulando:", err));
+}
+
+
+
+  verDetallePostulacion(p: any) {
     this.seleccionada = {
       titulo: p.oportunidadTitulo,
       descripcion: p.descripcion,
@@ -166,54 +260,146 @@ export class MiActividadComponent {
       modalidad: p.modalidad,
       fecha: p.fechaPostulacion,
       estado: p.estado,
-      soloLectura: true, // 👈 así el popup no muestra "Postular"
+      soloLectura: true
     };
     this.popup = 'detalle';
   }
 
-  // ====== popups comunes ======
   cerrarPopup() {
     this.popup = '';
-    this.seleccionada = null;
     this.motivoPopup = null;
+    this.seleccionada = null;
   }
 
-  guardarOportunidad(data: any) {
-    if (!data) {
+guardarOportunidad(form: any) {
+
+  console.log("============== GUARDAR OPORTUNIDAD (MI ACTIVIDAD) ==============");
+  console.log("🟦 Form enviado:", form);
+  console.log("🟦 Seleccionada:", this.seleccionada);
+
+  // Mutation EDITAR
+  const editarMutation = `
+    mutation Editar(
+      $idOportunidad: Int!,
+      $idCreador: Int!,
+      $titulo: String!,
+      $descripcion: String!,
+      $requisitos: String!,
+      $ubicacion: String!,
+      $modalidad: String!,
+      $tipo: String!,
+      $fechaCierre: String,
+      $estado: String!
+    ) {
+      actualizarOportunidad(
+        idOportunidad: $idOportunidad,
+        idCreador: $idCreador,
+        titulo: $titulo,
+        descripcion: $descripcion,
+        requisitos: $requisitos,
+        ubicacion: $ubicacion,
+        modalidad: $modalidad,
+        tipo: $tipo,
+        fechaCierre: $fechaCierre,
+        estado: $estado
+      ) {
+        idOportunidad
+      }
+    }
+  `;
+
+  // ID del usuario actual
+  const usuarioStr = localStorage.getItem("usuario");
+  const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
+  const idUsuarioActual = Number(usuario?.idUsuario);
+
+  // Variables
+  const variables = {
+    idOportunidad: Number(this.seleccionada.idOportunidad),
+    idCreador: idUsuarioActual,
+    titulo: form.titulo,
+    descripcion: form.descripcion,
+    requisitos: form.requisitos,
+    ubicacion: form.ubicacion,
+    modalidad: form.modalidad,
+    tipo: form.tipo,
+    fechaCierre: form.fechaCierre ? form.fechaCierre + "T00:00:00" : null,
+    estado: form.estado
+  };
+
+  console.log("🟧 MUTATION ENVIADA:", editarMutation);
+  console.log("🟧 VARIABLES:", variables);
+
+  // Enviar al servidor
+  fetch("http://localhost:8080/graphql", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: editarMutation, variables })
+  })
+    .then(r => r.json())
+    .then(res => {
+
+      console.log("🟥 RESPUESTA EDITAR:", res);
+
+      if (res.errors) {
+        console.error("❌ Error GraphQL:", res.errors);
+        return;
+      }
+
+      // Recargar todo para que refleje en UI
+      this.cargarTodo();
+
       this.cerrarPopup();
-      return;
-    }
+    })
+    .catch(err => console.error("❌ Error editando:", err));
+}
 
-    if (data.estado) {
-    data.estado = data.estado.toLowerCase();
-    }
-
-    const idx = this.misOportunidades.findIndex((o) => o.id === data.id);
-    if (idx !== -1) {
-      this.misOportunidades[idx] = {
-        ...this.misOportunidades[idx],
-        ...data,
-      };
-    }
-
-    this.cerrarPopup();
-  }
 
   confirmarEliminar() {
-    // eliminar una oportunidad mía
-    if (this.motivoPopup === 'eliminarOportunidad' && this.seleccionada) {
-      this.misOportunidades = this.misOportunidades.filter(
-        (o) => o.id !== this.seleccionada.id
-      );
-    }
 
-    // despostularme de una externa
-    if (this.motivoPopup === 'despostular' && this.seleccionada) {
-      this.misPostulaciones = this.misPostulaciones.filter(
-        (p) => p.id !== this.seleccionada.id
-      );
-    }
+  const id = Number(this.seleccionada?.idOportunidad);
 
-    this.cerrarPopup();
+  console.log("🗑️ ID capturado para eliminar:", id);
+
+  if (!id) {
+    console.error("❌ ERROR: idOportunidad inválido o undefined");
+    return;
   }
+
+  const mutation = `
+    mutation Eliminar($idOportunidad: Int!) {
+      eliminarOportunidad(idOportunidad: $idOportunidad)
+    }
+  `;
+
+  const variables = { idOportunidad: id };
+
+  console.log("📤 Enviando DELETE:", variables);
+
+  fetch("http://localhost:8080/graphql", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: mutation, variables })
+  })
+    .then(r => r.json())
+    .then(res => {
+
+      console.log("📥 RESPUESTA DELETE:", res);
+
+      if (res.errors) {
+        console.error("❌ Error GraphQL:", res.errors);
+        return;
+      }
+
+      if (res.data.eliminarOportunidad === true) {
+        console.log("✔ Eliminado correctamente");
+        this.cargarTodo();   // 🔥 recargar lista de oportunidades y postulaciones
+      } else {
+        console.warn("❗ DELETE devolvió false");
+      }
+
+      this.cerrarPopup();
+    })
+    .catch(err => console.error("❌ Error eliminando:", err));
+}
 }
