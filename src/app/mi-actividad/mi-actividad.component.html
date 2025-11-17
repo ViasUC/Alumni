@@ -1,17 +1,22 @@
+<!-- PANEL SUPERIOR -->
 <app-panel-lista activo="actividad"></app-panel-lista>
 
 <div class="mi-actividad-page">
   <h1>Mi Actividad</h1>
 
-  <!-- MIS OPORTUNIDADES (SOLO LAS QUE YO CREÉ) -->
+  <!-- =====================================================
+       SECCIÓN: MIS OPORTUNIDADES (solo las que YO creé)
+       ===================================================== -->
   <section class="panel">
     <div class="panel-head">
       <h2>Mis oportunidades</h2>
+
       <div class="filters">
         <label>
           <span>Fecha</span>
           <input type="date" [(ngModel)]="filtroFechaOpo" />
         </label>
+
         <label>
           <span>Estado</span>
           <select [(ngModel)]="filtroEstadoOpo">
@@ -24,6 +29,7 @@
       </div>
     </div>
 
+    <!-- LISTA DE OPORTUNIDADES CREADAS -->
     <div class="list" *ngIf="oportunidadesFiltradas.length; else noOpo">
       <div class="item" *ngFor="let op of oportunidadesFiltradas">
         <div class="text">
@@ -35,6 +41,7 @@
         </div>
 
         <div class="actions">
+          <!-- BADGE -->
           <span
             class="badge"
             [class.badge-green]="op.estado === 'activa'"
@@ -43,13 +50,15 @@
             {{ op.estado | uppercase }}
           </span>
 
-          <!-- como son mías: solo estas 3 -->
+          <!-- BOTONES -->
           <button class="btn-primary" (click)="editarOportunidad(op)">
             Editar
           </button>
+
           <button class="btn-danger" (click)="eliminarOportunidad(op)">
             Eliminar
           </button>
+
           <button class="btn-primary" (click)="abrirPostulantes(op)">
             Ver postulantes
           </button>
@@ -62,65 +71,80 @@
     </ng-template>
   </section>
 
-  <!-- MIS POSTULACIONES (EXTERNAS) -->
-<section class="panel">
-  <div class="panel-head">
-    <h2>Mis postulaciones</h2>
-    <div class="filters">
-      <label>
-        <span>Fecha</span>
-        <input type="date" [(ngModel)]="filtroFechaPost" />
-      </label>
-      <label>
-        <span>Estado</span>
-        <select [(ngModel)]="filtroEstadoPost">
-          <option value="todas">Todas</option>
-          <option value="activa">Activa</option>
-          <option value="cerrada">Cerrada</option>
-        </select>
-      </label>
-    </div>
-  </div>
+  <!-- =====================================================
+       SECCIÓN: MIS POSTULACIONES (oportunidades AJENAS)
+       ===================================================== -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Mis postulaciones</h2>
 
-  <div class="list" *ngIf="postulacionesFiltradas.length; else noPost">
-    <div class="item" *ngFor="let p of postulacionesFiltradas">
-      <div class="text">
-        <h3>{{ p.oportunidadTitulo }}</h3>
-        <p>Postulado el {{ p.fechaPostulacion }}</p>
-      </div>
+      <div class="filters">
+        <label>
+          <span>Fecha</span>
+          <input type="date" [(ngModel)]="filtroFechaPost" />
+        </label>
 
-      <div class="actions">
-        <span
-          class="badge"
-          [class.badge-green]="p.estado === 'activa'"
-          [class.badge-red]="p.estado === 'cerrada'"
-        >
-          {{ p.estado | titlecase }}
-        </span>
-
-        <button class="btn-danger" (click)="despostularPostulacion(p)">
-          Despostular
-        </button>
-        <button class="btn-primary" (click)="verDetallePostulacion(p)">
-          Ver detalles
-        </button>
+        <label>
+          <span>Estado</span>
+          <select [(ngModel)]="filtroEstadoPost">
+            <option value="Todas">Todas</option>
+            <option value="activo">Activo</option>
+            <option value="cerrado">Cerrado</option>
+            <option value="pausada">Pausada</option>
+            <option value="borrador">Borrador</option>
+          </select>
+        </label>
       </div>
     </div>
-  </div>
 
-  <ng-template #noPost>
-    <p class="empty">No tenés postulaciones con esos filtros.</p>
-  </ng-template>
-</section>
+    <!-- LISTA DE POSTULACIONES -->
+    <div class="list" *ngIf="postulacionesFiltradas.length; else noPost">
+      <div class="item" *ngFor="let p of postulacionesFiltradas">
+        <div class="text">
+          <h3>{{ p.oportunidadTitulo }}</h3>
+          <p>Postulado el {{ p.fechaPostulacion }}</p>
+        </div>
+
+        <div class="actions">
+          <!-- BADGE -->
+          <span
+            class="badge"
+            [class.badge-green]="p.estado === 'activa'"
+            [class.badge-red]="p.estado === 'cerrada'"
+          >
+            {{ p.estado | titlecase }}
+          </span>
+
+          <!-- BOTONES -->
+          <button class="btn-danger" (click)="despostularPostulacion(p)">
+            Despostular
+          </button>
+
+          <button class="btn-primary" (click)="verDetallePostulacion(p)">
+            Ver detalles
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noPost>
+      <p class="empty">No tenés postulaciones con esos filtros.</p>
+    </ng-template>
+  </section>
 </div>
 
-<!-- POPUPS -->
+<!-- =====================================================
+     POPUPS UNIFICADOS
+     ===================================================== -->
+
+<!-- DETALLE -->
 <app-popup-detalle
   *ngIf="popup === 'detalle'"
   [data]="seleccionada"
   (cerrar)="cerrarPopup()"
 ></app-popup-detalle>
 
+<!-- EDITAR -->
 <app-popup-editar
   *ngIf="popup === 'editar'"
   [data]="seleccionada"
@@ -128,21 +152,27 @@
   (guardar)="guardarOportunidad($event)"
 ></app-popup-editar>
 
-<app-popup-eliminar *ngIf="popup === 'eliminar'" [data]="seleccionada" [mensaje]="motivoPopup === 'despostular'
-    ? '¿Deseás despostularte de esta oportunidad?'
-    : '¿Deseás eliminar esta oportunidad?'" (cancelar)="cerrarPopup()" (eliminar)="confirmarEliminar()">
-</app-popup-eliminar>
+<!-- ELIMINAR / DESPOSTULAR -->
+<app-popup-eliminar
+  *ngIf="popup === 'eliminar'"
+  [data]="seleccionada"
+  [mensaje]="motivoPopup === 'despostular'
+      ? '¿Deseás despostularte de esta oportunidad?'
+      : '¿Deseás eliminar esta oportunidad?'"
+  (cancelar)="cerrarPopup()"
+  (eliminar)="confirmarEliminar()"
+></app-popup-eliminar>
 
-
+<!-- POSTULANTES -->
 <app-popup-postulante
   *ngIf="popup === 'postulante'"
   [data]="seleccionada"
   (cerrar)="cerrarPopup()"
 ></app-popup-postulante>
 
+<!-- CONFIRMAR -->
 <app-popup-confirmar
   *ngIf="popup === 'confirmar'"
   (cancelar)="cerrarPopup()"
   (guardar)="cerrarPopup()"
 ></app-popup-confirmar>
-
