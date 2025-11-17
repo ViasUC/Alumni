@@ -208,7 +208,7 @@ export class RedPersonalComponent implements OnInit {
           titulo: du.egresadoData?.titulo ?? "-",
           anioEgreso: du.egresadoData?.anioEgreso ?? "-",
           rol: du.rolPrincipal,
-          descripcion: du.adminData?.descripcion ?? "-",
+          descripcion: dp?.descripcion ?? "-",
           skills: dp?.skills ?? "-",
           visibilidad: dp?.visibilidad ?? "-",
           ultimaActualizacion: dp?.ultimaActualizacion ?? "-",

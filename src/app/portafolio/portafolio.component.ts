@@ -11,10 +11,8 @@ import { PopupEliminarComponent } from '../popups/popup-eliminar/popup-eliminar.
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
-    PopupEditarComponent,
-    PopupEliminarComponent
-  ],
+    RouterLink
+],
   templateUrl: './portafolio.component.html',
   styleUrls: ['./portafolio.component.css']
 })
