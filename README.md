@@ -59,6 +59,37 @@ Perfil
 - Evidencias vinculadas
 - Indicador de completitud del perfil
 
-# Exalumnos
+# Instalación y ejecución del proyecto
 
 Este proyecto utiliza la version 19.1.8 de Angular .
+
+1. Clonar el repositorio
+
+Descargar el proyecto desde Git ejecutando el comando:
+git clone https://github.com/ViasUC/Alumni.git
+
+Y luego ingresar a la carpeta del proyecto.
+
+2. Instalar dependencias
+
+Para instalar todas las dependencias necesarias, ejecutar:
+npm install
+
+Esto descargará los módulos que utiliza Angular y dejará el proyecto listo para ejecutarse.
+
+3. Ejecutar servidor de desarrollo
+
+Para iniciar la aplicación en modo desarrollo, ejecutar:
+ng serve -o
+
+Esto compila el proyecto y abre automáticamente la aplicación en el navegador en la dirección http://localhost:4200/.
+Cada vez que se modifique un archivo y guardarlo (Control S), la app se recargará automáticamente.
+
+
+4. Requisitos previos
+
+Antes de ejecutar el proyecto es necesario tener instalado:
+
+Node.js versión 18 o superior
+
+Angular CLI instalado globalmente mediante: npm install -g @angular/cli
