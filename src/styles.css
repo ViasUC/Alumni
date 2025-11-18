@@ -120,6 +120,18 @@ mat-icon,
   cursor: not-allowed !important;
 }
 
+.btn-connected2 {
+  background: #1e8b47 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 999px !important;
+  padding: 0.55rem 1.35rem !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+  cursor: pointer !important;
+}
+
 .btn-disabled {
   background: #91969d !important;
   color: #fff !important;

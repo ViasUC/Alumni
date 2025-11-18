@@ -92,7 +92,7 @@
         <label class="lbl">Rol</label>
         <div class="input underline">
           <span class="icon">🎓</span>
-          <select [(ngModel)]="rol">
+          <select [(ngModel)]="rol" name="rol" required>
             <option value="" disabled selected>Seleccionar rol</option>
             <option value="alumno">Alumno</option>
             <option value="profesor">Profesor</option>
@@ -100,12 +100,13 @@
             <option value="empresa">Empresa</option>
           </select>
         </div>
-
-
           <button class="btn-primary" type="submit">Registrarme</button>
 
           <p *ngIf="errorMsg" class="error">{{ errorMsg }}</p>
-        </form>
+          </form>
+          <app-popup-registrar *ngIf="mostrarPopup" (aceptar)="cerrarPopupYAbrirLogin()">
+          </app-popup-registrar>
+
       </section>
 
       <!-- PANEL DERECHO HERO -->
