@@ -92,4 +92,10 @@ Antes de ejecutar el proyecto es necesario tener instalado:
 
 Node.js versión 18 o superior
 
+- Verificar si tienes esto ejecutando desde la consola: node -v npm -v
+- Si no tienes instalado:
+- Descarga recomendada: https://nodejs.org
+- Versión sugerida: Node.js 18.x o superior
+- npm se instala automáticamente con Node.js
+
 Angular CLI instalado globalmente mediante: npm install -g @angular/cli
