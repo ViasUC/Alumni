@@ -8,12 +8,14 @@ import { PopupPerfilPostulanteComponent } from '../popups/popup-perfil-postulant
 import { PanelListaComponent } from '../shared/panel-lista/panel-lista.component';
 
 interface UsuarioMini {
+  idUsuario(idUsuario: any): boolean;
   id: number;
   nombre: string;
   rol: string;
   carrera?: string;
   ubicacion?: string;
   endorsed?: boolean;
+  
 }
 
 interface SolicitudPendiente {
@@ -47,6 +49,7 @@ export class RedPersonalComponent implements OnInit {
 
   endorsementsRecibidos: any[] = [];
   endorsementsRealizados: any[] = [];
+todosLosUsuarios: any[] = [];   // ⭐ AGREGAR ESTO AQUÍ
 
   abrirPopup = false;
   popup: '' | 'eliminarEndorse' | 'perfilCompleto' | 'perfilBasico' = '';
@@ -112,6 +115,8 @@ export class RedPersonalComponent implements OnInit {
 
       const conexiones = resConex.data?.conexionesPorUsuario ?? [];
       const usuarios = resUsers.data?.usuarios ?? [];
+      this.todosLosUsuarios = usuarios;   // ⭐ NECESARIO PARA MOSTRAR LOS NOMBRES
+
       const pendientes = resPend.data?.solicitudesPendientes ?? [];
 
       const ids = new Set<number>();
@@ -145,9 +150,84 @@ export class RedPersonalComponent implements OnInit {
           ubicacion: origen?.ubicacion ?? "—",
         };
       });
+this.cargarEndorsements();
 
     });
   }
+yaEndorseado(idUsuario: number): boolean {
+  return this.endorsementsRealizados.some(e => e.idUsuarioReceptor === idUsuario);
+}
+cargarEndorsements() {
+  const qr = `
+    query($id: Int!) {
+      endorsementsRealizados(id: $id) {
+        idEndorsement
+        idUsuarioReceptor
+        fechaEndorsement
+      }
+    }
+  `;
+
+  const qrec = `
+    query($id: Int!) {
+      endorsementsRecibidos(id: $id) {
+        idEndorsement
+        idUsuarioEmisor
+        fechaEndorsement
+      }
+    }
+  `;
+
+  Promise.all([
+    this.http.post<any>("http://localhost:8080/graphql", {
+      query: qr,
+      variables: { id: this.idLogueado }
+    }).toPromise(),
+
+    this.http.post<any>("http://localhost:8080/graphql", {
+      query: qrec,
+      variables: { id: this.idLogueado }
+    }).toPromise()
+  ]).then(([real, rec]) => {
+
+    // Guardamos los arrays crudos primero (NECESARIO PARA LO VERDE)
+    const realizadosRaw = real.data?.endorsementsRealizados ?? [];
+    const recibidosRaw  = rec.data?.endorsementsRecibidos ?? [];
+
+    // Guardamos los crudos para marcar lo verde
+    this.endorsementsRealizados = realizadosRaw;
+    this.endorsementsRecibidos  = recibidosRaw;
+
+    // ⭐ IMPORTANTE: marcar lo verde ANTES del merge
+    this.marcarEndorseados();
+
+    // Obtener nombres de todos los usuarios
+    const usuarios = this.todosLosUsuarios;
+
+    // 🎯 Ahora sí, map con nombres
+    this.endorsementsRealizados = realizadosRaw.map((e: any) => {
+      const u = usuarios.find((x: any) => Number(x.idUsuario) === Number(e.idUsuarioReceptor));
+
+      return {
+        id: e.idEndorsement,
+        nombre: u ? `${u.nombre} ${u.apellido}` : "—",
+        fecha: e.fechaEndorsement
+      };
+    });
+
+    this.endorsementsRecibidos = recibidosRaw.map((e: any) => {
+      const u = usuarios.find((x: any) => Number(x.idUsuario) === Number(e.idUsuarioEmisor));
+
+      return {
+        id: e.idEndorsement,
+        nombre: u ? `${u.nombre} ${u.apellido}` : "—",
+        fecha: e.fechaEndorsement
+      };
+    });
+
+  });
+}
+
 
   // ======================================================
   // PERFIL COMPLETO
@@ -280,24 +360,55 @@ export class RedPersonalComponent implements OnInit {
     this.usuarioSeleccionado = u;
     this.abrirPopup = true;
   }
+private marcarEndorseados() {
+  const idsEndorseados = this.endorsementsRealizados.map(e => e.idUsuarioReceptor);
+
+  this.conexiones = this.conexiones.map(c => ({
+    ...c,
+    endorsed: idsEndorseados.includes(c.id)
+  }));
+}
 
   cancelarEndorse() {
     this.abrirPopup = false;
     this.usuarioSeleccionado = null;
   }
 
-  confirmarEndorse() {
-    if (!this.usuarioSeleccionado) return;
+confirmarEndorse() {
+  if (!this.usuarioSeleccionado) return;
 
-    this.endorsementsRealizados.push({
-      id: this.usuarioSeleccionado.id,
-      nombre: this.usuarioSeleccionado.nombre,
-      fecha: new Date().toISOString().slice(0, 10)
-    });
+  const mutation = `
+    mutation($emisorId: Int!, $receptorId: Int!) {
+      crearEndorsement(emisorId: $emisorId, receptorId: $receptorId) {
+        idEndorsement
+      }
+    }
+  `;
 
-    this.usuarioSeleccionado.endorsed = true;
-    this.cancelarEndorse();
-  }
+  this.http.post<any>("http://localhost:8080/graphql", {
+    query: mutation,
+    variables: {
+      emisorId: this.idLogueado,
+      receptorId: this.usuarioSeleccionado.id   // ✔ FIX
+    }
+  }).subscribe({
+    next: () => {
+
+      this.usuarioSeleccionado!.endorsed = true;
+
+      this.endorsementsRealizados.push({
+        idUsuarioReceptor: this.usuarioSeleccionado!.id,  // ✔ FIX
+        nombre: this.usuarioSeleccionado!.nombre,
+        fecha: new Date().toISOString().slice(0,10)
+      });
+
+      this.cancelarEndorse();
+      this.cargarEndorsements();
+    }
+  });
+}
+
+
 
   // ======================================================
   // ACEPTAR / RECHAZAR SOLICITUD
@@ -336,24 +447,28 @@ export class RedPersonalComponent implements OnInit {
     this.popup = 'eliminarEndorse';
   }
 
-  eliminarEndorseConfirmado() {
-    if (!this.eliminarTarget) return;
+eliminarEndorseConfirmado() {
+  if (!this.eliminarTarget) return;
 
-    const { tipo, id } = this.eliminarTarget;
-
-    if (tipo === 'recibido') {
-      this.endorsementsRecibidos =
-        this.endorsementsRecibidos.filter(e => e.id !== id);
-    } else {
-      this.endorsementsRealizados =
-        this.endorsementsRealizados.filter(e => e.id !== id);
-
-      const idx = this.conexiones.findIndex(c => c.id === id);
-      if (idx >= 0) this.conexiones[idx].endorsed = false;
+  const mutation = `
+    mutation($id: Int!) {
+      eliminarEndorsement(id: $id)
     }
+  `;
 
-    this.cerrarPopup();
-  }
+  this.http.post("http://localhost:8080/graphql", {
+    query: mutation,
+    variables: { id: this.eliminarTarget.id }
+  }).subscribe({
+    next: () => {
+      this.cerrarPopup();
+      this.cargarEndorsements();
+      this.cargarDatos();
+    },
+    error: (err) => console.error("❌ Error eliminando endorsement:", err)
+  });
+}
+
 
   // ======================================================
   // POPUP
@@ -367,8 +482,15 @@ export class RedPersonalComponent implements OnInit {
     this.abrirPopup = false;
   }
 
-  ini(fullName: string) {
-    const p = fullName.split(" ");
-    return (p[0][0] + (p[1]?.[0] ?? "")).toUpperCase();
-  }
+  ini(fullName: string): string {
+  if (!fullName) return "";
+
+  const parts = fullName.trim().split(" ");
+
+  const first = parts[0]?.[0] ?? "";
+  const last = parts.length > 1 ? parts[parts.length - 1][0] : "";
+
+  return (first + last).toUpperCase();
+}
+
 }
