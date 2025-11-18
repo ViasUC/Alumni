@@ -1,59 +1,64 @@
+# VIAS UC – Frontend (Angular)
+
+Aplicación web desarrollada con Angular (standalone components) para gestionar perfiles, oportunidades, red personal, registro/login de usuarios y actividad.
+
+# Flujo general de la aplicación
+1. Registro de usuario
+
+El usuario completa:
+- Nombre, Apellido, Email, Contraseña, Rol (Alumno, Profesor, Egresado, Empresa)
+
+Al enviar el formulario:
+- Se valida que todos los campos estén completos
+- Se muestra un popup de confirmación
+- Al presionar Aceptar, el usuario es redirigido al Login
+
+2. Login
+- Valida credenciales
+- Si son correctas, guarda el usuario en sessionStorage
+- Redirige al Dashboard
+
+3. Navegación
+- La barra superior azul:
+- Identifica la pestaña activa según la ruta
+- Permite moverse entre:
+Oportunidades, Mi Actividad, Descubrir, Red Personal, Mi Perfil
+
+(El avatar con iniciales abre la pantalla de perfil)
+
+- Pantallas principales:
+  
+  Oportunidades
+- Crear, editar y eliminar oportunidades propias
+- Ver detalles
+- Postularse a oportunidades
+- Ver lista de postulantes mediante un popup
+- Ver perfil del postulante mediante un popup
+
+Mi Actividad
+- Muestra oportunidades creadas por el usuario (Editar, Eliminar y Ver Postulantes)
+- Muestra postulaciones realizadas (Despostular y Ver Detalles)
+- Incluye filtros por fecha y estado
+
+Descubrir
+- Lista de usuarios registrados y pendientes de registrar
+- Búsqueda por texto
+- Visualizacion de perfil de usuarios
+- Conectar, cancelar solicitud o aceptar conexión
+
+Red Personal
+- Lista de conexiones del usuario (Aqui se puede endorsear usuarios)
+- Solicitudes recibidas para conectarse entre usuarios (Aceptar o rechazar)
+- Sección de endorsements recibidos y realizados
+- Acceso a perfiles completos al conectarse con un usuario
+- Acceso a perfil basico al no estar conectado con usuario
+
+Perfil
+- Edición de datos personales
+- Visualización del portafolio
+- Evidencias vinculadas
+- Indicador de completitud del perfil
+
 # Exalumnos
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.8.
-
-## Development server
-
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Este proyecto utiliza la version 19.1.8 de Angular .
