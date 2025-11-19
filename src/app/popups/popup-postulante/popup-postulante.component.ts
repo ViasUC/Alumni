@@ -7,11 +7,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './popup-postulante.component.html',
-  styleUrls: ['./popup-postulante.component.css']
+  styleUrls: ['./popup-postulante.component.css'],
 })
 export class PopupPostulanteComponent {
-
-  @Input() data: any; 
+  @Input() data: any;
   @Output() cerrar = new EventEmitter<void>();
   @Output() verPerfil = new EventEmitter<any>();
 
@@ -23,13 +22,13 @@ export class PopupPostulanteComponent {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    console.log("📌 INIT POPUP — OPORTUNIDAD:", this.data);
+    console.log('📌 INIT POPUP — OPORTUNIDAD:', this.data);
     this.cargarPostulantes();
   }
-verPerfilCompleto(idUsuario: number) {
-  console.log("🔵 CARGANDO PERFIL COMPLETO →", idUsuario);
+  verPerfilCompleto(idUsuario: number) {
+    console.log('🔵 CARGANDO PERFIL COMPLETO →', idUsuario);
 
-  const qUsuario = `
+    const qUsuario = `
     query ($id: Int!) {
       usuarioById(id: $id) {
         idUsuario
@@ -48,7 +47,7 @@ verPerfilCompleto(idUsuario: number) {
     }
   `;
 
-  const qPortafolio = `
+    const qPortafolio = `
     query ($id: Int!) {
       portafolioPorUsuario(idUsuario: $id) {
         descripcion
@@ -65,7 +64,7 @@ verPerfilCompleto(idUsuario: number) {
     }
   `;
 
-  const qEndorsements = `
+    const qEndorsements = `
     query ($id: Int!) {
       endorsementsRecibidos(id: $id) {
         idEndorsement
@@ -75,7 +74,7 @@ verPerfilCompleto(idUsuario: number) {
     }
   `;
 
-  const qUsuarios = `
+    const qUsuarios = `
     query {
       usuarios {
         idUsuario
@@ -86,56 +85,92 @@ verPerfilCompleto(idUsuario: number) {
     }
   `;
 
-  // Ejecutar todo junto
-  Promise.all([
-    this.http.post<any>("http://localhost:8080/graphql", { query: qUsuario, variables: { id: idUsuario }}).toPromise(),
-    this.http.post<any>("http://localhost:8080/graphql", { query: qPortafolio, variables: { id: idUsuario }}).toPromise(),
-    this.http.post<any>("http://localhost:8080/graphql", { query: qEndorsements, variables: { id: idUsuario }}).toPromise(),
-    this.http.post<any>("http://localhost:8080/graphql", { query: qUsuarios }).toPromise()
-  ])
-  .then(([usr, port, endo, allUsers]) => {
+    // Ejecutar todo junto
+    Promise.all([
+      this.http
+        .post<any>('http://localhost:8080/graphql', {
+          query: qUsuario,
+          variables: { id: idUsuario },
+        })
+        .toPromise(),
+      this.http
+        .post<any>('http://localhost:8080/graphql', {
+          query: qPortafolio,
+          variables: { id: idUsuario },
+        })
+        .toPromise(),
+      this.http
+        .post<any>('http://localhost:8080/graphql', {
+          query: qEndorsements,
+          variables: { id: idUsuario },
+        })
+        .toPromise(),
+      this.http
+        .post<any>('http://localhost:8080/graphql', { query: qUsuarios })
+        .toPromise(),
+    ]).then(([usr, port, endo, allUsers]) => {
+      console.log('📌 PERFIL COMPLETO RECIBIDO:', usr);
 
-    console.log("📌 PERFIL COMPLETO RECIBIDO:", usr);
+      const usuario = usr.data?.usuarioById ?? {};
+      const portafolio = port.data?.portafolioPorUsuario ?? {};
+      const endorsements = endo.data?.endorsementsRecibidos ?? [];
+      const usuarios = allUsers.data?.usuarios ?? [];
 
-    const usuario = usr.data?.usuarioById ?? {};
-    const portafolio = port.data?.portafolioPorUsuario ?? {};
-    const endorsements = endo.data?.endorsementsRecibidos ?? [];
-    const usuarios = allUsers.data?.usuarios ?? [];
+      // Resolver nombres de emisores
+      const endorsementsInfo = endorsements.map((e: any) => {
+        const emisor = usuarios.find(
+          (u: any) => Number(u.idUsuario) === Number(e.idUsuarioEmisor)
+        );
+        return {
+          id: e.idEndorsement,
+          fecha: e.fechaEndorsement,
+          nombre: emisor ? `${emisor.nombre} ${emisor.apellido}` : '—',
+          rol: emisor?.rolPrincipal ?? '—',
+        };
+      });
 
-    // Resolver nombres de emisores
-    const endorsementsInfo = endorsements.map((e: any) => {
-      const emisor = usuarios.find(
-        (u:any) => Number(u.idUsuario) === Number(e.idUsuarioEmisor)
-      );
-      return {
-        id: e.idEndorsement,
-        fecha: e.fechaEndorsement,
-        nombre: emisor ? `${emisor.nombre} ${emisor.apellido}` : "—",
-        rol: emisor?.rolPrincipal ?? "—"
+      // Armar objeto final
+      this.postulanteSeleccionado = {
+        ...usuario,
+        tituloUniversitario: usuario.egresadoData?.titulo ?? '',
+        anioEgreso: usuario.egresadoData?.anioEgreso ?? '',
+
+        ...portafolio,
+
+        endorsements: endorsementsInfo,
       };
+
+      console.log(
+        '🟢 POSTULANTE SELECCIONADO ARMADO:',
+        this.postulanteSeleccionado
+      );
+
+      this.vistaDetalle = true;
     });
+  }
 
-    // Armar objeto final
-    this.postulanteSeleccionado = {
-      ...usuario,
-      tituloUniversitario: usuario.egresadoData?.titulo ?? "",
-      anioEgreso: usuario.egresadoData?.anioEgreso ?? "",
+  toggleDropdown(p: any) {
+    // Cerrar otros dropdowns
+    this.postulantes.forEach((x) => (x.dropdownOpen = false));
 
-      ...portafolio,
+    // Abrir/cerrar solo este
+    p.dropdownOpen = !p.dropdownOpen;
+  }
 
-      endorsements: endorsementsInfo
-    };
+  cambiarEstado(p: any, estado: string) {
+    p.estadoPostulacion = estado;
+    p.dropdownOpen = false;
 
-    console.log("🟢 POSTULANTE SELECCIONADO ARMADO:", this.postulanteSeleccionado);
+    console.log('Estado actualizado:', p.nombre, estado);
 
-    this.vistaDetalle = true;
-  });
-}
-
-
+    // Aquí podrías llamar a tu backend si querés guardar el cambio
+    // this.postulanteService.actualizarEstado(p.id, estado).subscribe(...)
+  }
   cargarPostulantes() {
-
-    console.log("📌 CARGANDO POSTULANTES → idOportunidad:", this.data.idOportunidad);
+    console.log(
+      '📌 CARGANDO POSTULANTES → idOportunidad:',
+      this.data.idOportunidad
+    );
 
     const query = `
       query ($idOportunidad: Int!) {
@@ -153,33 +188,33 @@ verPerfilCompleto(idUsuario: number) {
       }
     `;
 
-    this.http.post<any>("http://localhost:8080/graphql", {
-      query,
-      variables: { idOportunidad: Number(this.data.idOportunidad) }
-    })
-    .subscribe({
-      next: (res) => {
-        console.log("🔎 RAW GRAPHQL RESPONSE:", res);
-  if (res.errors) {
-    console.error("🛑 GRAPHQL ERROR:", res.errors);
-    console.error("🛑 GRAPHQL ERROR MESSAGE:", res.errors[0].message);
-    console.error("🛑 GRAPHQL ERROR PATH:", res.errors[0].path);
-    console.error("🛑 GRAPHQL ERROR EXT:", res.errors[0].extensions);
+    this.http
+      .post<any>('http://localhost:8080/graphql', {
+        query,
+        variables: { idOportunidad: Number(this.data.idOportunidad) },
+      })
+      .subscribe({
+        next: (res) => {
+          console.log('🔎 RAW GRAPHQL RESPONSE:', res);
+          if (res.errors) {
+            console.error('🛑 GRAPHQL ERROR:', res.errors);
+            console.error('🛑 GRAPHQL ERROR MESSAGE:', res.errors[0].message);
+            console.error('🛑 GRAPHQL ERROR PATH:', res.errors[0].path);
+            console.error('🛑 GRAPHQL ERROR EXT:', res.errors[0].extensions);
+          }
+
+          console.log('🟦 DATA:', res.data);
+          this.postulantes = res.data?.postulantesPorOportunidad ?? [];
+          console.log('📌 POSTULANTES RECIBIDOS:', this.postulantes);
+        },
+        error: (err) => console.error('❌ ERROR CARGANDO POSTULANTES:', err),
+      });
   }
 
-  console.log("🟦 DATA:", res.data);
-        this.postulantes = res.data?.postulantesPorOportunidad ?? [];
-        console.log("📌 POSTULANTES RECIBIDOS:", this.postulantes);
-      },
-      error: err => console.error("❌ ERROR CARGANDO POSTULANTES:", err)
-    });
-  }
+  verPerfilPostulante(p: any) {
+    console.log('🟦 VER PERFIL → postulante:', p);
 
-verPerfilPostulante(p: any) {
-
-  console.log("🟦 VER PERFIL → postulante:", p);
-
-const query = `
+    const query = `
   query ($idOportunidad: Int!) {
     postulantesPorOportunidad(idOportunidad: $idOportunidad) {
       idUsuario
@@ -190,7 +225,7 @@ const query = `
       ubicacion
       rolPrincipal
       fechaPostulacion
-      
+
       portafolio {
         descripcion
         skills
@@ -207,31 +242,33 @@ const query = `
   }
 `;
 
+    this.http
+      .post<any>('http://localhost:8080/graphql', {
+        query,
+        variables: { idUsuario: Number(p.idUsuario) },
+      })
+      .subscribe({
+        next: (res) => {
+          console.log('📌 RAW GRAPHQL RESPONSE:', JSON.stringify(res, null, 2));
 
-  this.http.post<any>("http://localhost:8080/graphql", {
-    query,
-    variables: { idUsuario: Number(p.idUsuario) }
-  })
-  .subscribe({
-    next: (res) => {
+          if (res.errors) {
+            console.error('🛑 GRAPHQL ERROR DETECTADO:');
+            res.errors.forEach((e: any) => console.error('🔻', e.message));
+            return;
+          }
 
-      console.log("📌 RAW GRAPHQL RESPONSE:", JSON.stringify(res, null, 2));
+          console.log(
+            '📌 PERFIL COMPLETO RECIBIDO (OK):',
+            res.data?.usuarioById
+          );
 
-      if (res.errors) {
-        console.error("🛑 GRAPHQL ERROR DETECTADO:");
-        res.errors.forEach((e: any) => console.error("🔻", e.message));
-        return;
-      }
-
-      console.log("📌 PERFIL COMPLETO RECIBIDO (OK):", res.data?.usuarioById);
-
-      this.verPerfil.emit(res.data?.usuarioById);
-    },
-    error: (err) => {
-      console.error("❌ ERROR HTTP:", err);
-    }
-  });
-}
+          this.verPerfil.emit(res.data?.usuarioById);
+        },
+        error: (err) => {
+          console.error('❌ ERROR HTTP:', err);
+        },
+      });
+  }
 
   volverALista() {
     this.vistaDetalle = false;

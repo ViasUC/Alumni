@@ -8,11 +8,8 @@
 
     <ng-container *ngIf="postulantes.length > 0; else sinPostulantes">
       <ul class="lista-postulantes">
-        <li
-          *ngFor="let p of postulantes"
-          class="postulante-item"
-          (click)="verPerfilCompleto(p.idUsuario)"
-        >
+        <li *ngFor="let p of postulantes" class="postulante-item">
+
           <div class="info">
             <div class="nombre">{{ p.nombre }} {{ p.apellido }}</div>
             <div class="fecha">
@@ -20,14 +17,46 @@
             </div>
           </div>
 
-          <button
-            class="btn-ver"
-            type="button"
-            (click)="verPerfilCompleto(p.idUsuario)"
-          >
-            Ver perfil
-          </button>
+          <div class="actions-row">
+
+            <!-- Botón Ver Perfil -->
+            <button class="btn-primary" type="button" (click)="verPerfilCompleto(p.idUsuario)">
+              Ver perfil
+            </button>
+
+            <!-- BOTÓN ESTADO + DROPDOWN -->
+            <div class="dropdown">
+              <button class="btn-estado" [ngClass]="{
+                  'btn-connected2': p.estadoPostulacion === 'Aceptado',
+                  'btn-danger': p.estadoPostulacion === 'Rechazado',
+                  'btn-amarillo': p.estadoPostulacion === 'Pendiente' || !p.estadoPostulacion
+                }" (click)="toggleDropdown(p)">
+                {{ p.estadoPostulacion || 'Pendiente' }}
+
+                <!-- FLECHA -->
+                <span class="arrow" [class.open]="p.dropdownOpen">▼</span>
+              </button>
+
+              <!-- MENÚ DESPLEGABLE -->
+              <div class="dropdown-menu" *ngIf="p.dropdownOpen">
+                <button class="btn-connected2" (click)="cambiarEstado(p,'Aceptado')">
+                  Aceptado
+                </button>
+
+                <button class="btn-danger" (click)="cambiarEstado(p,'Rechazado')">
+                  Rechazado
+                </button>
+
+                <button class="btn-amarillo" (click)="cambiarEstado(p,'Pendiente')">
+                  Pendiente
+                </button>
+              </div>
+            </div>
+
+          </div>
+
         </li>
+
       </ul>
     </ng-container>
 

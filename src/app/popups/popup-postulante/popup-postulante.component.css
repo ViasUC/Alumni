@@ -80,15 +80,7 @@
   border-color: #d5e0ff;
 }
 
-.btn-ver {
-  background: #0b63ff;
-  color: white;
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  border: none;
-  font-size: 0.75rem;
-  cursor: pointer;
-}
+
 
 /* ======================================
    GRID PRINCIPAL
@@ -192,4 +184,86 @@ h4.sub {
   .perfil-grid {
     grid-template-columns: 1fr !important;
   }
+}
+
+.actions-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Botón de estado */
+.btn-estado {
+  background: #0b63ff;
+  color: #fff;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: none;
+  font-size: 0.75rem;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Contenedor */
+.dropdown {
+  position: relative;
+}
+
+/* Menú */
+.dropdown-menu {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  padding: 6px 0;
+  box-shadow: 0 6px 18px rgba(0,0,0,.15);
+  width: 140px;
+  border: 1px solid #eee;
+  z-index: 99999;
+}
+
+.dropdown-menu li {
+  list-style: none;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 0.83rem;
+  color: #333;
+}
+
+.dropdown-menu li:hover {
+  background: #eaf1ff;
+}
+
+.arrow {
+  transition: transform 0.2s ease;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.arrow.open {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.10);
+  z-index: 10;
+}
+
+.dropdown-item {
+  width: 140px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  text-align: center;
+  cursor: pointer;
+  border: none;
 }
