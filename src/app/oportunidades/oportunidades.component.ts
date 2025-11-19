@@ -180,6 +180,28 @@ this.cargarPostulacionesUsuario().subscribe((resp: any) => {
   });
 
   console.log("📌 LISTA DE OPORTUNIDADES FINAL:", this.oportunidades);
+  // ====================================================
+// ORDENAR OPORTUNIDADES
+// 1) Mis oportunidades (creadas por mí)
+// 2) Oportunidades donde estoy postulado
+// 3) Disponibles para postularme
+// ====================================================
+this.oportunidades = this.oportunidades.sort((a, b) => {
+
+  // 1) Primero las creadas por mí
+  if (a.creadaPorUsuario && !b.creadaPorUsuario) return -1;
+  if (!a.creadaPorUsuario && b.creadaPorUsuario) return 1;
+
+  // 2) Luego donde YA estoy postulado
+  if (a.postulado && !b.postulado) return -1;
+  if (!a.postulado && b.postulado) return 1;
+
+  // 3) Finalmente las disponibles
+  return a.titulo.localeCompare(b.titulo);
+});
+
+console.log("📌 LISTA ORDENADA:", this.oportunidades);
+
 });
 
       },
