@@ -52,6 +52,21 @@ export class MiActividadComponent {
     console.log("🔥 MI ACTIVIDAD INIT");
     this.cargarTodo();
   }
+getColorEstado(estado: string) {
+  switch ((estado || "").toLowerCase()) {
+    case "pendiente":
+      return "estado-pendiente";
+
+    case "aceptada":
+      return "estado-aceptada";
+
+    case "rechazada":
+      return "estado-rechazada";
+
+    default:
+      return "";
+  }
+}
 
   cargarTodo() {
     const usuarioStr = localStorage.getItem("usuario");
@@ -111,14 +126,16 @@ export class MiActividadComponent {
   // =====================================================
   marcarPostulaciones(idUsuario: number) {
 
-    const query = `
-      query ($idUsuario: Int!) {
-        postulacionesPorUsuario(idUsuario: $idUsuario) {
-          idOportunidad
-          fechaPostulacion
-        }
-      }
-    `;
+ const query = `
+  query ($idUsuario: Int!) {
+    postulacionesPorUsuario(idUsuario: $idUsuario) {
+      idOportunidad
+      fechaPostulacion
+      estado          # ⬅⬅⬅ AGREGAR ESTO
+    }
+  }
+`;
+
 
     this.http.post<any>("http://localhost:8080/graphql", {
       query,
@@ -142,21 +159,26 @@ export class MiActividadComponent {
       );
 
       // separar las que yo postulé
-      this.misPostulaciones = this.oportunidades
-        .filter(op => op.postulado && !op.creadaPorUsuario)
-        .map(op => ({
-          id: op.idOportunidad,
-          idOportunidad: op.idOportunidad,
-          oportunidadTitulo: op.titulo,
-          descripcion: op.descripcion,
-          ubicacion: op.ubicacion,
-          modalidad: op.modalidad,
-          fechaPostulacion:
-            userPosts.find((p: any) =>
-              Number(p.idOportunidad) === Number(op.idOportunidad)
-            )?.fechaPostulacion ?? "",
-          estado: op.estado?.toLowerCase() ?? "activo"
-        }));
+this.misPostulaciones = this.oportunidades
+  .filter(op => op.postulado && !op.creadaPorUsuario)
+  .map(op => {
+
+    const post = userPosts.find((p: any) =>
+      Number(p.idOportunidad) === Number(op.idOportunidad)
+    );
+
+    return {
+      id: op.idOportunidad,
+      idOportunidad: op.idOportunidad,
+      oportunidadTitulo: op.titulo,
+      descripcion: op.descripcion,
+      ubicacion: op.ubicacion,
+      modalidad: op.modalidad,
+      fechaPostulacion: post?.fechaPostulacion ?? "",
+      estado: post?.estado?.toLowerCase() ?? "pendiente"   // ⬅⬅⬅ ESTADO REAL
+    };
+  });
+
     });
   }
 

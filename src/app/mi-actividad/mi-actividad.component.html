@@ -88,11 +88,10 @@
         <label>
           <span>Estado</span>
           <select [(ngModel)]="filtroEstadoPost">
-            <option value="todas">Todas</option>
-            <option value="activo">Activo</option>
-            <option value="cerrado">Cerrado</option>
-            <option value="pausada">Pausada</option>
-            <option value="borrador">Borrador</option>
+            <option value="todas">TODAS</option>
+            <option value="aceptada">ACEPTADA</option>
+            <option value="rechazada">RECHAZADA</option>
+            <option value="pendiente">PENDIENTE</option>
           </select>
         </label>
       </div>
@@ -108,13 +107,14 @@
 
         <div class="actions">
           <!-- BADGE -->
-          <span
-            class="badge"
-            [class.badge-green]="p.estado === 'activa'"
-            [class.badge-red]="p.estado === 'cerrada'"
-          >
-            {{ p.estado | titlecase }}
-          </span>
+          <!-- ESTADO REAL DE LA POSTULACIÓN -->
+<span
+  class="estado-pill"
+  [ngClass]="getColorEstado(p.estado)"
+>
+  {{ p.estado | uppercase }}
+</span>
+
 
           <!-- BOTONES -->
           <button class="btn-danger" (click)="despostularPostulacion(p)">

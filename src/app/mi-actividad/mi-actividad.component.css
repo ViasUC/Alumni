@@ -134,3 +134,36 @@
   font-size: .65rem;
   font-weight: 600;
 }
+
+/* =============================
+   ESTADOS DE POSTULACIÓN
+   ============================= */
+
+/* =============================
+   ESTADOS DE POSTULACIÓN (MISMO ESTILO QUE BOTONES)
+   ============================= */
+
+.estado-pill {
+  display: inline-block;
+  padding: 0.55rem 1.35rem;     /* MISMO padding QUE BOTONES */
+  border-radius: 999px;         /* MISMO border-radius */
+  font-weight: 600;             /* MISMO grosor */
+  font-size: 0.9rem;            /* MISMO tamaño de letra */
+  text-transform: uppercase;
+  color: #fff;
+}
+
+/* Pendiente (amarillo tipo warning) */
+.estado-pendiente {
+  background: var(--warning);      /* #f59e0b */
+}
+
+/* Aceptada (verde igual a btn-connected2) */
+.estado-aceptada {
+  background: #1e8b47;             /* MISMO verde que tu botón */
+}
+
+/* Rechazada (rojo igual a btn-danger) */
+.estado-rechazada {
+  background: #e53935;             /* MISMO rojo que btn-danger */
+}
