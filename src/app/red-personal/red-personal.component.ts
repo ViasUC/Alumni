@@ -34,7 +34,6 @@ interface SolicitudPendiente {
     PanelListaComponent,
     PopupEndorseComponent,
     PopupEliminarComponent,
-    PopupPerfilBasicoComponent,
     PopupPerfilPostulanteComponent,
   ],
   templateUrl: './red-personal.component.html',
@@ -43,6 +42,7 @@ interface SolicitudPendiente {
 export class RedPersonalComponent implements OnInit {
 
   constructor(private http: HttpClient) {}
+perfilPendienteSeleccionado: any = null;
 
   conexiones: UsuarioMini[] = [];
   solicitudesPendientes: SolicitudPendiente[] = [];
@@ -52,7 +52,8 @@ export class RedPersonalComponent implements OnInit {
 todosLosUsuarios: any[] = [];   // ⭐ AGREGAR ESTO AQUÍ
 
   abrirPopup = false;
-  popup: '' | 'eliminarEndorse' | 'perfilCompleto' | 'perfilBasico' = '';
+  popup: "" | "eliminarEndorse" | "perfilCompleto" | "perfilBasico" | "perfilPendiente" = "";
+
 
   usuarioSeleccionado: UsuarioMini | null = null;
   eliminarTarget: { tipo: 'recibido' | 'realizado', id: number } | null = null;
@@ -312,14 +313,17 @@ verPerfilConexion(u: UsuarioMini) {
 
       this.perfilCompletoSeleccionado = {
         // Datos personales
-        nombre: `${du.nombre} ${du.apellido}`,
+        nombre: du.nombre,
+apellido: du.apellido,
+
         ubicacion: du.ubicacion ?? "-",
         telefono: du.telefono ?? "-",
         email: du.email ?? "-",
         rol: du.rolPrincipal,
 
-        titulo: du.egresadoData?.titulo ?? "-",
-        anioEgreso: du.egresadoData?.anioEgreso ?? "-",
+        tituloUniversitario: du.egresadoData?.titulo ?? "-",
+anioEgreso: du.egresadoData?.anioEgreso ?? "-",
+
 
         // Portafolio
         descripcion: dp?.descripcion ?? "-",
@@ -337,15 +341,14 @@ verPerfilConexion(u: UsuarioMini) {
     error: (err) => console.error("❌ Error cargando perfil:", err)
   });
 }
+// ======================================================
+// PERFIL BÁSICO (Solicitudes recibidas)
+// ======================================================
+verPerfilPendiente(u: SolicitudPendiente) {
+  this.popup = "perfilPendiente";
 
-  // ======================================================
-  // PERFIL BÁSICO
-  // ======================================================
-  verPerfilPendiente(u: SolicitudPendiente) {
-  this.popup = "perfilBasico";
-
-  const query = `
-    query PerfilBasico($id: Int!) {
+  const Q_USUARIO = `
+    query($id: Int!) {
       usuarioById(id: $id) {
         nombre
         apellido
@@ -353,7 +356,6 @@ verPerfilConexion(u: UsuarioMini) {
         telefono
         ubicacion
         rolPrincipal
-
         egresadoData {
           titulo
           anioEgreso
@@ -362,32 +364,62 @@ verPerfilConexion(u: UsuarioMini) {
     }
   `;
 
-  this.http.post<any>("http://localhost:8080/graphql", {
-    query,
-    variables: { id: u.idUsuarioOrigen }
-  }).subscribe({
-    next: (res) => {
-      const du = res.data?.usuarioById;
-
-      if (!du) {
-        console.error("❌ usuarioById vino NULL en perfil básico");
-        return;
+  const Q_PORTAFOLIO = `
+    query($id: Int!) {
+      portafolioPorUsuario(idUsuario: $id) {
+        descripcion
+        skills
+        visibilidad
+        ultimaActualizacion
+        evidencias {
+          idEvidencia
+          titulo
+          descripcion
+          tipo
+          recurso
+        }
       }
+    }
+  `;
 
-      this.perfilBasicoSeleccionado = {
-        nombre: `${du.nombre} ${du.apellido}`,
-        email: du.email ?? "—",
-        telefono: du.telefono ?? "—",
-        ubicacion: du.ubicacion ?? "—",
-        titulo: du.egresadoData?.titulo ?? "—",
-        anioEgreso: du.egresadoData?.anioEgreso ?? "—",
-        rol: du.rolPrincipal ?? "—",
-      };
-    },
+  Promise.all([
+    this.http.post<any>("http://localhost:8080/graphql", { query: Q_USUARIO, variables: { id: u.idUsuarioOrigen }}).toPromise(),
+    this.http.post<any>("http://localhost:8080/graphql", { query: Q_PORTAFOLIO, variables: { id: u.idUsuarioOrigen }}).toPromise()
+  ])
+  .then(([usr, port]) => {
 
-    error: (err) => console.error("❌ Error cargando perfil básico:", err),
-  });
+    const usuario = usr.data?.usuarioById;
+    const portafolio = port.data?.portafolioPorUsuario;
+
+    this.perfilPendienteSeleccionado = {
+      nombre: usuario.nombre,
+      apellido: usuario.apellido,
+      ubicacion: usuario.ubicacion ?? "—",
+
+      telefono: "CONECTA PARA VER",
+      email:    "CONECTA PARA VER",
+
+      rolPrincipal: usuario.rolPrincipal ?? "—",
+      completitud: usuario.completitud ?? 0,
+
+      tituloUniversitario: usuario.egresadoData?.titulo ?? "—",
+      anioEgreso: usuario.egresadoData?.anioEgreso ?? "—",
+
+      descripcion: portafolio?.descripcion ?? "—",
+      skills: portafolio?.skills ?? "—",
+      visibilidad: portafolio?.visibilidad ?? "—",
+      ultimaActualizacion: portafolio?.ultimaActualizacion ?? "—",
+      evidencias: portafolio?.evidencias ?? [],
+
+      endorsements: [
+        { nombre: "CONECTA PARA VER" }
+      ]
+    };
+
+  })
+  .catch(err => console.error("Error perfilPendiente:", err));
 }
+
 
 
   // ======================================================

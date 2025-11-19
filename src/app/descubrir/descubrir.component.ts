@@ -2,12 +2,11 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  PerfilBasico,
-  PopupPerfilBasicoComponent
-} from '../popups/popup-perfil-basico/popup-perfil-basico.component';
+import { PopupPerfilPostulanteComponent } from '../popups/popup-perfil-postulante/popup-perfil-postulante.component';
+
 
 import { PanelListaComponent } from '../shared/panel-lista/panel-lista.component';
+import { PerfilBasico } from '../popups/popup-perfil-basico/popup-perfil-basico.component';
 
 interface UsuarioDescubrir {
   id: number;
@@ -18,6 +17,7 @@ interface UsuarioDescubrir {
   ubicacion: string;
   conectado: boolean;
   solicitudEnviada: boolean;
+  estaConectado: false,
   idSolicitud: number | null;
 }
 
@@ -28,7 +28,7 @@ interface UsuarioDescubrir {
     CommonModule,
     FormsModule,
     PanelListaComponent,
-    PopupPerfilBasicoComponent
+    PopupPerfilPostulanteComponent
   ],
   templateUrl: './descubrir.component.html',
   styleUrls: ['./descubrir.component.css'],
@@ -38,8 +38,10 @@ export class DescubrirComponent implements OnInit {
   termino = '';
   usuarios: UsuarioDescubrir[] = [];
 
+
   verPerfil = false;
-  perfilSeleccionado: PerfilBasico | null = null;
+  perfilSeleccionado: any = null;
+
 
   constructor(private http: HttpClient) {}
 
@@ -214,48 +216,146 @@ export class DescubrirComponent implements OnInit {
   // ==========================================================
   // ABRIR POPUP PERFIL REAL
   // ==========================================================
-  abrirPerfil(u: UsuarioDescubrir) {
-    console.log("🔍 Cargando perfil para:", u.id);
+ abrirPerfil(u: UsuarioDescubrir) {
+  console.log("🔍 Cargando perfil para:", u.id);
 
-    const query = `
-      query PerfilUsuario($id: Int!) {
-        usuarioById(id: $id) {
-          nombre
-          apellido
-          email
-          telefono
-          ubicacion
-          rolPrincipal
-          egresadoData {
-            anioEgreso
-            titulo
-          }
+  const id = u.id;
+
+  const Q_USUARIO = `
+    query($id: Int!) {
+      usuarioById(id: $id) {
+        idUsuario
+        nombre
+        apellido
+        email
+        telefono
+        ubicacion
+        rolPrincipal
+        egresadoData {
+          titulo
+          anioEgreso
         }
       }
-    `;
+    }
+  `;
 
-    this.http.post<any>('http://localhost:8080/graphql', {
-      query,
-      variables: { id: u.id }
-    }).subscribe(res => {
-      console.log("📥 Respuesta perfil:", res);
+  const Q_PORTAFOLIO = `
+    query($id: Int!) {
+      portafolioPorUsuario(idUsuario: $id) {
+        descripcion
+        skills
+        visibilidad
+        ultimaActualizacion
+        evidencias {
+          idEvidencia
+          titulo
+          descripcion
+          tipo
+          recurso
+        }
+      }
+    }
+  `;
 
-      const data = res.data?.usuarioById;
-      if (!data) return;
+  const Q_ENDORSEMENTS = `
+    query($id: Int!) {
+      endorsementsRecibidos(id: $id) {
+        idEndorsement
+        idUsuarioEmisor
+        fechaEndorsement
+      }
+    }
+  `;
 
-      this.perfilSeleccionado = {
-        nombre: `${data.nombre} ${data.apellido}`,
-        ubicacion: data.ubicacion ?? "–",
-        telefono: data.telefono ?? "–",
-        email: data.email ?? "–",
-        titulo: data.egresadoData?.titulo ?? "—",
-        anioEgreso: data.egresadoData?.anioEgreso ?? undefined,
-        rol: data.rolPrincipal
-      };
+  const Q_USUARIOS = `
+    query {
+      usuarios {
+        idUsuario
+        nombre
+        apellido
+        rolPrincipal
+      }
+    }
+  `;
 
-      this.verPerfil = true;
-    });
+  Promise.all([
+    this.http.post<any>("http://localhost:8080/graphql", { query: Q_USUARIO, variables: { id }}).toPromise(),
+    this.http.post<any>("http://localhost:8080/graphql", { query: Q_PORTAFOLIO, variables: { id }}).toPromise(),
+    this.http.post<any>("http://localhost:8080/graphql", { query: Q_ENDORSEMENTS, variables: { id }}).toPromise(),
+    this.http.post<any>("http://localhost:8080/graphql", { query: Q_USUARIOS }).toPromise(),
+  ])
+  .then(([usr, port, endo, allUsers]) => {
+
+    const usuario = usr.data?.usuarioById;
+    const portafolio = port.data?.portafolioPorUsuario;
+    const endorsements = endo.data?.endorsementsRecibidos ?? [];
+    const usuarios = allUsers.data?.usuarios ?? [];
+
+    const conectado = u.estaConectado;
+    const oculto = "Conecta con usuario para visualizar estos datos";
+
+    // Resolver datos de los endorsers
+    const endoFinal =
+      conectado
+        ? endorsements.map((e: any) => {
+            const emisor = usuarios.find((x: any) => x.idUsuario == e.idUsuarioEmisor);
+
+            return {
+              idEndorsement: e.idEndorsement,
+              fecha: e.fechaEndorsement,
+              nombre: emisor ? `${emisor.nombre} ${emisor.apellido}` : "Usuario",
+              rol: emisor?.rolPrincipal ?? "—"
+            };
+          })
+        : oculto;
+
+// En descubrir ocultamos SIEMPRE teléfono y email
+const mostrarTelefono = false;
+const mostrarEmail = false;
+
+// Endorsements SIEMPRE ocultos (pero mostramos la caja vacía)
+const endorsementsFinal = []; // se muestra la caja de “aún no recibió...”
+
+// PERFIL FINAL
+this.perfilSeleccionado = {
+  idUsuario: usuario.idUsuario,
+
+  // DATOS PERSONALES
+  nombre: usuario.nombre,
+  apellido: usuario.apellido,
+  ubicacion: usuario.ubicacion ?? "—",
+  telefono: mostrarTelefono ? (usuario.telefono ?? "—") : "CONECTA PARA VER",
+  email: mostrarEmail ? (usuario.email ?? "—") : "CONECTA PARA VER",
+  rolPrincipal: usuario.rolPrincipal,
+  completitud: usuario.completitud ?? 0,
+
+  tituloUniversitario: usuario.egresadoData?.titulo ?? "—",
+  anioEgreso: usuario.egresadoData?.anioEgreso ?? "—",
+
+  // PORTAFOLIO
+  descripcion: portafolio?.descripcion ?? "—",
+  skills: portafolio?.skills ?? "—",
+  visibilidad: portafolio?.visibilidad ?? "—",
+  ultimaActualizacion: portafolio?.ultimaActualizacion ?? "—",
+  evidencias: portafolio?.evidencias ?? [],
+
+  // ENDORSEMENTS SIEMPRE OCULTOS PERO MOSTRAMOS LA CAJA VACÍA
+  // ENDORSEMENTS: mensaje de bloqueo
+endorsements: [
+  {
+    nombre: "CONECTA PARA VER",
   }
+]
+
+};
+
+this.verPerfil = true;
+
+
+
+    this.verPerfil = true;
+  });
+}
 
   cerrarPerfil() {
     this.verPerfil = false;

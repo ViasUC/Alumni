@@ -154,11 +154,13 @@
 ></app-popup-eliminar>
 
 <!-- POPUP PERFIL BÁSICO (solicitudes pendientes: SOLO datos personales) -->
-<app-popup-perfil-basico
-  *ngIf="popup === 'perfilBasico' && perfilBasicoSeleccionado"
-  [perfil]="perfilBasicoSeleccionado"
+<!-- POPUP PERFIL COMPLETO PARA SOLICITUDES RECIBIDAS -->
+<app-popup-perfil-postulante
+  *ngIf="popup === 'perfilPendiente' && perfilPendienteSeleccionado"
+  [data]="perfilPendienteSeleccionado"
   (cerrar)="cerrarPopup()"
-></app-popup-perfil-basico>
+></app-popup-perfil-postulante>
+
 
 <!-- POPUP PERFIL COMPLETO (mis conexiones: datos + portafolio) -->
 <app-popup-perfil-postulante

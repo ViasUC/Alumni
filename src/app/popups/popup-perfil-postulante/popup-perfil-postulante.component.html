@@ -76,10 +76,18 @@
         </div>
 
         <div class="evidencia" *ngFor="let e of perfil.endorsements">
-          <h5>{{ e.nombre }}</h5>
-          <p>Rol: {{ e.rol }}</p>
-          <small>{{ e.fecha }}</small>
-        </div>
+
+  <!-- Mostrar SOLO el nombre -->
+  <h5>{{ e.nombre }}</h5>
+
+  <!-- Mostrar Rol y Fecha SOLO si no es el mensaje de bloqueo -->
+  <ng-container *ngIf="e.nombre !== 'CONECTA PARA VER'">
+    <p>Rol: {{ e.rol }}</p>
+    <small>{{ e.fecha }}</small>
+  </ng-container>
+
+</div>
+
 
       </section>
 

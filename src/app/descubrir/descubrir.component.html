@@ -70,8 +70,11 @@
 </div>
 
 <!-- POPUP PERFIL BÁSICO -->
-<app-popup-perfil-basico
+<app-popup-perfil-postulante
   *ngIf="verPerfil && perfilSeleccionado"
-  [perfil]="perfilSeleccionado"
-  (cerrar)="cerrarPerfil()"
-></app-popup-perfil-basico>
+  [data]="perfilSeleccionado"
+  (cerrar)="cerrarPerfil()">
+</app-popup-perfil-postulante>
+
+
+
