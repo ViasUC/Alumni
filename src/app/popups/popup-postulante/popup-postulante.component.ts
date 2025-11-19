@@ -29,93 +29,109 @@ export class PopupPostulanteComponent {
 verPerfilCompleto(idUsuario: number) {
   console.log("🔵 CARGANDO PERFIL COMPLETO →", idUsuario);
 
-const query = `
-  query ($id: Int!) {
-    usuarioById(id: $id) {
-      idUsuario
-      nombre
-      apellido
-      email
-      telefono
-      ubicacion
-      rolPrincipal
-      completitud
-
-      egresadoData {
-        titulo
-        anioEgreso
+  const qUsuario = `
+    query ($id: Int!) {
+      usuarioById(id: $id) {
+        idUsuario
+        nombre
+        apellido
+        email
+        telefono
+        ubicacion
+        rolPrincipal
+        completitud
+        egresadoData {
+          titulo
+          anioEgreso
+        }
       }
     }
+  `;
 
-    portafolioPorUsuario(idUsuario: $id) {
-      descripcion
-      skills
-      visibilidad
-      ultimaActualizacion
-
-      evidencias {
-        idEvidencia
-        titulo
+  const qPortafolio = `
+    query ($id: Int!) {
+      portafolioPorUsuario(idUsuario: $id) {
         descripcion
-        tipo
-        recurso
+        skills
+        visibilidad
+        ultimaActualizacion
+        evidencias {
+          idEvidencia
+          titulo
+          descripcion
+          tipo
+        }
       }
     }
-  }
-`;
+  `;
 
+  const qEndorsements = `
+    query ($id: Int!) {
+      endorsementsRecibidos(id: $id) {
+        idEndorsement
+        idUsuarioEmisor
+        fechaEndorsement
+      }
+    }
+  `;
 
+  const qUsuarios = `
+    query {
+      usuarios {
+        idUsuario
+        nombre
+        apellido
+        rolPrincipal
+      }
+    }
+  `;
 
-  this.http.post<any>("http://localhost:8080/graphql", {
-    query,
-    variables: { id: idUsuario }
-  })
-  .subscribe({
-next: (res) => {
-  console.log("📌 PERFIL COMPLETO RECIBIDO:", res);
+  // Ejecutar todo junto
+  Promise.all([
+    this.http.post<any>("http://localhost:8080/graphql", { query: qUsuario, variables: { id: idUsuario }}).toPromise(),
+    this.http.post<any>("http://localhost:8080/graphql", { query: qPortafolio, variables: { id: idUsuario }}).toPromise(),
+    this.http.post<any>("http://localhost:8080/graphql", { query: qEndorsements, variables: { id: idUsuario }}).toPromise(),
+    this.http.post<any>("http://localhost:8080/graphql", { query: qUsuarios }).toPromise()
+  ])
+  .then(([usr, port, endo, allUsers]) => {
 
-  if (res.errors) {
-    console.error("❌ GRAPHQL ERROR:", res.errors);
-    return;
-  }
+    console.log("📌 PERFIL COMPLETO RECIBIDO:", usr);
 
-  const u = res.data.usuarioById;
-  const p = res.data.portafolioPorUsuario;
+    const usuario = usr.data?.usuarioById ?? {};
+    const portafolio = port.data?.portafolioPorUsuario ?? {};
+    const endorsements = endo.data?.endorsementsRecibidos ?? [];
+    const usuarios = allUsers.data?.usuarios ?? [];
 
-  this.postulanteSeleccionado = {
-    // === Datos personales ===
-    idUsuario: u.idUsuario,
-    nombre: u.nombre,
-    apellido: u.apellido,
-    email: u.email,
-    telefono: u.telefono,
-    ubicacion: u.ubicacion,
-    rolPrincipal: u.rolPrincipal,
-    completitud: u.completitud,
+    // Resolver nombres de emisores
+    const endorsementsInfo = endorsements.map((e: any) => {
+      const emisor = usuarios.find(
+        (u:any) => Number(u.idUsuario) === Number(e.idUsuarioEmisor)
+      );
+      return {
+        id: e.idEndorsement,
+        fecha: e.fechaEndorsement,
+        nombre: emisor ? `${emisor.nombre} ${emisor.apellido}` : "—",
+        rol: emisor?.rolPrincipal ?? "—"
+      };
+    });
 
-    // === Datos de egresado ===
-    tituloUniversitario: u.egresadoData?.titulo ?? "",
-    anioEgreso: u.egresadoData?.anioEgreso ?? "",
+    // Armar objeto final
+    this.postulanteSeleccionado = {
+      ...usuario,
+      tituloUniversitario: usuario.egresadoData?.titulo ?? "",
+      anioEgreso: usuario.egresadoData?.anioEgreso ?? "",
 
-    // === Portafolio ===
-    descripcion: p?.descripcion ?? "",
-    skills: p?.skills ?? "",
-    visibilidad: p?.visibilidad ?? "",
-    ultimaActualizacion: p?.ultimaActualizacion ?? "",
+      ...portafolio,
 
-    // === Evidencias ===
-    evidencias: p?.evidencias ?? []
-  };
+      endorsements: endorsementsInfo
+    };
 
-  console.log("📌 POSTULANTE SELECCIONADO ARMADO:", this.postulanteSeleccionado);
+    console.log("🟢 POSTULANTE SELECCIONADO ARMADO:", this.postulanteSeleccionado);
 
-  this.vistaDetalle = true;
-}
-
-
-    ,error: (err) => console.error("❌ ERROR HTTP:", err)
+    this.vistaDetalle = true;
   });
 }
+
 
   cargarPostulantes() {
 

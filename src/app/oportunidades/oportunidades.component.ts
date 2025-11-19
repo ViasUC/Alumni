@@ -224,49 +224,97 @@ console.log("📌 LISTA ORDENADA:", this.oportunidades);
   abrirEliminar(op: any) { this.seleccionada = op; this.popup = 'eliminar'; }
   abrirPostulantes(op: any) { this.seleccionada = op; this.popup = 'postulante'; }
 
-  verPerfilPostulante(p: any) {
-  console.log("📌 VER PERFIL → postulante:", p);
+verPerfilPostulante(p: any) {
+  const id = Number(p.idUsuario);
 
-  const query = `
-    query ($idUsuario: Int!) {
-      usuarioById(id: $idUsuario) {
+  const queryUsuario = `
+    query ($id: Int!) {
+      usuarioById(id: $id) {
         idUsuario
         nombre
         apellido
         email
         telefono
         ubicacion
-        titulo
-        anioEgreso
         rolPrincipal
         completitud
+      }
+    }
+  `;
 
-        portafolio {
+  const queryPortafolio = `
+    query ($id: Int!) {
+      portafolioPorUsuario(idUsuario: $id) {
+        descripcion
+        skills
+        visibilidad
+        ultimaActualizacion
+        evidencias {
+          titulo
           descripcion
-          skills
-          visibilidad
-          ultimaActualizacion
-          evidencias {
-            titulo
-            descripcion
-            tipo
-            fecha
-          }
+          tipo
+          fecha
         }
       }
     }
   `;
 
-  this.http.post<any>("http://localhost:8080/graphql", {
-    query,
-    variables: { idUsuario: Number(p.idUsuario) }
-  }).subscribe(res => {
-    console.log("📌 PERFIL COMPLETO RECIBIDO:", res);
+  const queryEndos = `
+    query ($id: Int!) {
+      endorsementsRecibidos(id: $id) {
+        idEndorsement
+        idUsuarioEmisor
+        fechaEndorsement
+      }
+    }
+  `;
 
-    this.postulanteSeleccionado = res.data?.usuarioById ?? null;
+  const queryUsuarios = `
+    query {
+      usuarios {
+        idUsuario
+        nombre
+        apellido
+        rolPrincipal
+      }
+    }
+  `;
+
+  Promise.all([
+    this.http.post<any>("http://localhost:8080/graphql", { query: queryUsuario, variables: { id } }).toPromise(),
+    this.http.post<any>("http://localhost:8080/graphql", { query: queryPortafolio, variables: { id } }).toPromise(),
+    this.http.post<any>("http://localhost:8080/graphql", { query: queryEndos, variables: { id } }).toPromise(),
+    this.http.post<any>("http://localhost:8080/graphql", { query: queryUsuarios }).toPromise()
+  ]).then(([usr, port, ends, all]) => {
+
+    const usuario = usr.data?.usuarioById ?? {};
+    const portafolio = port.data?.portafolioPorUsuario ?? {};
+    const endorsements = ends.data?.endorsementsRecibidos ?? [];
+    const usuarios = all.data?.usuarios ?? [];
+
+    const endorsementsInfo = endorsements.map((e: any) => {
+      const u = usuarios.find((x: any) => Number(x.idUsuario) === Number(e.idUsuarioEmisor));
+      return {
+        id: e.idEndorsement,
+        fecha: e.fechaEndorsement,
+        nombre: u ? `${u.nombre} ${u.apellido}` : "—",
+        rol: u?.rolPrincipal ?? "—"
+      };
+    });
+
+    this.postulanteSeleccionado = {
+      ...usuario,
+      ...portafolio,
+      endorsements: endorsementsInfo
+    };
+
+    console.log("POSTULANTE SELECCIONADO ARMADO:", this.postulanteSeleccionado);
+
     this.popup = 'perfilPostulante';
   });
 }
+
+
 
 
 togglePostulacion(op: any) {

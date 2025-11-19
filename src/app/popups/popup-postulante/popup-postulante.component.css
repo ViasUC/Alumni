@@ -1,35 +1,63 @@
-/* fondo */
+/* ======================================
+   OVERLAY
+====================================== */
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, .35);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 5000;
+  padding: 20px;
+  z-index: 9999;
+  overflow-y: auto;
 }
 
-/* popup lista */
+/* ======================================
+   POPUP
+====================================== */
 .popup {
   background: #fff;
+  width: 90vw;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
   border-radius: 18px;
-  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.15);
-  padding: 1.9rem 2rem 1.6rem;
-  min-width: 520px;
-  max-width: 1100px;
+  padding: 24px 28px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .15);
+  position: relative;
 }
 
-.popup h2 {
-  margin: 0 0 1.2rem;
-  font-size: 1.25rem;
-  font-weight: 700;
+/* ======================================
+   HEADER
+====================================== */
+.perfil-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
 }
 
-/* lista linda */
+.close-icon {
+  background: #f4f4f4;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.close-icon:hover {
+  background: #e2e2e2;
+}
+
+/* Lista de postulantes */
 .lista-postulantes {
   list-style: none;
   padding: 0;
-  margin: 0 0 1.6rem 0;
+  margin: 0 0 1.5rem 0;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
@@ -41,154 +69,105 @@
   border-radius: 12px;
   padding: 0.65rem 0.9rem;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  align-items: center;
   cursor: pointer;
   transition: 0.15s ease;
 }
 
 .postulante-item:hover {
   background: #eaf1ff;
-  border-color: #dbe5ff;
-}
-
-.postulante-item .info .nombre {
-  font-weight: 600;
-}
-
-.postulante-item .info .fecha {
-  font-size: 0.75rem;
-  color: #6b7280;
+  border-color: #d5e0ff;
 }
 
 .btn-ver {
   background: #0b63ff;
-  color: #fff;
-  border: none;
+  color: white;
   padding: 0.35rem 0.75rem;
   border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 500;
-}
-
-.actions {
-  text-align: right;
-}
-
-.popup-detalle {
-  width: min(1100px, 92vw);
-  max-height: 92vh;
-  overflow-y: auto;
-}
-
-.perfil-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.3rem;
-}
-
-.close-icon {
-  background: #f5f5f5;
   border: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  font-size: 1.1rem;
+  font-size: 0.75rem;
   cursor: pointer;
 }
 
-/* GRID PRINCIPAL */
+/* ======================================
+   GRID PRINCIPAL
+====================================== */
 .perfil-grid {
   display: grid;
-  grid-template-columns: 1.03fr 0.97fr;
-  gap: 1.5rem; /* ← MÁS SEPARACIÓN ENTRE LAS DOS COLUMNAS */
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
 }
 
-/* CARD */
+/* ======================================
+   CARD
+====================================== */
 .card {
-  background: #fff;
-  border: 1px solid #edf0f4;
-  border-radius: 16px;
-  padding: 1.2rem 1.2rem 1.25rem;
+  background: #fafafa;
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid #eee;
 }
 
 .card h3 {
   margin-top: 0;
-  margin-bottom: 1rem; /* ← MÁS ESPACIO DE RESPIRO */
+  margin-bottom: 16px;
+  font-size: 1.05rem;
+  font-weight: 600;
 }
 
-/* CAMPOS */
+/* ======================================
+   CAMPOS
+====================================== */
 .grid-fields {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.9rem 1rem;  /* ← MÁS ESPACIO ENTRE INPUTS */
-  margin-bottom: 1.2rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
 }
 
 label {
   display: flex;
   flex-direction: column;
-  gap: 6px; /* ← ESPACIO ENTRE label Y input */
+  gap: 6px;
 }
 
 label span {
-  display: block;
-  font-size: 0.70rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  margin-bottom: 0.2rem;
+  color: #444;
 }
 
-/* INPUTS */
 input,
 textarea {
-  width: 100%;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px; /* ← más redondeado y lindo */
-  padding: 0.45rem 0.6rem; /* ← MÁS ESPACIO INTERNO */
-  font-size: 0.82rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 0.85rem;
 }
 
 textarea {
+  min-height: 60px;
   resize: none;
-  min-height: 60px; /* ← MÁS ALTO */
 }
 
-/* PROGRESO */
-.mini-progress {
-  margin-top: 1rem;
-}
-
-.mini-progress p {
-  margin: 0 0 0.5rem;
-}
-
-.mini-progress .circle {
-  width: 78px;
-  height: 78px;
-  border-radius: 50%;
-  border: 5px solid #0b63ff;
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-}
-
-/* SUBTÍTULOS */
-.sub {
-  margin-top: 1.4rem;   /* ← MÁS ESPACIO ENTRE SECCIONES */
-  margin-bottom: 0.6rem;
+/* ======================================
+   EVIDENCIAS / ENDORSEMENTS
+====================================== */
+h4.sub {
+  margin-top: 18px;
+  margin-bottom: 10px;
   font-weight: 600;
   font-size: 0.95rem;
 }
 
-
 .evidencia {
-  background: #f5f6fa;
+  background: white;
   border-radius: 12px;
-  padding: 0.75rem 0.8rem;
-  margin-bottom: 0.7rem;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border: 1px solid #eee;
 }
 
 .evidencia h5 {
@@ -196,68 +175,21 @@ textarea {
 }
 
 .evidencia p {
-  margin: 0.28rem 0;
-  font-size: 0.78rem;
-  color: #4b5563;
+  margin: 4px 0;
+  font-size: 0.8rem;
+  color: #555;
 }
 
 .evidencia small {
-  font-size: 0.68rem;
-  color: #6b7280;
+  font-size: 0.7rem;
+  color: #777;
 }
 
-.card label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 14px;
-}
-
-.card input,
-.card textarea {
-  width: 100%;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 0.45rem 0.6rem;
-  font-size: 0.82rem;
-}
-
-.card .sub {
-  margin-top: 20px !important;
-  margin-bottom: 10px !important;
-}
-
-.evidencia {
-  margin-bottom: 14px !important;
-  padding: 0.75rem !important;
-}
-
-/* ========================
-   ACHICAR POPUP COMPLETO
-   ======================== */
-
-/* Reduce el ancho máximo */
-.popup.popup-detalle {
-  max-width: 900px !important;   /* antes 1100px */
-  width: 90vw;                   /* adaptable sin romper */
-  padding: 1.6rem 1.8rem !important;
-}
-
-/* Reducir separación de columnas para que entre mejor */
-.perfil-grid {
-  grid-template-columns: 1fr 1fr !important;
-  gap: 0.9rem !important;
-}
-
-/* Ajuste de cards internas para que no se estiren demasiado */
-.card {
-  padding: 0.9rem 0.9rem 1rem !important;
-}
-
-/* Inputs más compactos (el tamaño visual sigue igual) */
-.card input,
-.card textarea {
-  font-size: 0.78rem !important;
-  padding: 0.35rem 0.5rem !important;
+/* ======================================
+   RESPONSIVE
+====================================== */
+@media (max-width: 850px) {
+  .perfil-grid {
+    grid-template-columns: 1fr !important;
+  }
 }

@@ -232,74 +232,111 @@ cargarEndorsements() {
   // ======================================================
   // PERFIL COMPLETO
   // ======================================================
-  verPerfilConexion(u: UsuarioMini) {
-    console.log("🟦 Abriendo perfil de:", u);
+verPerfilConexion(u: UsuarioMini) {
+  console.log("🟦 Abriendo perfil de:", u);
 
-    this.popup = "perfilCompleto";
-    this.perfilCompletoSeleccionado = null;
+  this.popup = "perfilCompleto";
+  this.perfilCompletoSeleccionado = null;
 
-    const query = `
-      query Perfil($id: Int!) {
-        usuarioById(id: $id) {
-          nombre
-          apellido
-          email
-          telefono
-          ubicacion
-          rolPrincipal
-          adminData { descripcion }
-          egresadoData { titulo anioEgreso }
-        }
-
-        portafolioPorUsuario(idUsuario: $id) {
-          descripcion
-          skills
-          visibilidad
-          ultimaActualizacion
-          evidencias {
-            idEvidencia
-            titulo
-            descripcion
-            tipo
-            recurso
-          }
+  const query = `
+    query Perfil($id: Int!) {
+      usuarioById(id: $id) {
+        idUsuario
+        nombre
+        apellido
+        email
+        telefono
+        ubicacion
+        rolPrincipal
+        
+        egresadoData {
+          titulo
+          anioEgreso
         }
       }
-    `;
 
-    this.http.post<any>("http://localhost:8080/graphql", {
-      query,
-      variables: { id: u.id }
-    }).subscribe({
-      next: (res) => {
-        const du = res.data?.usuarioById;
-        const dp = res.data?.portafolioPorUsuario;
-
-        if (!du) {
-          console.error("❌ usuarioById vino null. ID enviado:", u.id);
-          return;
+      portafolioPorUsuario(idUsuario: $id) {
+        descripcion
+        skills
+        visibilidad
+        ultimaActualizacion
+        evidencias {
+          idEvidencia
+          titulo
+          descripcion
+          tipo
+          recurso
         }
+      }
 
-        this.perfilCompletoSeleccionado = {
-          nombre: `${du.nombre} ${du.apellido}`,
-          ubicacion: du.ubicacion ?? "-",
-          telefono: du.telefono ?? "-",
-          email: du.email ?? "-",
-          titulo: du.egresadoData?.titulo ?? "-",
-          anioEgreso: du.egresadoData?.anioEgreso ?? "-",
-          rol: du.rolPrincipal,
-          descripcion: dp?.descripcion ?? "-",
-          skills: dp?.skills ?? "-",
-          visibilidad: dp?.visibilidad ?? "-",
-          ultimaActualizacion: dp?.ultimaActualizacion ?? "-",
-          evidencias: dp?.evidencias ?? []
+      endorsementsRecibidos(id: $id) {
+        idEndorsement
+        idUsuarioEmisor
+        fechaEndorsement
+      }
+
+      usuarios {
+        idUsuario
+        nombre
+        apellido
+        rolPrincipal
+      }
+    }
+  `;
+
+  this.http.post<any>("http://localhost:8080/graphql", {
+    query,
+    variables: { id: u.id }
+  }).subscribe({
+    next: (res) => {
+      const du = res.data?.usuarioById;
+      const dp = res.data?.portafolioPorUsuario;
+      const endo = res.data?.endorsementsRecibidos ?? [];
+      const users = res.data?.usuarios ?? [];
+
+      if (!du) {
+        console.error("❌ usuarioById vino null. ID:", u.id);
+        return;
+      }
+
+      // 🔵 Resolver nombres/roles de endorsers
+      const endorsementsInfo = endo.map((e: any) => {
+        const emisor = users.find((x: any) => Number(x.idUsuario) === Number(e.idUsuarioEmisor));
+        return {
+          id: e.idEndorsement,
+          fecha: e.fechaEndorsement,
+          nombre: emisor ? `${emisor.nombre} ${emisor.apellido}` : "Usuario desconocido",
+          rol: emisor?.rolPrincipal ?? "-"
         };
+      });
 
-        console.log("🟢 Perfil completo cargado:", this.perfilCompletoSeleccionado);
-      },
-      error: (err) => console.error("❌ Error cargando perfil:", err)
-    });
-  }
+      this.perfilCompletoSeleccionado = {
+        // Datos personales
+        nombre: `${du.nombre} ${du.apellido}`,
+        ubicacion: du.ubicacion ?? "-",
+        telefono: du.telefono ?? "-",
+        email: du.email ?? "-",
+        rol: du.rolPrincipal,
+
+        titulo: du.egresadoData?.titulo ?? "-",
+        anioEgreso: du.egresadoData?.anioEgreso ?? "-",
+
+        // Portafolio
+        descripcion: dp?.descripcion ?? "-",
+        skills: dp?.skills ?? "-",
+        visibilidad: dp?.visibilidad ?? "-",
+        ultimaActualizacion: dp?.ultimaActualizacion ?? "-",
+        evidencias: dp?.evidencias ?? [],
+
+        // ENDORSEMENTS
+        endorsements: endorsementsInfo
+      };
+
+      console.log("🟢 Perfil completo FINAL:", this.perfilCompletoSeleccionado);
+    },
+    error: (err) => console.error("❌ Error cargando perfil:", err)
+  });
+}
 
   // ======================================================
   // PERFIL BÁSICO

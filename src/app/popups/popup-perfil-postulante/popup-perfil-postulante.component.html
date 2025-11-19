@@ -1,25 +1,32 @@
-<div class="overlay" (click)="cerrar.emit()">
-  <div class="popup" (click)="$event.stopPropagation()">
+<div class="overlay">
 
-    <!-- ENCABEZADO -->
-    <div class="popup-head">
-      <h2>Perfil de {{ perfil.nombre }}</h2>
-      <button class="x" (click)="cerrar.emit()">×</button>
+  <div class="popup popup-detalle" *ngIf="perfil">
+
+    <!-- HEADER -->
+    <div class="perfil-header">
+      <h2>
+        Perfil de {{ perfil.nombre }} {{ perfil.apellido }}
+      </h2>
+
+      <button class="close-icon" (click)="cerrar.emit()">×</button>
     </div>
 
-    <!-- GRID DOS COLUMNAS -->
     <div class="perfil-grid">
 
-      <!-- ========================= -->
-      <!-- COLUMNA IZQUIERDA: DATOS -->
-      <!-- ========================= -->
+      <!-- ========================================= -->
+      <!-- CARD IZQUIERDO: DATOS PERSONALES + ENDOS -->
+      <!-- ========================================= -->
       <section class="card">
         <h3>Datos personales</h3>
 
-        <div class="grid">
+        <div class="grid-fields">
+
           <label>
             <span>Nombre</span>
-            <input [value]="perfil.nombre" readonly />
+            <input
+              [value]="perfil.nombre + ' ' + perfil.apellido"
+              readonly
+            />
           </label>
 
           <label>
@@ -38,8 +45,18 @@
           </label>
 
           <label>
+            <span>Rol principal</span>
+            <input [value]="perfil.rolPrincipal || perfil.rol || '—'" readonly />
+          </label>
+
+          <label>
+            <span>Completitud</span>
+            <input [value]="(perfil.completitud || 0) + '%'" readonly />
+          </label>
+
+          <label>
             <span>Título universitario</span>
-            <input [value]="perfil.titulo || perfil.titulo || '—'" readonly />
+            <input [value]="perfil.tituloUniversitario || '—'" readonly />
           </label>
 
           <label>
@@ -47,16 +64,28 @@
             <input [value]="perfil.anioEgreso || '—'" readonly />
           </label>
 
-          <label class="full">
-            <span>Rol principal</span>
-            <input [value]="perfil.rol || perfil.rol || '—'" readonly />
-          </label>
         </div>
+
+        <!-- ======================= -->
+        <!-- ENDORSEMENTS RECIBIDOS -->
+        <!-- ======================= -->
+        <h3 style="margin-top:2rem;">Endorsements recibidos</h3>
+
+        <div *ngIf="perfil.endorsements?.length === 0" class="evidencia">
+          <p style="opacity:.6;">Este usuario aún no recibió endorsements.</p>
+        </div>
+
+        <div class="evidencia" *ngFor="let e of perfil.endorsements">
+          <h5>{{ e.nombre }}</h5>
+          <p>Rol: {{ e.rol }}</p>
+          <small>{{ e.fecha }}</small>
+        </div>
+
       </section>
 
-      <!-- ====================== -->
-      <!-- COLUMNA DERECHA: PORTA -->
-      <!-- ====================== -->
+      <!-- ======================== -->
+      <!-- CARD DERECHO: PORTAFOLIO -->
+      <!-- ======================== -->
       <section class="card">
         <h3>Portafolio</h3>
 
@@ -67,35 +96,30 @@
 
         <label>
           <span>Skills</span>
-          <input [value]="perfil.skills" readonly />
+          <input readonly [value]="perfil.skills" />
         </label>
 
         <label>
           <span>Visibilidad</span>
-          <input [value]="perfil.visibilidad" readonly />
+          <input readonly [value]="perfil.visibilidad" />
         </label>
 
         <label>
           <span>Última actualización</span>
-          <input [value]="perfil.ultimaActualizacion" readonly />
+          <input readonly [value]="perfil.ultimaActualizacion" />
         </label>
 
-        <h4 class="ev-title">Evidencias vinculadas</h4>
+        <h4 class="sub">Evidencias vinculadas</h4>
 
-        <div *ngFor="let ev of perfil.evidencias" class="ev">
+        <div class="evidencia" *ngFor="let ev of perfil.evidencias">
           <div>
-            <strong>{{ ev.titulo }}</strong>
+            <h5>{{ ev.titulo }}</h5>
             <p>{{ ev.descripcion }}</p>
-            <small>{{ ev.tipo }} • {{ ev.fecha }}</small>
+            <small>{{ ev.tipo }}</small>
           </div>
         </div>
+
       </section>
-
-    </div>
-
-    <!-- BOTÓN CERRAR -->
-    <div class="popup-actions">
-      <button class="btn" (click)="cerrar.emit()">Cerrar</button>
     </div>
 
   </div>

@@ -16,7 +16,7 @@
           <div class="info">
             <div class="nombre">{{ p.nombre }} {{ p.apellido }}</div>
             <div class="fecha">
-              Postulado el {{ p.fechaPostulacion | date : "dd/MM/yyyy HH:mm" }}
+              Postulado el {{ p.fechaPostulacion | date : 'dd/MM/yyyy HH:mm' }}
             </div>
           </div>
 
@@ -40,134 +40,119 @@
     </div>
   </div>
 
-  <!-- ============================
-       VISTA 2: Perfil del postulante
-       ============================ -->
-  <div class="popup popup-detalle" *ngIf="vistaDetalle && postulanteSeleccionado">
+<!-- ============================
+     VISTA 2: Perfil del postulante
+     ============================ -->
+<div class="popup popup-detalle" *ngIf="vistaDetalle && postulanteSeleccionado">
 
-    <div class="perfil-header">
-      <h2>
-        Perfil de {{ postulanteSeleccionado.nombre }}
-        {{ postulanteSeleccionado.apellido }}
-      </h2>
+  <div class="perfil-header">
+    <h2>
+      Perfil de {{ postulanteSeleccionado.nombre }}
+      {{ postulanteSeleccionado.apellido }}
+    </h2>
 
-      <button class="close-icon" (click)="volverALista()">×</button>
-    </div>
+    <button class="close-icon" (click)="volverALista()">×</button>
+  </div>
 
-    <div class="perfil-grid">
+  <div class="perfil-grid">
 
-      <!-- ============================
-           Datos Personales
-           ============================ -->
-      <section class="card">
-        <h3>Datos personales</h3>
+    <!-- ============================
+         CARD IZQUIERDO: Datos + Endorsements
+         ============================ -->
+    <section class="card">
+      <h3>Datos personales</h3>
 
-        <div class="grid-fields">
+      <div class="grid-fields">
 
-          <label>
-            <span>Nombre</span>
-            <input
-              [value]="postulanteSeleccionado.nombre + ' ' + postulanteSeleccionado.apellido"
-              readonly
-            />
-          </label>
+        <label>
+          <span>Nombre</span>
+          <input
+            [value]="postulanteSeleccionado.nombre + ' ' + postulanteSeleccionado.apellido"
+            readonly
+          />
+        </label>
 
-          <label>
-            <span>Ubicación</span>
-            <input
-              [value]="postulanteSeleccionado.ubicacion"
-              readonly
-            />
-          </label>
+        <label>
+          <span>Ubicación</span>
+          <input [value]="postulanteSeleccionado.ubicacion" readonly />
+        </label>
 
-          <label>
-            <span>Teléfono</span>
-            <input
-              [value]="postulanteSeleccionado.telefono"
-              readonly
-            />
-          </label>
+        <label>
+          <span>Teléfono</span>
+          <input [value]="postulanteSeleccionado.telefono" readonly />
+        </label>
 
-          <label>
-            <span>Email</span>
-            <input
-              [value]="postulanteSeleccionado.email"
-              readonly
-            />
-          </label>
+        <label>
+          <span>Email</span>
+          <input [value]="postulanteSeleccionado.email" readonly />
+        </label>
 
-          <label>
-            <span>Rol principal</span>
-            <input
-              [value]="postulanteSeleccionado.rolPrincipal"
-              readonly
-            />
-          </label>
+        <label>
+          <span>Rol principal</span>
+          <input [value]="postulanteSeleccionado.rolPrincipal" readonly />
+        </label>
 
-          <label>
-            <span>Completitud</span>
-            <input
-              [value]="postulanteSeleccionado.completitud + '%'"
-              readonly
-            />
-          </label>
+        <label>
+          <span>Completitud</span>
+          <input [value]="postulanteSeleccionado.completitud + '%'" readonly />
+        </label>
 
+      </div>
+
+      <!-- 🔵 ENDORSEMENTS AQUÍ PEGADO -->
+      <h3 style="margin-top:2rem;">Endorsements recibidos</h3>
+
+      <div *ngIf="postulanteSeleccionado.endorsements?.length === 0"
+           class="evidencia">
+        <p style="opacity:.6;">Este usuario aún no recibió endorsements.</p>
+      </div>
+
+      <div class="evidencia"
+           *ngFor="let e of postulanteSeleccionado.endorsements">
+        <h5>{{ e.nombre }}</h5>
+        <p>Rol: {{ e.rol }}</p>
+        <small>{{ e.fecha }}</small>
+      </div>
+
+    </section>
+
+    <!-- ============================
+         CARD DERECHO: Portafolio
+         ============================ -->
+    <section class="card">
+      <h3>Portafolio</h3>
+
+      <label>
+        <span>Descripción</span>
+        <textarea rows="3" readonly>{{ postulanteSeleccionado.descripcion }}</textarea>
+      </label>
+
+      <label>
+        <span>Skills</span>
+        <input readonly [value]="postulanteSeleccionado.skills" />
+      </label>
+
+      <label>
+        <span>Visibilidad</span>
+        <input readonly [value]="postulanteSeleccionado.visibilidad" />
+      </label>
+
+      <label>
+        <span>Última actualización</span>
+        <input readonly [value]="postulanteSeleccionado.ultimaActualizacion" />
+      </label>
+
+      <h4 class="sub">Evidencias vinculadas</h4>
+
+      <div class="evidencia" *ngFor="let ev of postulanteSeleccionado.evidencias">
+        <div>
+          <h5>{{ ev.titulo }}</h5>
+          <p>{{ ev.descripcion }}</p>
+          <small>{{ ev.tipo }}</small>
         </div>
-      </section>
+      </div>
 
-      <!-- ============================
-           Portafolio
-           ============================ -->
-      <section class="card">
-        <h3>Portafolio</h3>
+    </section>
 
-        <label>
-          <span>Descripción</span>
-          <textarea
-            rows="3"
-            readonly
-            [value]="postulanteSeleccionado.descripcion"
-          ></textarea>
-        </label>
-
-        <label>
-          <span>Skills</span>
-          <input
-            readonly
-            [value]="postulanteSeleccionado.skills"
-          />
-        </label>
-
-        <label>
-          <span>Visibilidad</span>
-          <input
-            readonly
-            [value]="postulanteSeleccionado.visibilidad"
-          />
-        </label>
-
-        <label>
-          <span>Última actualización</span>
-          <input
-            readonly
-            [value]="postulanteSeleccionado.ultimaActualizacion"
-          />
-        </label>
-
-        <h4 class="sub">Evidencias vinculadas</h4>
-
-        <div
-          class="evidencia"
-          *ngFor="let ev of postulanteSeleccionado.evidencias"
-        >
-          <div>
-            <h5>{{ ev.titulo }}</h5>
-            <p>{{ ev.descripcion }}</p>
-            <small>{{ ev.tipo }}</small>
-          </div>
-        </div>
-
-      </section>
-    </div>
   </div>
 </div>
