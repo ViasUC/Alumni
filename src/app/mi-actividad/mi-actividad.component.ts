@@ -24,11 +24,10 @@ import { PopupConfirmarComponent } from '../popups/popup-confirmar/popup-confirm
     PopupEditarComponent,
     PopupEliminarComponent,
     PopupPostulanteComponent,
-    PopupConfirmarComponent
-  ]
+    PopupConfirmarComponent,
+  ],
 })
 export class MiActividadComponent {
-
   popup: any = '';
   motivoPopup: any = null;
   seleccionada: any = null;
@@ -49,27 +48,27 @@ export class MiActividadComponent {
   // INIT
   // =====================================================
   ngOnInit() {
-    console.log("🔥 MI ACTIVIDAD INIT");
+    console.log('🔥 MI ACTIVIDAD INIT');
     this.cargarTodo();
   }
-getColorEstado(estado: string) {
-  switch ((estado || "").toLowerCase()) {
-    case "pendiente":
-      return "estado-pendiente";
+  getColorEstado(estado: string) {
+    switch ((estado || '').toLowerCase()) {
+      case 'pendiente':
+        return 'estado-pendiente';
 
-    case "aceptada":
-      return "estado-aceptada";
+      case 'aceptada':
+        return 'estado-aceptada';
 
-    case "rechazada":
-      return "estado-rechazada";
+      case 'rechazada':
+        return 'estado-rechazada';
 
-    default:
-      return "";
+      default:
+        return '';
+    }
   }
-}
 
   cargarTodo() {
-    const usuarioStr = localStorage.getItem("usuario");
+    const usuarioStr = localStorage.getItem('usuario');
     const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
 
     const idUsuario = Number(
@@ -83,7 +82,6 @@ getColorEstado(estado: string) {
   // CARGAR OPORTUNIDADES (MISMAS QUE OPORTUNIDADES.TS)
   // =====================================================
   cargarOportunidades(idUsuario: number) {
-
     const query = `
       query {
         oportunidades {
@@ -102,31 +100,28 @@ getColorEstado(estado: string) {
       }
     `;
 
-    this.http.post<any>("http://localhost:8080/graphql", { query })
-      .subscribe({
-        next: (res) => {
+    this.http.post<any>('http://localhost:8080/graphql', { query }).subscribe({
+      next: (res) => {
+        const lista = res.data?.oportunidades ?? [];
 
-          const lista = res.data?.oportunidades ?? [];
+        this.oportunidades = lista.map((op: any) => ({
+          ...op,
+          id: op.idOportunidad,
+          creadaPorUsuario: Number(op.idCreador) === Number(idUsuario),
+          postulado: false,
+        }));
 
-          this.oportunidades = lista.map((op: any) => ({
-            ...op,
-            id: op.idOportunidad,
-            creadaPorUsuario: Number(op.idCreador) === Number(idUsuario),
-            postulado: false
-          }));
-
-          this.marcarPostulaciones(idUsuario);
-        },
-        error: err => console.error("❌ Error cargando oportunidades:", err)
-      });
+        this.marcarPostulaciones(idUsuario);
+      },
+      error: (err) => console.error('❌ Error cargando oportunidades:', err),
+    });
   }
 
   // =====================================================
   // MARCAR POSTULACIONES → MISMO CÓDIGO QUE OPORTUNIDADES.TS
   // =====================================================
   marcarPostulaciones(idUsuario: number) {
-
- const query = `
+    const query = `
   query ($idUsuario: Int!) {
     postulacionesPorUsuario(idUsuario: $idUsuario) {
       idOportunidad
@@ -136,80 +131,75 @@ getColorEstado(estado: string) {
   }
 `;
 
+    this.http
+      .post<any>('http://localhost:8080/graphql', {
+        query,
+        variables: { idUsuario },
+      })
+      .subscribe((resp) => {
+        const userPosts = resp.data?.postulacionesPorUsuario ?? [];
 
-    this.http.post<any>("http://localhost:8080/graphql", {
-      query,
-      variables: { idUsuario }
-    })
-    .subscribe(resp => {
+        // marcar postulado dentro de la lista
+        this.oportunidades = this.oportunidades.map((op) => ({
+          ...op,
+          postulado: userPosts.some(
+            (p: any) => Number(p.idOportunidad) === Number(op.idOportunidad)
+          ),
+        }));
 
-      const userPosts = resp.data?.postulacionesPorUsuario ?? [];
+        // separar las que yo creé
+        this.misOportunidades = this.oportunidades.filter(
+          (op) => op.creadaPorUsuario
+        );
 
-      // marcar postulado dentro de la lista
-      this.oportunidades = this.oportunidades.map(op => ({
-        ...op,
-        postulado: userPosts.some((p: any) =>
-          Number(p.idOportunidad) === Number(op.idOportunidad)
-        )
-      }));
+        // separar las que yo postulé
+        this.misPostulaciones = this.oportunidades
+          .filter((op) => op.postulado && !op.creadaPorUsuario)
+          .map((op) => {
+            const post = userPosts.find(
+              (p: any) => Number(p.idOportunidad) === Number(op.idOportunidad)
+            );
 
-      // separar las que yo creé
-      this.misOportunidades = this.oportunidades.filter(
-        op => op.creadaPorUsuario
-      );
-
-      // separar las que yo postulé
-this.misPostulaciones = this.oportunidades
-  .filter(op => op.postulado && !op.creadaPorUsuario)
-  .map(op => {
-
-    const post = userPosts.find((p: any) =>
-      Number(p.idOportunidad) === Number(op.idOportunidad)
-    );
-
-    return {
-      id: op.idOportunidad,
-      idOportunidad: op.idOportunidad,
-      oportunidadTitulo: op.titulo,
-      descripcion: op.descripcion,
-      ubicacion: op.ubicacion,
-      modalidad: op.modalidad,
-      fechaPostulacion: post?.fechaPostulacion ?? "",
-      estado: post?.estado?.toLowerCase() ?? "pendiente"   // ⬅⬅⬅ ESTADO REAL
-    };
-  });
-
-    });
+            return {
+              id: op.idOportunidad,
+              idOportunidad: op.idOportunidad,
+              oportunidadTitulo: op.titulo,
+              descripcion: op.descripcion,
+              ubicacion: op.ubicacion,
+              modalidad: op.modalidad,
+              fechaPostulacion: post?.fechaPostulacion ?? '',
+              estado: post?.estado?.toLowerCase() ?? 'pendiente', // ⬅⬅⬅ ESTADO REAL
+            };
+          });
+      });
   }
 
   // =====================================================
   // FILTROS
   // =====================================================
-get oportunidadesFiltradas() {
-  return this.misOportunidades.filter(op => {
-    const f1 =
-      !this.filtroFechaOpo ||
-      op.fechaPublicacion?.substring(0, 10) === this.filtroFechaOpo;
+  get oportunidadesFiltradas() {
+    return this.misOportunidades.filter((op) => {
+      const f1 =
+        !this.filtroFechaOpo ||
+        op.fechaPublicacion?.substring(0, 10) === this.filtroFechaOpo;
 
-    const f2 =
-      this.filtroEstadoOpo === 'todas' ||
-      op.estado === this.filtroEstadoOpo;
+      const f2 =
+        this.filtroEstadoOpo === 'todas' || op.estado === this.filtroEstadoOpo;
 
-    return f1 && f2;
-  });
-}
+      return f1 && f2;
+    });
+  }
 
-
-get postulacionesFiltradas() {
-  return this.misPostulaciones.filter(p => {
-    const f1 = !this.filtroFechaPost ||
-               p.fechaPostulacion?.startsWith(this.filtroFechaPost);
-    const f2 = this.filtroEstadoPost === 'todas' ||
-               p.estado === this.filtroEstadoPost;
-    return f1 && f2;
-  });
-}
-
+  get postulacionesFiltradas() {
+    return this.misPostulaciones.filter((p) => {
+      const f1 =
+        !this.filtroFechaPost ||
+        p.fechaPostulacion?.startsWith(this.filtroFechaPost);
+      const f2 =
+        this.filtroEstadoPost === 'todas' || p.estado === this.filtroEstadoPost;
+      return f1 && f2;
+    });
+  }
 
   // =====================================================
   // ACCIONES POPUP
@@ -230,15 +220,14 @@ get postulacionesFiltradas() {
     this.popup = 'postulante';
   }
 
-despostularPostulacion(p: any) {
+  despostularPostulacion(p: any) {
+    console.log('🔴 DESPOSTULAR → postulacion', p);
 
-  console.log("🔴 DESPOSTULAR → postulacion", p);
+    const usuarioStr = localStorage.getItem('usuario');
+    const user = usuarioStr ? JSON.parse(usuarioStr) : null;
+    const idUsuario = Number(user?.idUsuario);
 
-  const usuarioStr = localStorage.getItem("usuario");
-  const user = usuarioStr ? JSON.parse(usuarioStr) : null;
-  const idUsuario = Number(user?.idUsuario);
-
-  const mutation = `
+    const mutation = `
     mutation ($idPostulante: Int!, $idOportunidad: Int!) {
       eliminarPostulacion(
         idPostulante: $idPostulante,
@@ -247,38 +236,34 @@ despostularPostulacion(p: any) {
     }
   `;
 
-  const variables = {
-    idPostulante: idUsuario,
-    idOportunidad: Number(p.id)
-  };
+    const variables = {
+      idPostulante: idUsuario,
+      idOportunidad: Number(p.id),
+    };
 
-  fetch("http://localhost:8080/graphql", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: mutation, variables })
-  })
-    .then(r => r.json())
-    .then(res => {
-
-      console.log("🟢 RESPUESTA DESPOSTULAR:", res);
-
-      if (res.data?.eliminarPostulacion) {
-
-        console.log("✔ DESPOSTULADO!");
-
-        // 🔥 Solo eliminamos esa una
-        this.misPostulaciones = this.misPostulaciones.filter(
-          x => x.id !== p.id
-        );
-
-        // 🔥 Recargar solo postulaciones SIN romper nada
-        this.marcarPostulaciones(idUsuario);
-      }
+    fetch('http://localhost:8080/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: mutation, variables }),
     })
-    .catch(err => console.error("❌ Error despostulando:", err));
-}
+      .then((r) => r.json())
+      .then((res) => {
+        console.log('🟢 RESPUESTA DESPOSTULAR:', res);
 
+        if (res.data?.eliminarPostulacion) {
+          console.log('✔ DESPOSTULADO!');
 
+          // 🔥 Solo eliminamos esa una
+          this.misPostulaciones = this.misPostulaciones.filter(
+            (x) => x.id !== p.id
+          );
+
+          // 🔥 Recargar solo postulaciones SIN romper nada
+          this.marcarPostulaciones(idUsuario);
+        }
+      })
+      .catch((err) => console.error('❌ Error despostulando:', err));
+  }
 
   verDetallePostulacion(p: any) {
     this.seleccionada = {
@@ -288,7 +273,7 @@ despostularPostulacion(p: any) {
       modalidad: p.modalidad,
       fecha: p.fechaPostulacion,
       estado: p.estado,
-      soloLectura: true
+      soloLectura: true,
     };
     this.popup = 'detalle';
   }
@@ -299,14 +284,15 @@ despostularPostulacion(p: any) {
     this.seleccionada = null;
   }
 
-guardarOportunidad(form: any) {
+  guardarOportunidad(form: any) {
+    console.log(
+      '============== GUARDAR OPORTUNIDAD (MI ACTIVIDAD) =============='
+    );
+    console.log('🟦 Form enviado:', form);
+    console.log('🟦 Seleccionada:', this.seleccionada);
 
-  console.log("============== GUARDAR OPORTUNIDAD (MI ACTIVIDAD) ==============");
-  console.log("🟦 Form enviado:", form);
-  console.log("🟦 Seleccionada:", this.seleccionada);
-
-  // Mutation EDITAR
-  const editarMutation = `
+    // Mutation EDITAR
+    const editarMutation = `
     mutation Editar(
       $idOportunidad: Int!,
       $idCreador: Int!,
@@ -336,98 +322,139 @@ guardarOportunidad(form: any) {
     }
   `;
 
-  // ID del usuario actual
-  const usuarioStr = localStorage.getItem("usuario");
-  const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
-  const idUsuarioActual = Number(usuario?.idUsuario);
+    // ID del usuario actual
+    const usuarioStr = localStorage.getItem('usuario');
+    const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
+    const idUsuarioActual = Number(usuario?.idUsuario);
 
-  // Variables
-  const variables = {
-    idOportunidad: Number(this.seleccionada.idOportunidad),
-    idCreador: idUsuarioActual,
-    titulo: form.titulo,
-    descripcion: form.descripcion,
-    requisitos: form.requisitos,
-    ubicacion: form.ubicacion,
-    modalidad: form.modalidad,
-    tipo: form.tipo,
-    fechaCierre: form.fechaCierre ? form.fechaCierre + "T00:00:00" : null,
-    estado: form.estado
-  };
+    // Variables
+    const variables = {
+      idOportunidad: Number(this.seleccionada.idOportunidad),
+      idCreador: idUsuarioActual,
+      titulo: form.titulo,
+      descripcion: form.descripcion,
+      requisitos: form.requisitos,
+      ubicacion: form.ubicacion,
+      modalidad: form.modalidad,
+      tipo: form.tipo,
+      fechaCierre: form.fechaCierre ? form.fechaCierre + 'T00:00:00' : null,
+      estado: form.estado,
+    };
 
-  console.log("🟧 MUTATION ENVIADA:", editarMutation);
-  console.log("🟧 VARIABLES:", variables);
+    console.log('🟧 MUTATION ENVIADA:', editarMutation);
+    console.log('🟧 VARIABLES:', variables);
 
-  // Enviar al servidor
-  fetch("http://localhost:8080/graphql", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: editarMutation, variables })
-  })
-    .then(r => r.json())
-    .then(res => {
-
-      console.log("🟥 RESPUESTA EDITAR:", res);
-
-      if (res.errors) {
-        console.error("❌ Error GraphQL:", res.errors);
-        return;
-      }
-
-      // Recargar todo para que refleje en UI
-      this.cargarTodo();
-
-      this.cerrarPopup();
+    // Enviar al servidor
+    fetch('http://localhost:8080/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: editarMutation, variables }),
     })
-    .catch(err => console.error("❌ Error editando:", err));
-}
+      .then((r) => r.json())
+      .then((res) => {
+        console.log('🟥 RESPUESTA EDITAR:', res);
 
+        if (res.errors) {
+          console.error('❌ Error GraphQL:', res.errors);
+          return;
+        }
 
-  confirmarEliminar() {
+        // Recargar todo para que refleje en UI
+        this.cargarTodo();
 
-  const id = Number(this.seleccionada?.idOportunidad);
-
-  console.log("🗑️ ID capturado para eliminar:", id);
-
-  if (!id) {
-    console.error("❌ ERROR: idOportunidad inválido o undefined");
-    return;
+        this.cerrarPopup();
+      })
+      .catch((err) => console.error('❌ Error editando:', err));
   }
 
-  const mutation = `
+  confirmarEliminar() {
+    const id = Number(this.seleccionada?.idOportunidad);
+
+    console.log('🗑️ ID capturado para eliminar:', id);
+
+    if (!id) {
+      console.error('❌ ERROR: idOportunidad inválido o undefined');
+      return;
+    }
+
+    const mutation = `
     mutation Eliminar($idOportunidad: Int!) {
       eliminarOportunidad(idOportunidad: $idOportunidad)
     }
   `;
 
-  const variables = { idOportunidad: id };
+    const variables = { idOportunidad: id };
 
-  console.log("📤 Enviando DELETE:", variables);
+    console.log('📤 Enviando DELETE:', variables);
 
-  fetch("http://localhost:8080/graphql", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: mutation, variables })
-  })
-    .then(r => r.json())
-    .then(res => {
-
-      console.log("📥 RESPUESTA DELETE:", res);
-
-      if (res.errors) {
-        console.error("❌ Error GraphQL:", res.errors);
-        return;
-      }
-
-      if (res.data.eliminarOportunidad === true) {
-        console.log("✔ Eliminado correctamente");
-        this.cargarTodo();   // 🔥 recargar lista de oportunidades y postulaciones
-      } else {
-        console.warn("❗ DELETE devolvió false");
-      }
-
-      this.cerrarPopup();
+    fetch('http://localhost:8080/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: mutation, variables }),
     })
-    .catch(err => console.error("❌ Error eliminando:", err));
-}
+      .then((r) => r.json())
+      .then((res) => {
+        console.log('📥 RESPUESTA DELETE:', res);
+
+        if (res.errors) {
+          console.error('❌ Error GraphQL:', res.errors);
+          return;
+        }
+
+        if (res.data.eliminarOportunidad === true) {
+          console.log('✔ Eliminado correctamente');
+          this.cargarTodo(); // 🔥 recargar lista de oportunidades y postulaciones
+        } else {
+          console.warn('❗ DELETE devolvió false');
+        }
+
+        this.cerrarPopup();
+      })
+      .catch((err) => console.error('❌ Error eliminando:', err));
+  }
+
+  actualizarEstadoPostulacion(
+    idUsuario: number,
+    idOportunidad: number,
+    estado: string
+  ) {
+    const mutation = `
+    mutation ($idUsuario: Int!, $idOportunidad: Int!, $estado: String!) {
+      actualizarEstadoPostulacion(
+        idUsuario: $idUsuario,
+        idOportunidad: $idOportunidad,
+        estado: $estado
+      )
+    }
+  `;
+
+    const variables = {
+      idUsuario,
+      idOportunidad,
+      estado,
+    };
+
+    fetch('http://localhost:8080/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: mutation, variables }),
+    })
+      .then((r) => r.json())
+      .then((res) => {
+        console.log('🟢 Estado actualizado:', res);
+
+        if (res.errors) {
+          console.error('❌ Error GraphQL:', res.errors);
+          return;
+        }
+
+        // ACTUALIZAR POSTULANTES EN PANTALLA SIN REFRESCAR TODO
+        const usuarioStr = localStorage.getItem('usuario');
+        const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
+        const idUser = Number(usuario?.idUsuario);
+
+        this.marcarPostulaciones(idUser);
+      })
+      .catch((err) => console.error('❌ Error al actualizar estado:', err));
+  }
 }

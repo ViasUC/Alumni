@@ -166,7 +166,9 @@
   *ngIf="popup === 'postulante'"
   [data]="seleccionada"
   (cerrar)="cerrarPopup()"
+  (estadoChange)="actualizarEstadoPostulacion($event.idUsuario, $event.idOportunidad, $event.estado)"
 ></app-popup-postulante>
+
 
 <!-- CONFIRMAR -->
 <app-popup-confirmar

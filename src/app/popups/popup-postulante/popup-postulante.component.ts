@@ -13,6 +13,7 @@ export class PopupPostulanteComponent {
   @Input() data: any;
   @Output() cerrar = new EventEmitter<void>();
   @Output() verPerfil = new EventEmitter<any>();
+  @Output() estadoChange = new EventEmitter<any>();
 
   postulantes: any[] = [];
 
@@ -157,15 +158,62 @@ export class PopupPostulanteComponent {
     p.dropdownOpen = !p.dropdownOpen;
   }
 
-  cambiarEstado(p: any, estado: string) {
-    p.estadoPostulacion = estado;
-    p.dropdownOpen = false;
+  cambiarEstado(p: any, nuevoEstado: string) {
 
-    console.log('Estado actualizado:', p.nombre, estado);
+  // 1) Cerrar menú
+  p.dropdownOpen = false;
 
-    // Aquí podrías llamar a tu backend si querés guardar el cambio
-    // this.postulanteService.actualizarEstado(p.id, estado).subscribe(...)
-  }
+  const idPostulante = Number(p.idUsuario);
+  const idOportunidad = Number(this.data.idOportunidad);
+
+  console.log("Actualizando estado...", {
+    idPostulante,
+    idOportunidad,
+    nuevoEstado
+  });
+
+  const mutation = `
+    mutation CambiarEstado(
+      $idPostulante: Int!,
+      $idOportunidad: Int!,
+      $estado: String!
+    ) {
+      actualizarEstadoPostulacion(
+        idPostulante: $idPostulante,
+        idOportunidad: $idOportunidad,
+        estado: $estado
+      )
+    }
+  `;
+
+  const variables = {
+    idPostulante,
+    idOportunidad,
+    estado: nuevoEstado
+  };
+
+  fetch("http://localhost:8080/graphql", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: mutation, variables })
+  })
+    .then(r => r.json())
+    .then(res => {
+      console.log("✔ ESTADO ACTUALIZADO:", res);
+
+      if (res.errors) {
+        console.error("Error GraphQL:", res.errors);
+        return;
+      }
+
+      // 2) Actualizar visualmente el botón
+      p.estadoPostulacion = nuevoEstado;
+
+    })
+    .catch(err => console.error("❌ ERROR en actualizar estado:", err));
+}
+
+
   cargarPostulantes() {
     console.log(
       '📌 CARGANDO POSTULANTES → idOportunidad:',
@@ -184,6 +232,7 @@ export class PopupPostulanteComponent {
           rolPrincipal
           completitud
           fechaPostulacion
+          estado
         }
       }
     `;
@@ -204,7 +253,12 @@ export class PopupPostulanteComponent {
           }
 
           console.log('🟦 DATA:', res.data);
-          this.postulantes = res.data?.postulantesPorOportunidad ?? [];
+          this.postulantes = (res.data?.postulantesPorOportunidad ?? []).map(
+            (p: { estado: any; }) => ({
+              ...p,
+              estadoPostulacion: p.estado || 'PENDIENTE',
+            })
+          );
           console.log('📌 POSTULANTES RECIBIDOS:', this.postulantes);
         },
         error: (err) => console.error('❌ ERROR CARGANDO POSTULANTES:', err),
@@ -225,6 +279,7 @@ export class PopupPostulanteComponent {
       ubicacion
       rolPrincipal
       fechaPostulacion
+      estado
 
       portafolio {
         descripcion
