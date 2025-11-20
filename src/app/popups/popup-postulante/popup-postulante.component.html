@@ -27,11 +27,11 @@
             <!-- BOTÓN ESTADO + DROPDOWN -->
             <div class="dropdown">
               <button class="btn-estado" [ngClass]="{
-                  'btn-connected2': p.estadoPostulacion === 'Aceptado',
-                  'btn-danger': p.estadoPostulacion === 'Rechazado',
-                  'btn-amarillo': p.estadoPostulacion === 'Pendiente' || !p.estadoPostulacion
+                  'btn-connected2': p.estadoPostulacion === 'ACEPTADA',
+                  'btn-danger': p.estadoPostulacion === 'RECHAZADA',
+                  'btn-amarillo': p.estadoPostulacion === 'PENDIENTE' || !p.estadoPostulacion
                 }" (click)="toggleDropdown(p)">
-                {{ p.estadoPostulacion || 'Pendiente' }}
+                {{ p.estadoPostulacion || 'PENDIENTE' }}
 
                 <!-- FLECHA -->
                 <span class="arrow" [class.open]="p.dropdownOpen">▼</span>
@@ -39,16 +39,16 @@
 
               <!-- MENÚ DESPLEGABLE -->
               <div class="dropdown-menu" *ngIf="p.dropdownOpen">
-                <button class="btn-connected2" (click)="cambiarEstado(p,'Aceptado')">
-                  Aceptado
+                <button class="btn-connected2" (click)="cambiarEstado(p,'ACEPTADA')">
+                  ACEPTADA
                 </button>
 
-                <button class="btn-danger" (click)="cambiarEstado(p,'Rechazado')">
-                  Rechazado
+                <button class="btn-danger" (click)="cambiarEstado(p,'RECHAZADA')">
+                  RECHAZADA
                 </button>
 
-                <button class="btn-amarillo" (click)="cambiarEstado(p,'Pendiente')">
-                  Pendiente
+                <button class="btn-amarillo" (click)="cambiarEstado(p,'PENDIENTE')">
+                  PENDIENTE
                 </button>
               </div>
             </div>
