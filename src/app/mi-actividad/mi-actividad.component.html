@@ -114,9 +114,14 @@
 
 
           <!-- BOTONES -->
-          <button class="btn-danger" (click)="despostularPostulacion(p)">
-            Despostular
-          </button>
+<button
+  *ngIf="p.estado === 'pendiente'"
+  class="btn-danger"
+  (click)="despostularPostulacion(p)"
+>
+  Despostular
+</button>
+
 
           <button class="btn-primary" (click)="verDetallePostulacion(p)">
             Ver detalles

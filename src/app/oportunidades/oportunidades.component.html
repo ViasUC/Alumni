@@ -23,7 +23,9 @@
 
         <div class="actions">
 
-          <!-- Mías -->
+          <!-- ============================================================
+               MÍAS (Botones: Editar / Eliminar / Ver Postulantes)
+          ============================================================ -->
           <ng-container *ngIf="op.creadaPorUsuario; else noPropias">
             <button class="btn-primary" (click)="abrirEditar(op)">Editar</button>
             <button class="btn-danger" (click)="abrirEliminar(op)">Eliminar</button>
@@ -32,31 +34,64 @@
             </button>
           </ng-container>
 
-          <!-- No mías -->
+          <!-- ============================================================
+               NO MÍAS — ver detalles, postular, despostular, badge estado
+          ============================================================ -->
           <ng-template #noPropias>
-            <button
-              *ngIf="!op.postulado"
-              class="btn-primary"
-              (click)="abrirDetalle(op)"
-            >
-              Ver detalles
-            </button>
 
-            <button
-              *ngIf="!op.postulado"
-              class="btn-primary"
-              (click)="togglePostulacion(op)"
-            >
-              Postular
-            </button>
+            <!-- ==========================
+                 SI NO ESTOY POSTULADO
+            =========================== -->
+            <ng-container *ngIf="!op.postulado">
+              <button class="btn-primary" (click)="abrirDetalle(op)">
+                Ver detalles
+              </button>
 
-            <button
-              *ngIf="op.postulado"
-              class="btn-danger"
-              (click)="despostular(op)"
-            >
-            Despostular
-            </button>
+              <button class="btn-primary" (click)="togglePostulacion(op)">
+                Postular
+              </button>
+            </ng-container>
+
+            <!-- ==========================
+                 SI YA ESTOY POSTULADO
+            =========================== -->
+            <!-- ==========================
+     SI YA ESTOY POSTULADO
+=========================== -->
+<ng-container *ngIf="op.postulado">
+
+  <!-- BADGE DE ESTADO -->
+  <span
+    class="estado-pill"
+    [ngClass]="{
+      'estado-pendiente': op.estadoPostulacion === 'pendiente',
+      'estado-aceptada': op.estadoPostulacion === 'aceptada',
+      'estado-rechazada': op.estadoPostulacion === 'rechazada'
+    }"
+  >
+    {{ op.estadoPostulacion | uppercase }}
+  </span>
+
+  <!-- VER DETALLES SIEMPRE -->
+  <button
+    class="btn-primary"
+    (click)="abrirDetalle(op)"
+  >
+    Ver detalles
+  </button>
+
+  <!-- DESPOSTULAR SOLO SI ESTÁ PENDIENTE -->
+  <button
+    *ngIf="op.estadoPostulacion === 'pendiente'"
+    class="btn-danger"
+    (click)="despostular(op)"
+  >
+    Despostular
+  </button>
+
+</ng-container>
+
+
           </ng-template>
 
         </div>

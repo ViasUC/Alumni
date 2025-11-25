@@ -90,13 +90,15 @@ despostular(op: any) {
   const user = usuarioStr ? JSON.parse(usuarioStr) : null;
   const idUsuario = Number(user?.idUsuario);
 
-  const query = `
-    query ($idUsuario: Int!) {
-      postulacionesPorUsuario(idUsuario: $idUsuario) {
-        idOportunidad
-      }
+const query = `
+  query ($idUsuario: Int!) {
+    postulacionesPorUsuario(idUsuario: $idUsuario) {
+      idOportunidad
+      estado
     }
-  `;
+  }
+`;
+
 
   return this.http.post<any>("http://localhost:8080/graphql", {
     query,
@@ -156,28 +158,23 @@ this.cargarPostulacionesUsuario().subscribe((resp: any) => {
   console.log("📌 LISTA DE OPORTUNIDADES ANTES DE MARCAR:", this.oportunidades);
 
   this.oportunidades = this.oportunidades.map(op => {
-    const fuePostulado = userPosts.some((p: any) => {
+  const post = userPosts.find((p: any) =>
+    Number(p.idOportunidad) === Number(op.idOportunidad)
+  );
 
-      const match =
-        Number(p.idOportunidad) === Number(op.idOportunidad);
+  const fuePostulado = !!post;
 
-      console.log(
-        `🔍 comparando op.idOportunidad=${op.idOportunidad} ` +
-        `con p.idOportunidad=${p.idOportunidad} => MATCH=${match}`
-      );
+  if (fuePostulado) {
+    console.log(`✅ MARCADO COMO POSTULADO → oportunidad ${op.idOportunidad}`);
+  }
 
-      return match;
-    });
+  return {
+    ...op,
+    postulado: fuePostulado,
+    estadoPostulacion: post?.estado?.toLowerCase() ?? null
+  };
+});
 
-    if (fuePostulado) {
-      console.log(`✅ MARCADO COMO POSTULADO → oportunidad ${op.idOportunidad}`);
-    }
-
-    return {
-      ...op,
-      postulado: fuePostulado
-    };
-  });
 
   console.log("📌 LISTA DE OPORTUNIDADES FINAL:", this.oportunidades);
   // ====================================================
@@ -357,6 +354,7 @@ togglePostulacion(op: any) {
       console.log("🟢 POSTULACIÓN CREADA:", res);
 
       op.postulado = true; // marcas en UI
+      this.cargarOportunidades();
     })
     .catch(err => console.error("❌ Error postulando:", err));
 }
