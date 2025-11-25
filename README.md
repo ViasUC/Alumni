@@ -65,6 +65,12 @@ Este proyecto utiliza la version 19.1.8 de Angular .
 
 1. Clonar el repositorio
 
+IMPORTANTISIMO: Al clonar el backend debe ser clonado la rama exalumnos.
+IMPORTANTISIMO: Al clonar el backend debe ser clonado la rama exalumnos.
+IMPORTANTISIMO: Al clonar el backend debe ser clonado la rama exalumnos.
+IMPORTANTISIMO: Al clonar el backend debe ser clonado la rama exalumnos.
+IMPORTANTISIMO: Al clonar el backend debe ser clonado la rama exalumnos.
+
 Descargar el proyecto desde Git ejecutando el comando:
 git clone https://github.com/ViasUC/Alumni.git
 
